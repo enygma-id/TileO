@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://tileo.org/" title="Visit TileO Official Website">
+  <a href="https://tileo.org/" title="TileO Official Website">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="assets/branding/tileo-logo-dark.png">
       <source media="(prefers-color-scheme: light)" srcset="assets/branding/tileo-logo-light.png">
@@ -8,7 +8,11 @@
   </a>
 
   <p>
-    <a href="https://tileo.org/"><strong>Official Website</strong></a>
+    <a href="https://tileo.org/">Official Website</a>
+    &nbsp;·&nbsp;
+    <a href="#quick-start">Quick Start</a>
+    &nbsp;·&nbsp;
+    <a href="#samples">Samples</a>
   </p>
 </div>
 
