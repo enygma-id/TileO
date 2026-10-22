@@ -1,0 +1,49 @@
+{
+  "name": "tileo-console",
+  "version": "0.1.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.13.0 <25"
+  },
+  "scripts": {
+    "build": "tsc && esbuild src/web/model3d.ts --bundle --format=esm --target=es2022 --outfile=dist/web/model3d.js && esbuild src/web/cog.ts --bundle --format=esm --target=es2022 --outfile=dist/web/cog.js",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/start.js",
+    "start:build": "npm run build && npm start",
+    "api": "node dist/api.js",
+    "worker": "node dist/worker.js",
+    "doctor": "node dist/doctor.js",
+    "copy:clean": "node scripts/copy-clean.js",
+    "copy:landing": "node scripts/copy-landing.js",
+    "notices": "node scripts/generate-third-party-notices.js",
+    "version:show": "npm pkg get version",
+    "release:patch": "npm version patch --no-git-tag-version && npm run build",
+    "release:minor": "npm version minor --no-git-tag-version && npm run build",
+    "release:major": "npm version major --no-git-tag-version && npm run build",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "test:browser": "playwright test",
+    "release:gate": "node scripts/release-gate.js"
+  },
+  "dependencies": {
+    "@deck.gl/geo-layers": "^9.4.0",
+    "@deck.gl/maplibre": "^9.4.0",
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "better-sqlite3": "12.11.1",
+    "fastify": "5.12.5",
+    "geotiff": "^3.0.5",
+    "maplibre-gl": "6.12.0",
+    "meshoptimizer": "^1.3.0",
+    "pmtiles": "^4.5.0",
+    "proj4": "^2.22.0",
+    "yazl": "^3.3.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.0"
+  }
+}

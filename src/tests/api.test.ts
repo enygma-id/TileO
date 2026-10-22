@@ -1,0 +1,56 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, rm, readdir, mkdir, writeFile, stat } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+
+test('HTTP uploads stream to disk, validate options and persist the queue', async () => {
+  const data = await mkdtemp(join(tmpdir(), 'tileo-http-'));
+  process.env.TILEO_DATA_DIR = data; process.env.TILEO_DISK_RESERVE_MB = '0';
+  const { createApp } = await import('../api.js');
+  const { Jobs } = await import('../jobs.js');
+  const jobs = new Jobs();
+  const app = await createApp(jobs);
+  const address = await app.listen({ host: '127.0.0.1', port: 0 });
+  try {
+    const home = await app.inject('/'); assert.equal(home.statusCode, 200); assert.match(home.body, /lang="en"/);
+    const docs = await app.inject('/docs'); assert.equal(docs.statusCode, 200); assert.match(docs.body, /TileO API reference/); assert.doesNotMatch(docs.body, /unpkg\.com/);
+    assert.equal((await app.inject('/openapi.yaml')).statusCode, 200);
+    const status = await app.inject('/api/status'); assert.equal(status.statusCode, 200); assert.equal(typeof status.json().version, 'string');
+    const upload = await fetch(`${address}/api/jobs?filename=test.geojson`, { method: 'POST', headers: { 'content-type': 'application/octet-stream' }, body: '{"type":"FeatureCollection","features":[]}' });
+    assert.equal(upload.status, 202, await upload.clone().text());
+    const job = await upload.json(); assert.equal(job.status, 'QUEUED'); assert.ok(job.sha256); assert.equal(job.input, undefined);
+    assert.equal((await readdir(join(data, 'input'))).length, 1);
+    const bad = await app.inject({ method: 'POST', url: '/api/jobs?filename=../bad.tif', headers: { 'content-type': 'application/octet-stream' }, payload: 'bad' });
+    assert.equal(bad.statusCode, 400);
+    const crossOrigin = await app.inject({ method: 'POST', url: `/api/jobs/${job.id}/cancel`, headers: { origin: 'https://attacker.invalid' } });
+    assert.equal(crossOrigin.statusCode, 403);
+    const cancel = await app.inject({ method: 'POST', url: `/api/jobs/${job.id}/cancel` }); assert.equal(cancel.json().status, 'CANCELLED');
+    const invalidDownload = await app.inject(`/api/jobs/${job.id}/download`); assert.equal(invalidDownload.statusCode, 400);
+    const deleted = await app.inject({ method: 'DELETE', url: `/api/jobs/${job.id}` }); assert.equal(deleted.statusCode, 200);
+    assert.equal((await app.inject(`/api/jobs/${job.id}`)).statusCode, 404);
+    const rebinding = await app.inject({ url: '/api/jobs', headers: { host: 'attacker.invalid' } }); assert.equal(rebinding.statusCode, 403);
+    const elevationUpload = await fetch(`${address}/api/jobs?${new URLSearchParams({ filename: 'dtm.tif', options: JSON.stringify({ pipeline: 'elevation', elevationKind: 'dtm' }) })}`, { method: 'POST', headers: { 'content-type': 'application/octet-stream' }, body: 'fixture' });
+    assert.equal(elevationUpload.status, 202);
+    const elevation = await elevationUpload.json();
+    jobs.acquire('fixture-worker'); const claimed = jobs.claim('fixture-worker')!;
+    const output = `${elevation.id}-${claimed.attempt}-elevation`, directory = join(data, 'output', output);
+    await mkdir(directory);
+    const tiff = Buffer.from('II*\0fixture-range-bytes'); await writeFile(join(directory, 'elevation.tif'), tiff);
+    assert.equal(jobs.finish(elevation.id, claimed.attempt, 'fixture-worker', output, { kind: 'elevation', format: 'cog' }), true);
+    const full = await app.inject(`/api/jobs/${elevation.id}/cog`); assert.equal(full.statusCode, 200); assert.deepEqual(full.rawPayload, tiff);
+    const original = await app.inject(`/api/jobs/${elevation.id}/source`); assert.equal(original.statusCode, 200); assert.equal(original.body, 'fixture');
+    const originalRange = await app.inject({ url: `/api/jobs/${elevation.id}/source`, headers: { range: 'bytes=1-3' } }); assert.equal(originalRange.statusCode, 206); assert.equal(originalRange.body, 'ixt');
+    assert.equal((await app.inject({ url: `/api/jobs/${elevation.id}/source`, headers: { range: 'bytes=200-' } })).statusCode, 416);
+    const range = await app.inject({ url: `/api/jobs/${elevation.id}/cog`, headers: { range: 'bytes=0-3' } });
+    assert.equal(range.statusCode, 206); assert.equal(range.headers['content-range'], `bytes 0-3/${tiff.length}`); assert.deepEqual(range.rawPayload, tiff.subarray(0, 4));
+    const suffix = await app.inject({ url: `/api/jobs/${elevation.id}/cog`, headers: { range: 'bytes=-5' } }); assert.deepEqual(suffix.rawPayload, tiff.subarray(-5));
+    for (const range of ['bytes=9999-', 'bytes=8-2', 'bytes=0-1,3-4', 'bytes=-0', 'bytes=abc']) assert.equal((await app.inject({ url: `/api/jobs/${elevation.id}/cog`, headers: { range } })).statusCode, 416);
+    const cogDownload = await app.inject(`/api/jobs/${elevation.id}/download`);
+    assert.equal(cogDownload.headers['content-type'], 'image/tiff'); assert.deepEqual(cogDownload.rawPayload, tiff);
+    assert.equal((await app.inject(`/api/jobs/${elevation.id}/tiles/0/0/0`)).statusCode, 404);
+    assert.equal((await app.inject(`/api/jobs/${elevation.id}/download?file=../../bad`)).statusCode, 404);
+    assert.equal((await app.inject({ method: 'DELETE', url: `/api/jobs/${elevation.id}` })).statusCode, 200);
+    await assert.rejects(stat(directory));
+  } finally { await app.close(); await rm(data, { recursive: true, force: true }); }
+});

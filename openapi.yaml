@@ -1,0 +1,723 @@
+openapi: 3.0.3
+info:
+  title: TileO API
+  version: 0.1.1
+  description: |
+    Upload geospatial data, create tiles, and preview the results.
+
+    **Conversion:** inspect a file → create a job → check its status → preview or download.
+    **Quick Open:** open an existing TIFF or tile archive immediately, without conversion.
+
+    Upload files as `application/octet-stream`. When `TILEO_API_TOKEN` is configured, send it as a Bearer token or create a browser session. Credentials grant shared administrator access. A localhost-only deployment may run with authentication disabled.
+    The server URL follows the address used to open these docs, including LAN addresses.
+servers:
+  - url: /
+    description: Current server (local or LAN)
+security:
+  - bearerAuth: []
+  - sessionCookie: []
+tags:
+  - name: System
+    description: Check API health, worker connection, and available resources.
+  - name: Authentication
+    description: Create a browser session. API clients can use a Bearer token instead.
+  - name: Inspect uploads
+    description: Check file metadata before conversion. Inspection references expire after 30 minutes.
+  - name: Storage inputs
+    description: Inspect and enqueue allowlisted S3 or MinIO COG objects without exposing storage credentials to the browser.
+  - name: Conversion jobs
+    description: Create conversions, monitor progress, cancel, retry, and delete jobs.
+  - name: Quick Open
+    description: Preview existing TIFF and MBTiles files without creating a conversion job. Previews expire after 30 minutes of inactivity and at most 2 hours after creation; at most 20 MBTiles and 20 TIFF previews are kept.
+  - name: Source previews
+    description: Inspect original uploaded data and compare it with the output.
+  - name: Map tiles and services
+    description: Connect raster, vector, elevation, or 3D results to your map.
+  - name: Downloads
+    description: Download completed archives and read conversion logs.
+paths:
+  /healthz:
+    get:
+      tags: [System]
+      summary: API liveness
+      security: []
+      responses:
+        '200':
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+  /api/status:
+    get:
+      tags: [System]
+      summary: Application and worker status
+      responses:
+        '200':
+          description: Current status
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Status' }
+  /api/session:
+    post:
+      tags: [Authentication]
+      summary: Create a browser session
+      description: Exchanges the configured shared API token for a 12-hour HttpOnly, SameSite=Strict session cookie. Rate limited. When API authentication is disabled, no session is created.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token]
+              properties: { token: { type: string } }
+      responses:
+        '200': { description: Session cookie created }
+        '401': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /api/session/logout:
+    post:
+      tags: [Authentication]
+      summary: End the current browser session
+      description: Revokes the presented session cookie and clears it in the browser. Bearer tokens are not revoked by this endpoint.
+      responses:
+        '200': { description: Session revoked }
+        '401': { $ref: '#/components/responses/Error' }
+  /api/storage/connections:
+    get:
+      tags: [Storage inputs]
+      summary: List configured storage connections
+      description: Returns only public connection metadata, allowed buckets, the authentication kind, and whether direct remote reading is enabled. Credentials and endpoints are never returned.
+      responses:
+        '200':
+          description: Available S3 or MinIO connections
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/StorageConnection' }
+  /api/storage/credentials:
+    post:
+      tags: [Storage inputs]
+      summary: Register BYOC bucket credentials
+      description: Stores your own S3-compatible bucket keys sealed with AES-256-GCM (TILEO_CREDENTIAL_KEY). Either keys for an admin-defined byoc connection (connectionId) or a full target (endpoint plus bucket plus keys, for example R2, Spaces, MinIO, or Supabase). Credentials bind to the current session and expire after ttlSeconds (default 15 minutes, at most 90 days).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                connectionId: { type: string, description: Admin-defined connection with byoc authentication. }
+                endpoint: { type: string, description: S3-compatible endpoint URL, for example https://s3.example.com or http://minio.internal:9000. HTTPS and a public host are required unless the exact host is allowlisted by TILEO_REMOTE_URL_HOSTS, which also permits http:// and private/LAN addresses (local development may set TILEO_BYOC_ALLOW_HTTP=1 for loopback). }
+                region: { type: string, default: us-east-1 }
+                bucket: { type: string }
+                prefix: { type: string, description: Optional key prefix the credentials are scoped to. }
+                accessKeyId: { type: string }
+                secretAccessKey: { type: string }
+                sessionToken: { type: string }
+                ttlSeconds: { type: integer, minimum: 60, maximum: 7776000, default: 900 }
+      responses:
+        '201':
+          description: Credentials registered
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [credentialId, expiresInSeconds]
+                properties:
+                  credentialId: { type: string, format: uuid }
+                  expiresInSeconds: { type: integer }
+        '400': { $ref: '#/components/responses/Error' }
+    get:
+      tags: [Storage inputs]
+      summary: List your registered storage credentials
+      description: Returns credential metadata (scope and expiry) for the current session. Secrets are never returned.
+      responses:
+        '200':
+          description: Registered credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [credentials]
+                properties:
+                  credentials:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string, format: uuid }
+                        connectionId: { type: string }
+                        endpoint: { type: string }
+                        region: { type: string }
+                        bucket: { type: string }
+                        expiresAt: { type: integer, format: int64 }
+                        createdAt: { type: integer, format: int64 }
+  /api/storage/credentials/{id}:
+    delete:
+      tags: [Storage inputs]
+      summary: Revoke registered storage credentials
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Credentials revoked }
+  /api/storage/inspect:
+    post:
+      tags: [Storage inputs]
+      summary: Inspect a public/presigned URL or configured S3 object
+      description: Performs a byte-range probe plus bounded GDAL metadata inspection. URL query signatures are never returned. The inspection ID expires after 30 minutes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required: [url]
+                  properties:
+                    url: { type: string, format: uri, description: Public or presigned .tif/.tiff URL. HTTPS is required unless the host is explicitly allowlisted. }
+                    readMode: { type: string, enum: [auto, remote, stage], default: auto }
+                - type: object
+                  required: [connectionId, bucket, key]
+                  properties:
+                    connectionId: { type: string }
+                    bucket: { type: string }
+                    key: { type: string, description: Exact object key ending in .tif or .tiff }
+                    credentialId: { type: string, format: uuid, description: BYOC credentials registered for a byoc connection. Must belong to the current session. }
+                    readMode: { type: string, enum: [auto, remote, stage], default: auto }
+                - type: object
+                  required: [credentialId, key]
+                  properties:
+                    credentialId: { type: string, format: uuid, description: BYOC credentials registered with a full endpoint target. The bucket is taken from the registered target. }
+                    key: { type: string, description: Exact object key ending in .tif or .tiff }
+                    readMode: { type: string, enum: [auto, remote, stage], default: auto }
+      responses:
+        '200':
+          description: Inspection metadata and immutable source identity
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inspectionId: { type: string, format: uuid }
+                  inspection: { type: object, additionalProperties: true }
+                  source:
+                    oneOf:
+                      - { $ref: '#/components/schemas/UrlInputSource' }
+                      - { $ref: '#/components/schemas/S3InputSource' }
+                  expiresInSeconds: { type: integer, example: 1800 }
+        '400': { $ref: '#/components/responses/Error' }
+        '403': { $ref: '#/components/responses/Error' }
+  /api/storage/inspect/{id}:
+    delete:
+      tags: [Storage inputs]
+      summary: Discard a pending storage inspection
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Inspection discarded }
+  /api/jobs/from-source:
+    post:
+      tags: [Storage inputs, Conversion jobs]
+      summary: Enqueue a job from a storage inspection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [inspectionId]
+              properties:
+                inspectionId: { type: string, format: uuid }
+                options: { type: object, additionalProperties: true }
+      responses:
+        '202':
+          description: Job accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
+        '400': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /api/jobs:
+    get:
+      tags: [Conversion jobs]
+      summary: List recent jobs
+      responses:
+        '200':
+          description: Jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Job' }
+    post:
+      tags: [Conversion jobs]
+      summary: Enqueue a conversion from an inspected upload or upload directly
+      parameters:
+        - { $ref: '#/components/parameters/Filename' }
+        - in: query
+          name: inspectionId
+          required: false
+          description: Use the temporary upload returned by POST /api/inspect instead of sending the file again.
+          schema: { type: string, format: uuid }
+        - in: query
+          name: options
+          required: false
+          description: 'URL-encoded JSON options. GLB requires latitude, longitude and WGS84 ellipsoid height; exportB3dm=true adds a 3D Tiles 1.0 B3DM compatibility package. Elevation GeoTIFF uses pipeline=elevation, rasterPurpose=elevation, elevationOutput=cog, terrain-rgb or terrarium, elevationKind=dem/dsm/dtm, elevationUnit=unknown/m/ft, heightReference=unknown/ellipsoid/orthometric. A non-height single-band numeric TIFF uses pipeline=scientific and rasterPurpose=scientific to produce a lossless COG. Terrain requires explicit units/reference and terrainNoDataHeight in meters, and accepts minZoom/maxZoom. See API.md for constraints. Other inputs use 2D tiling options (minZoom, maxZoom, tileFormat, quality, sourceCrs, layer, vectorPreset, vectorEngine, includeProperties, maxTileBytes, maxTileFeatures). Preserve with >100k features requires minZoom >= 10. exportPmtiles=true adds a PMTiles archive to imagery/vector or terrain output.'
+          schema: { type: string }
+      requestBody:
+        required: false
+        content:
+          application/octet-stream: { schema: { type: string, format: binary } }
+      responses:
+        '202':
+          description: Job accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
+        '400': { $ref: '#/components/responses/Error' }
+        '413': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /api/inspect:
+    post:
+      tags: [Inspect uploads]
+      summary: Upload and inspect a raster or vector dataset before conversion
+      parameters:
+        - { $ref: '#/components/parameters/Filename' }
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: { schema: { type: string, format: binary } }
+      responses:
+        '200':
+          description: Inspection metadata and a temporary upload reference valid for 30 minutes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  inspectionId: { type: string, format: uuid }
+                  inspection: { type: object, description: Detected kind, CRS, raster dimensions/native zoom, or vector layer/feature count. }
+                  expiresInSeconds: { type: integer, example: 1800 }
+        '400': { $ref: '#/components/responses/Error' }
+        '413': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /api/inspect/{id}:
+    delete:
+      tags: [Inspect uploads]
+      summary: Discard an inspected upload
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Temporary upload discarded }
+  /api/jobs/{id}:
+    get:
+      tags: [Conversion jobs]
+      summary: Get a job
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200':
+          description: Job
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Job' }
+        '404': { $ref: '#/components/responses/Error' }
+    delete:
+      tags: [Conversion jobs]
+      summary: Delete a terminal job and its files
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: Deleted }
+        '400': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/cancel:
+    post:
+      tags: [Conversion jobs]
+      summary: Cancel a queued or running job
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: Updated job }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/retry:
+    post:
+      tags: [Conversion jobs]
+      summary: Retry a failed or cancelled job
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: Updated job }
+        '400': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/log:
+    get:
+      tags: [Downloads]
+      summary: Get the process log
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: Plain-text log, content: { text/plain: { schema: { type: string } } } }
+  /api/jobs/{id}/compare:
+    get:
+      tags: [Source previews]
+      summary: Compare source and output metadata
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: Source and generated artifact metadata, content: { application/json: { schema: { type: object } } } }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/download:
+    get:
+      tags: [Downloads]
+      summary: Download MBTiles, COG, 3D Tiles ZIP or elevation ZIP
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+        - { in: query, name: file, required: false, description: Select an individual artifact. B3DM returns a 3D Tiles 1.0 compatibility ZIP; availability depends on the job type., schema: { type: string, enum: [cog, terrain, pmtiles, b3dm, glb, gltf] } }
+      responses:
+        '200':
+          description: MBTiles archive, 3D Tiles 1.1 ZIP, B3DM compatibility ZIP, or another job artifact
+          content:
+            application/octet-stream: { schema: { type: string, format: binary } }
+            application/zip: { schema: { type: string, format: binary } }
+            image/tiff: { schema: { type: string, format: binary } }
+        '400': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/cog:
+    get:
+      tags: [Map tiles and services]
+      summary: Read a completed COG with single HTTP byte-range support
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+        - { in: header, name: Range, required: false, schema: { type: string, example: 'bytes=0-16383' } }
+      responses:
+        '200': { description: Complete TIFF, content: { image/tiff: { schema: { type: string, format: binary } } } }
+        '206': { description: Partial TIFF bytes, headers: { Content-Range: { schema: { type: string } }, Accept-Ranges: { schema: { type: string } } }, content: { image/tiff: { schema: { type: string, format: binary } } } }
+        '416': { description: Invalid or unsatisfiable byte range }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/wmts:
+    get:
+      tags: [Map tiles and services]
+      summary: WMTS 1.0 KVP capabilities and tile service
+      description: WebMercatorQuad with XYZ row numbering. Imagery, vector and encoded terrain jobs only. Uses the same authentication as XYZ.
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+        - { in: query, name: SERVICE, required: true, schema: { type: string, enum: [WMTS] } }
+        - { in: query, name: VERSION, schema: { type: string, enum: ['1.0.0'] } }
+        - { in: query, name: REQUEST, required: true, schema: { type: string, enum: [GetCapabilities, GetTile] } }
+        - { in: query, name: LAYER, description: Required for GetTile; job UUID., schema: { type: string } }
+        - { in: query, name: STYLE, description: Required for GetTile., schema: { type: string, enum: [default] } }
+        - { in: query, name: TILEMATRIXSET, description: Required for GetTile., schema: { type: string, enum: [WebMercatorQuad] } }
+        - { in: query, name: TILEMATRIX, description: Required for GetTile; zoom., schema: { type: integer, minimum: 0, maximum: 22 } }
+        - { in: query, name: TILECOL, description: Required for GetTile; XYZ column., schema: { type: integer, minimum: 0 } }
+        - { in: query, name: TILEROW, description: Required for GetTile; XYZ row., schema: { type: integer, minimum: 0 } }
+        - { in: query, name: FORMAT, description: Required for GetTile; exact advertised MIME type., schema: { type: string } }
+      responses:
+        '200': { description: WMTS capabilities XML or tile bytes }
+        '204': { description: Tile not present }
+        '400': { description: OWS ExceptionReport XML for invalid WMTS parameters }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/tilejson:
+    get:
+      tags: [Map tiles and services]
+      summary: Get Terrain-RGB or Terrarium XYZ TileJSON
+      description: Only jobs with Terrain-RGB or Terrarium output expose TileJSON; other pipelines return 404.
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: Terrain bounds, zooms, encoding and tile URLs, content: { application/json: { schema: { type: object } } } }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/source-preview:
+    get:
+      tags: [Source previews]
+      summary: Preview uploaded imagery or vector data for visual comparison
+      description: Returns a 1536 px imagery PNG or WGS84 GeoJSON with at most 5000 vector features. No total dataset feature-count limit. GeoJSON preview.truncated indicates partial results; preview.scope is viewport or dataset. Native runner size, memory and timeout budgets apply. Requires a completed job.
+      parameters:
+        - $ref: '#/components/parameters/JobId'
+        - name: bbox
+          in: query
+          description: Optional west,south,east,north WGS84 viewport for vector spatial filtering. Must be non-wrapping and within longitude -180..180 and latitude -90..90. Does not clip or simplify geometry.
+          schema: { type: string, example: '119.4,-5.2,119.5,-5.1' }
+      responses:
+        '200':
+          description: Original source preview
+          content:
+            image/png: { schema: { type: string, format: binary } }
+            application/geo+json: { schema: { type: object } }
+        '400': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/source:
+    get:
+      tags: [Source previews]
+      summary: Read the original uploaded TIFF or GLB
+      description: Streams the original elevation GeoTIFF, imagery TIFF or GLB with HTTP Range support. Archived (.zip) inputs are not served here; use source-preview for those.
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+        - { in: header, name: Range, schema: { type: string, example: 'bytes=0-16383' } }
+      responses:
+        '200': { description: Original TIFF or GLB bytes }
+        '206': { description: Requested byte range }
+        '416': { description: Invalid or unsatisfiable range }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/source-georef:
+    get:
+      tags: [Source previews]
+      summary: Georeferencing metadata of the original TIFF
+      description: CRS, affine geotransform, dimensions, bands and WGS84 bounds from the original upload without reading pixel data. Used to stream the true source in the compare view.
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: TIFF georeferencing metadata, content: { application/json: { schema: { type: object } } } }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/source-tileset.json:
+    get:
+      tags: [Source previews]
+      summary: Place the original GLB for comparison using the published placement transform
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: A single-content 3D Tiles manifest referencing the original upload }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/3d/tileset.json:
+    get:
+      tags: [Map tiles and services]
+      summary: Read the tileset manifest from a completed GLB job
+      parameters: [{ $ref: '#/components/parameters/JobId' }]
+      responses:
+        '200': { description: 3D Tiles 1.1 tileset JSON }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/3d/tiles/{file}:
+    get:
+      tags: [Map tiles and services]
+      summary: Read GLB tile content from a completed GLB job
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+        - { in: path, name: file, required: true, schema: { type: string, pattern: '^[a-z0-9-]+\.glb$' } }
+      responses:
+        '200': { description: Binary glTF tile content }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/jobs/{id}/tiles/{z}/{x}/{y}:
+    get:
+      tags: [Map tiles and services]
+      summary: Read one tile from a completed job
+      description: Tile bytes carry `Cache-Control: private, max-age=86400, immutable` and a weak `ETag`; send `If-None-Match` for a `304` response. Missing tiles return `204` with a short cache header.
+      parameters:
+        - { $ref: '#/components/parameters/JobId' }
+        - { $ref: '#/components/parameters/Z' }
+        - { $ref: '#/components/parameters/X' }
+        - { $ref: '#/components/parameters/Y' }
+      responses:
+        '200': { description: Raster tile or vector tile }
+        '204': { description: Tile not present }
+        '304': { description: Tile unchanged (ETag match) }
+        '400': { $ref: '#/components/responses/Error' }
+        '401': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/basemap/osm/{z}/{x}/{y}.png:
+    get:
+      tags: [Map tiles and services]
+      summary: Proxy an OpenStreetMap basemap tile
+      description: Coordinates are validated (z 0-22, x/y within range). Upstream fetches time out after 10 seconds and successful tiles are cached in memory for 24 hours with request coalescing.
+      parameters:
+        - { $ref: '#/components/parameters/Z' }
+        - { $ref: '#/components/parameters/X' }
+        - { $ref: '#/components/parameters/Y' }
+      responses:
+        '200': { description: PNG basemap tile, content: { image/png: { schema: { type: string, format: binary } } } }
+        '304': { description: Tile unchanged (ETag match) }
+        '400': { $ref: '#/components/responses/Error' }
+        '502': { $ref: '#/components/responses/Error' }
+  /api/quick/mbtiles:
+    post:
+      tags: [Quick Open]
+      summary: Inspect an existing MBTiles archive
+      description: Uploads are bounded by the global upload limit with incremental disk checks. Archives with more than 5,000,000 tiles are rejected.
+      parameters:
+        - in: query
+          name: filename
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: { schema: { type: string, format: binary } }
+      responses:
+        '200': { description: Temporary preview metadata }
+        '400': { $ref: '#/components/responses/Error' }
+        '413': { $ref: '#/components/responses/Error' }
+  /api/quick/{id}/tiles/{z}/{x}/{y}:
+    get:
+      tags: [Quick Open]
+      summary: Read a tile from a Quick Open preview
+      description: Coordinates are validated like job tiles. Tile bytes carry `Cache-Control: private, max-age=86400, immutable` and an `ETag`; missing tiles return `204`.
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+        - { $ref: '#/components/parameters/Z' }
+        - { $ref: '#/components/parameters/X' }
+        - { $ref: '#/components/parameters/Y' }
+      responses:
+        '200': { description: Tile }
+        '204': { description: Tile not present }
+        '304': { description: Tile unchanged (ETag match) }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/quick/tiff:
+    post:
+      tags: [Quick Open]
+      summary: Inspect a GeoTIFF for Quick Open
+      description: Accepts georeferenced imagery or a single-band numeric scientific/elevation TIFF and returns a temporary streaming id with optional range metadata. The original file is rendered on demand; nothing is tiled.
+      parameters:
+        - in: query
+          name: filename
+          schema: { type: string }
+        - in: query
+          name: mode
+          description: Auto previews numeric non-Byte single-band TIFFs as scientific data. Byte defaults to imagery; choose Scientific or DEM/DSM/DTM explicitly for a single-band raster.
+          schema: { type: string, enum: [auto, imagery, scientific, dem, dsm, dtm], default: auto }
+      requestBody:
+        required: true
+        content:
+          application/octet-stream: { schema: { type: string, format: binary } }
+      responses:
+        '200': { description: Temporary TIFF metadata with georeferencing }
+        '400': { $ref: '#/components/responses/Error' }
+        '413': { $ref: '#/components/responses/Error' }
+  /api/quick/{id}/file:
+    get:
+      tags: [Quick Open]
+      summary: Stream the original Quick Open TIFF bytes
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+        - { in: header, name: Range, schema: { type: string, example: 'bytes=0-65535' } }
+      responses:
+        '200': { description: Original TIFF bytes }
+        '206': { description: Requested byte range }
+        '416': { description: Invalid or unsatisfiable range }
+        '404': { $ref: '#/components/responses/Error' }
+  /api/quick/{id}:
+    delete:
+      tags: [Quick Open]
+      summary: Release a Quick Open preview and remove its temporary file
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Preview released }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer }
+    sessionCookie: { type: apiKey, in: cookie, name: tileo_session }
+  parameters:
+    Filename: { in: query, name: filename, required: true, schema: { type: string } }
+    JobId: { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+    Z: { in: path, name: z, required: true, schema: { type: integer, minimum: 0, maximum: 22 } }
+    X: { in: path, name: x, required: true, schema: { type: integer, minimum: 0 } }
+    Y: { in: path, name: y, required: true, schema: { type: integer, minimum: 0 } }
+  responses:
+    Error:
+      description: API error
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+    StorageConnection:
+      type: object
+      required: [id, name, provider, buckets, remoteRead, auth, needsCredentials]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        provider: { type: string, enum: [Amazon S3, S3-compatible] }
+        buckets: { type: array, items: { type: string } }
+        remoteRead: { type: boolean, description: Whether immutable-key direct GDAL range reading is enabled by the administrator. }
+        auth: { type: string, enum: [static, iam, byoc, public], description: How the server authenticates to this connection. }
+        needsCredentials: { type: boolean, description: True when the caller must register their own bucket keys before inspecting objects on this connection. }
+    S3InputSource:
+      type: object
+      required: [kind, connectionId, bucket, key, readMode, size, etag, rangeSupported, cog]
+      properties:
+        kind: { type: string, enum: [s3] }
+        connectionId: { type: string }
+        bucket: { type: string }
+        key: { type: string }
+        readMode: { type: string, enum: [remote, stage] }
+        size: { type: integer, format: int64 }
+        etag: { type: string }
+        lastModified: { type: string, nullable: true }
+        rangeSupported: { type: boolean }
+        cog: { type: boolean }
+    UrlInputSource:
+      type: object
+      required: [kind, url, auth, readMode, size, etag, rangeSupported, cog]
+      properties:
+        kind: { type: string, enum: [url] }
+        url: { type: string, format: uri, description: Sanitized URL without query credentials. }
+        auth: { type: string, enum: [public, presigned] }
+        readMode: { type: string, enum: [remote, stage] }
+        size: { type: integer, format: int64 }
+        etag: { type: string }
+        lastModified: { type: string, nullable: true }
+        rangeSupported: { type: boolean }
+        cog: { type: boolean }
+    Job:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        filename: { type: string }
+        status: { type: string, enum: [QUEUED, RUNNING, SUCCEEDED, FAILED, CANCELLED] }
+        stage: { type: string }
+        progress: { type: integer }
+        attempt: { type: integer }
+        started: { type: string, format: date-time, nullable: true }
+        elapsedMs: { type: integer, nullable: true, description: Time since the running attempt started, in milliseconds }
+        remainingMs: { type: integer, nullable: true, description: Estimated time left from the measured progress rate, in milliseconds; null while there is no movement to measure yet }
+        error: { type: string, nullable: true }
+        code: { type: string, nullable: true }
+        output: { type: string, nullable: true }
+        source:
+          description: Local upload identity or the selected remote object identity. Storage credentials are never included.
+          oneOf:
+            - type: object
+              required: [kind, input, filename, size, sha256]
+              properties:
+                kind: { type: string, enum: [local] }
+                input: { type: string }
+                filename: { type: string }
+                size: { type: integer, format: int64 }
+                sha256: { type: string }
+            - { $ref: '#/components/schemas/S3InputSource' }
+            - { $ref: '#/components/schemas/UrlInputSource' }
+        options: { type: object, additionalProperties: true }
+        metadata:
+          type: object
+          nullable: true
+          description: Vector source metadata may be present while running. SUCCEEDED vector jobs also include a per-attempt batch summary under `batch`.
+          properties:
+            batch:
+              type: object
+              properties:
+                mode: { type: string, enum: ['off', 'auto', 'on'] }
+                delivery: { type: string, enum: [file, stream] }
+                active: { type: boolean }
+                stream: { type: boolean }
+                normalization: { type: string, nullable: true }
+                featureCount: { type: integer, nullable: true }
+                batchCount: { type: integer, nullable: true }
+                bytesNormalized: { type: integer, nullable: true }
+                fallback: { type: string, nullable: true, description: 'Engine fallback or legacy:unqualified-driver:<driver> when auto retains an unqualified reader.' }
+                normalizeMs: { type: integer, description: 'Producer/normalization duration; overlaps tileMs during streaming.' }
+                tileMs: { type: integer, description: 'Consumer duration; includes waiting for the producer during streaming.' }
+                peakMemoryBytes: { type: integer, nullable: true, description: 'Best-effort shared-tree sample, not a hard quota or guaranteed peak.' }
+                peakScratchBytes: { type: integer, nullable: true, description: 'Peak visible directory bytes; excludes open-but-unlinked temporary files.' }
+    Status:
+      type: object
+      properties:
+        version: { type: string }
+        workerOnline: { type: boolean }
+        tools: { type: object, additionalProperties: true }
+        freeBytes: { type: integer }
+        maxUploadBytes: { type: integer }
