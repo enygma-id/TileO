@@ -1073,7 +1073,7 @@ export async function createApp(jobs = new Jobs()) {
     '/style.css': [join(root, 'web/style.css'), 'text/css'],
     '/tileo-logo.svg': [join(root, 'web/assets/tileo-logo.svg'), 'image/svg+xml'],
     '/tileo-logo-white.svg': [join(root, 'web/assets/tileo-logo-white.svg'), 'image/svg+xml'],
-    '/tileo-social-card.jpg': [join(root, 'web/assets/tileo-social-card.jpg'), 'image/png'],
+    '/tileo-social-card.jpg': [join(root, 'web/assets/tileo-social-card.jpg'), 'image/jpeg'],
     '/maplibre-gl.mjs': [join(root, 'node_modules/maplibre-gl/dist/maplibre-gl.mjs'), 'text/javascript'],
     '/maplibre-gl-worker.mjs': [join(root, 'node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs'), 'text/javascript'],
     '/maplibre-gl-shared.mjs': [join(root, 'node_modules/maplibre-gl/dist/maplibre-gl-shared.mjs'), 'text/javascript'],

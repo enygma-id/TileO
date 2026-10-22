@@ -224,6 +224,7 @@ function main() {
 
   const output = lines.join('\n');
   fs.writeFileSync(OUTPUT_FILE, output, 'utf8');
+  fs.mkdirSync(path.dirname(BASELINE_OUTPUT), { recursive: true });
   fs.writeFileSync(BASELINE_OUTPUT, output, 'utf8');
   console.log(`Generated ${OUTPUT_FILE} (${pkgs.length} packages, ${output.length} bytes)`);
 }

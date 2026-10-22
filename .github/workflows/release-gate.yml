@@ -1,0 +1,43 @@
+name: Release Gate & Permissive Dependency Verification
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+# One run per ref: cancel superseded runs for the same branch.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-gate:
+    name: Permissive Dependency & Build Verification Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 24.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+
+      - name: Install dependencies (ci)
+        run: npm ci
+
+      - name: Generate notices and SBOM baseline artifacts
+        run: |
+          npm run notices
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
+          syft . -o spdx-json=baseline/sbom.spdx.json -q
+          syft . -o cyclonedx-json=baseline/sbom.cyclonedx.json -q
+
+      - name: Run 5-stage automated release gate
+        run: npm run release:gate
