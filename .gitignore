@@ -1,0 +1,11 @@
+node_modules/
+dist/
+# Ignore only root application runtime data; do not ignore nested sample fixtures.
+/data/
+.env
+.env.*
+!.env.example
+*.log
+test-results/
+.DS_Store
+Thumbs.db
