@@ -176,7 +176,7 @@ test('inspect() automatically leverages preflightGeoJson when vectorBatchMode is
       // Test strict mode rejection for non-geojson
       (config as any).vectorBatchMode = 'on';
       await assert.rejects(
-        inspect(join(dir, 'fake.gpkg'), parseOptions({}), {}),
+        inspect(join(dir, 'fake.kml'), parseOptions({}), {}),
         (err: any) => err instanceof JobError && err.code === 'UNSUPPORTED_INPUT'
       );
     } finally {
