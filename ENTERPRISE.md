@@ -55,4 +55,4 @@ Commercial licensing is handled by **PT Enygma Solusi Negeri** through Enygma's 
 
 ## Actual rights and distributed dependencies
 
-An AGPL license does not itself establish that Enygma owns external code; agreements, applicable contributor grants, employment/contract rights and source provenance must be verified before a separate commercial grant. The Clean 4 npm migration is promising but native binary compliance and actual release licenses remain independent conditions. See [dependency policy](docs/DEPENDENCY_POLICY.md) and [license coverage](third-party/LICENSE_COVERAGE.md).
+An AGPL license does not itself establish that Enygma owns external code; agreements, applicable contributor grants, employment/contract rights and source provenance must be verified before a separate commercial grant. The TileO npm migration is promising but native binary compliance and actual release licenses remain independent conditions. See [dependency policy](docs/DEPENDENCY_POLICY.md) and [license coverage](third-party/LICENSE_COVERAGE.md).

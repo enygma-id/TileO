@@ -22,7 +22,7 @@
 
 **TileO** is an open-source geospatial processing and publication toolkit founded by **Enygma**. It brings raster imagery, elevation surfaces, vector datasets, and georeferenced 3D content into formats that can be inspected, converted, validated, distributed, and consumed through modern GIS and web-rendering applications. TileO is designed around open formats, explicit geospatial semantics, inspectable processing, and deployment under the operator's control.
 
-**Founding Team** [Permanent founding record](FOUNDING_TEAM.md).
+**Project history:** [Founding team and contributors](FOUNDING_TEAM.md).
 
 ## Why TileO
 
@@ -71,7 +71,7 @@ Its central promise is **interoperability without silently changing the meaning 
                 Browser preview · API · download
 ```
 
-The TileO Clean 4 implementation snapshot reviewed for this documentation package uses **TypeScript/Node.js**, a single API process, a single worker, **SQLite-backed job management**, local filesystem outputs, **GDAL**, and **Tippecanoe** where applicable. This architecture is intentional for controlled self-hosting; it is **not a claim of multi-node clustering or unrestricted parallel conversion**. Full design: [ARCHITECTURE.md](docs/ARCHITECTURE.md).
+TileO uses **TypeScript/Node.js**, a single API process, a single worker, **SQLite-backed job management**, local filesystem outputs, **GDAL**, and **Tippecanoe** where applicable. This architecture is intentional for controlled self-hosting; it is **not a claim of multi-node clustering or unrestricted parallel conversion**. Full design: [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Principles
 
@@ -85,11 +85,23 @@ The TileO Clean 4 implementation snapshot reviewed for this documentation packag
 
 ## Quick start
 
-TileO Clean 4 provides a **single-host** TypeScript/Node.js API and worker using local SQLite-backed job management, local storage, GDAL and Tippecanoe. The following commands are taken from its implementation README and package scripts. **They are runnable after the reviewed application source is merged; the founding documentation commit by itself is not an executable release.**
+TileO runs as a **single-host** TypeScript/Node.js API and worker with a local SQLite job queue, local storage, GDAL and Tippecanoe. Run the following commands from the root of this repository.
+
+### Prerequisites
+
+| Component | Docker Compose | Native installation |
+| --- | --- | --- |
+| Container runtime | Docker Desktop or Docker Engine with Compose | Not required |
+| Node.js | Provided by the image | `>=24.13.0 <25` |
+| GDAL | Provided by the image | GDAL 3.8+ with necessary drivers |
+| Tippecanoe | Provided by the image | Needed for Preserve vector tiling; preferred for Density |
+| System resources | SSD space for source, scratch and output; at least 8 GB RAM recommended for larger inputs | Capacity depends on dataset size and conversion |
+
+**Start with [Tools & Prerequisites](docs/TOOLS.md)** for operating-system installation, helper commands, executable discovery, and troubleshooting. Native GDAL is necessary for raster processing; Docker avoids host-level native tool setup.
 
 ### Docker Compose (Windows, macOS and Linux)
 
-Use Docker Desktop with Linux containers (Windows/macOS) or Docker Engine with the Compose plugin (Linux). From the project root containing the imported application `compose.yaml` and `Dockerfile`:
+Use Docker Desktop with Linux containers (Windows/macOS) or Docker Engine with the Compose plugin (Linux). From the repository root:
 
 ```sh
 docker compose up -d --build
@@ -121,7 +133,7 @@ npm run typecheck
 npm run release:gate
 ```
 
-These commands require the imported application scripts. Real GDAL integration tests, Playwright browser tests, service authentication and the security requirements for LAN/Internet exposure are documented in [Installation](docs/INSTALLATION.md), [Testing](docs/TESTING.md), [Operations](docs/OPERATIONS.md) and the [Clean 4 implementation README reference](docs/IMPLEMENTATION_REFERENCE.md).
+See [Tools & Prerequisites](docs/TOOLS.md) for platform-specific GDAL and Tippecanoe setup, [Installation](docs/INSTALLATION.md) for detailed first-run instructions, [Testing](docs/TESTING.md) for integration/browser checks, and [Operations](docs/OPERATIONS.md) for deployment and security. Test results depend on the installed native tools and environment.
 
 ## Samples
 
@@ -143,7 +155,7 @@ The **ATAP cross-project sample** consists of 37 manually delineated building fo
 See the [sample catalogue](samples/README.md), [collection README](samples/TileO-Samples-01/README.md), [data manifest](samples/TileO-Samples-01/DATA_MANIFEST.json), [attribution guide](samples/TileO-Samples-01/ATTRIBUTION.md) and [sample policy](docs/SAMPLE_DATA_POLICY.md).
 ## API and integration
 
-TileO's implementation snapshot provides endpoints for source inspection, job creation and management, delivery, health/status, previews and a web console. API names, payloads, security rules, and exact response contracts must be tied to imported implementation and its OpenAPI definition rather than invented here. See [API reference](docs/API.md) and [API contract governance](docs/API_CONTRACT.md).
+TileO provides source inspection, job management, artifact delivery, status endpoints, preview functions and a web console. See the [API reference](API.md), the [OpenAPI description](openapi.yaml), and [API compatibility policy](docs/API_CONTRACT.md).
 
 ## Community and Enterprise
 

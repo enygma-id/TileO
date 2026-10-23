@@ -1,27 +1,21 @@
-# TileO Roadmap
+# Roadmap
 
-The roadmap distinguishes project governance, implementation work and release validation. It is a plan, not a representation that every milestone has shipped.
+TileO is a self-hosted toolkit for geospatial conversion and tile delivery. The priorities below are indicative rather than promises or release dates.
 
-## Foundation
+## Documentation and usability
 
-- [x] Establish TileO's GIS-native processing and interoperability direction.
-- [x] Record Erick's founding vision, Hanafi's prototype origin and Dony's initial official implementation.
-- [x] Prepare AGPL-3.0-only / separately contracted Enterprise licensing structure.
-- [x] Prepare documentation, dependency archive and sample scaffolding for first canonical commit.
-- [ ] Upload first foundation commit from authorized project founder account.
+- [ ] Keep prerequisites, native tool installation, Quick Start and API examples synchronized with supported builds.
+- [ ] Maintain representative, rights-cleared sample datasets and reproducible validation workflows.
 
-## Implementation import
+## Engineering and reliability
 
-- [ ] Grant explicitly selected collaborators appropriate role-based access.
-- [ ] Review actual source provenance, contributor rights, copied upstream material and code-license headers.
-- [ ] Import Clean 4 implementation through reviewed PR; keep authentic authorship and release history.
-- [ ] Align Node 24 requirements and CI, final Docker build and security parameters.
+- [ ] Expand integration and browser testing across supported host platforms and native GIS stacks.
+- [ ] Benchmark larger raster/vector workloads and document memory, disk and conversion tradeoffs.
+- [ ] Improve diagnostics and observability for failed or cancelled conversions.
 
-## Verified release
+## Release assurance
 
-- [ ] Run reproducible format-specific benchmarks and regression tests on canonical source.
-- [ ] Close native/container license BOM gaps or document the applicable copyleft compliance path.
-- [ ] Publish sample datasets only with documented permission.
-- [ ] Publish verified compatibility matrix, image digest, SBOM, license bundle and release notes.
+- [ ] Validate the published container/native build against the exact dependency inventory and notices.
+- [ ] Maintain native-library SBOM coverage and release checks.
 
-Future work may expand processing orchestration, supported geospatial formats, 3D packaging, validation/reporting and storage backends through documented ADRs.
+Changes should be proposed and reviewed via [Contributing](CONTRIBUTING.md). Roadmap items are not guarantees of availability or production readiness.

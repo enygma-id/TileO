@@ -1,64 +1,16 @@
-# TileO Third-Party Software Notices and Licenses
+# TileO third-party software notices and licenses
 
-This document contains third-party software notices and license agreements for dependencies utilized in TileO.
+TileO contains first-party AGPL-3.0-only code and separately licensed third-party libraries. Each upstream component retains its own copyright, attribution and licensing requirements. **This collected notice document is not a certification that every dependency of a released native/container image is permissively licensed.**
 
-## Primary Application License
+The application dependency inventory and notice evidence are indexed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [third-party/MANIFEST.json](third-party/MANIFEST.json), and [third-party/DEPENDENCIES.md](third-party/DEPENDENCIES.md). Some notices are generated from license metadata; consult [license coverage](third-party/LICENSE_COVERAGE.md) before shipping an artifact.
 
-- **TileO Application**: Copyright (c) 2026 TileO Contributors. Licensed under **GNU Affero General Public License v3.0 only (AGPL-3.0-only)**.
-- **Permissive Migration Objective**: All third-party software components bundled or dynamically linked in release artifacts have been migrated and audited to ensure they are distributed under strictly **permissive** open-source licenses (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, ISC, 0BSD, Zlib, Public Domain).
+## Multiple-license alternatives
 
----
+Where a package's original license explicitly offers alternatives, the project records its selected available license expression. Examples include `jszip` (MIT alternative), `expand-template` (MIT alternative), `rc` (permissive alternatives), and `@maplibre/mlt` (MIT alternative). These selections do not remove upstream attribution requirements or settle native runtime licensing.
 
-## Dual-License / Multi-License Elections
+## Data and native dependencies
 
-For dependencies distributed under dual or multiple alternative licenses, the TileO project formally exercises and elects the following permissive license options:
-
-| Package | Upstream Offered Options | Formal TileO Election | Rationale |
-|---|---|---|---|
-| `jszip@3.10.2` | `MIT OR GPL-3.0-or-later` | **MIT** | Elects permissive MIT terms; copyleft GPL terms are not selected or exercised. |
-| `expand-template@2.0.3` | `MIT OR WTFPL` | **MIT** | Elects standard permissive MIT terms. |
-| `rc@1.2.8` | `BSD-2-Clause OR MIT OR Apache-2.0` | **BSD-2-Clause** | Elects standard permissive BSD-2-Clause terms. |
-| `@maplibre/mlt@1.3.0` | `MIT OR Apache-2.0` | **MIT** | Elects standard permissive MIT terms. |
-
----
-
-## Geospatial Data & Client Renderer Legal Separation
-
-### 1. OpenStreetMap (OSM) Geodata Separation
-- **Data License**: OpenStreetMap geographical data is licensed under the **Open Database License 1.0 (ODbL-1.0)** by the OpenStreetMap Foundation (OSMF).
-- **Separation**: ODbL is a *database/data license* and does not apply to or infect the TileO application source code, API, or build artifacts.
-- **Configuration**: TileO defaults to a **neutral dark canvas (`#0b131e`) with zero network tile requests and zero ODbL data exposure**. OpenStreetMap tile services are only accessed when an operator explicitly opts in via `TILEO_BASEMAP_URL=osm` or custom configuration.
-- **Attribution & Usage Policy**: When OSM is enabled, mandatory attribution (`© OpenStreetMap contributors`) is displayed in the user interface and API metadata, and tile proxying respects OSMF Tile Usage Policies.
-
-### 2. Client-Side Renderers & Vector Tile Archives
-- **MapLibre GL JS**: Copyright (c) MapLibre contributors. Licensed under **BSD-3-Clause**.
-- **PMTiles Client**: Copyright (c) Protomaps LLC. Licensed under **BSD-3-Clause**.
-- Both client libraries are strictly permissive and operate offline without external services.
-
----
-
-## Native System Libraries & Executables (Container Artifacts)
-
-The production minimal scratch container (`tileo:min-musl`) incorporates the following native C/C++ libraries and binaries:
-
-| Component | Version | License | Upstream Project / Notice Location |
-|---|---|---|---|
-| **Musl C Library** | 1.2.5 | MIT | Standard C runtime for Alpine Linux |
-| **GDAL** (Restricted Build) | 3.11.4 | MIT / X11-style | OSGeo / `/usr/local/share/gdal/LICENSE.TXT` |
-| **PROJ** | 9.6.2 | MIT | OSGeo / `/usr/local/share/proj/` |
-| **Tippecanoe** | 2.79.0 | BSD-2-Clause | Felt / `/usr/local/share/tippecanoe-notices/` |
-| **SQLite** | 3.48.0 | Public Domain / Blessing | sqlite.org |
-| **libcurl** | 8.12.1 | curl license (MIT/X-derivative) | curl.se |
-| **libpng** | 1.6.47 | libpng License (Permissive) | libpng.org |
-| **libjpeg-turbo** | 3.1.0 | IJG / BSD-3 / zlib | libjpeg-turbo.org |
-| **libwebp** | 1.5.0 | BSD-3-Clause | Google WebP |
-| **zlib** | 1.3.1 | zlib License (Permissive) | zlib.net |
-| **expat** | 2.6.4 | MIT | libexpat.github.io |
-| **openjpeg** | 2.5.3 | BSD-2-Clause | uclouvain.github.io/openjpeg |
-
-### Residual Copyleft / Caveats in Minimal Container Spike
-- **`libidn2` (2.3.8)** and **`libunistring` (1.4.2)**: Licensed under `GPL-2.0+ OR LGPL-3.0+` dual election. Transitively included in `tileo:min-musl` via Alpine package `libcurl -> libpsl -> libidn2`. Mitigation path for release: compile curl from source with `--without-libpsl`.
-- **`ca-certificates-bundle`**: Licensed under **MPL-2.0** for public trust certificate data files.
+OpenStreetMap datasets carry their own ODbL rights and applicable tile usage policy; access to externally operated basemap services is not a software licensing grant. Native tools, GDAL/PROJ drivers, Node, linked libraries, fonts and icon assets must be assessed for the exact distributed build. Earlier scratch/minimal-image experiments are not authoritative for the project's primary `Dockerfile`. See [native dependency policy](third-party/NATIVE_COMPONENTS.md).
 
 ---
 
