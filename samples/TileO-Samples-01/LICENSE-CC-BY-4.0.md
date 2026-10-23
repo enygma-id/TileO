@@ -12,7 +12,7 @@
 | `data/footprints.geojson` | **Yes** | CC BY 4.0 | [ATAP](https://github.com/enygma-id/atap) |
 | `data/dsm.tif` | **Yes** | CC BY 4.0 | [ATAP](https://github.com/enygma-id/atap) |
 | `data/dtm.tif` | **Yes** | CC BY 4.0 | [ATAP](https://github.com/enygma-id/atap) |
-| `data/rgb-tif.tif` | **Yes** | CC BY 4.0 | TileO / Enygma |
+| `data/rgb.tif` | **Yes** | CC BY 4.0 | TileO / Enygma |
 
 The three included ATAP files retain their **original upstream [LICENSE-DATA.md](LICENSE-DATA.md)**, [ATAP README](ATAP_SOURCE_README.md) and [SHA-256 manifest](MANIFEST.sha256). This collection-level notice documents the same CC BY 4.0 data grant and identifies the separately originated TileO RGB sample. It does not change the original ATAP license or sublicense any material beyond Enygma's legal authority.
 
@@ -26,7 +26,7 @@ Recommended credit for the ATAP trio:
 
 Recommended credit for the RGB:
 
-> RGB GeoTIFF (`rgb-tif.tif`), © 2026 PT Enygma Solusi Negeri, CC BY 4.0; provided via TileO-Samples-01. Changes: [none / describe your modifications].
+> RGB GeoTIFF (`rgb.tif`), © 2026 PT Enygma Solusi Negeri, CC BY 4.0; provided via TileO-Samples-01. Changes: [none / describe your modifications].
 
 ## Exclusions
 

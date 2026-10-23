@@ -15,7 +15,7 @@ The collection is organized in [`samples/TileO-Samples-01/data/`](../samples/Til
 | [`footprints.geojson`](../samples/TileO-Samples-01/data/footprints.geojson) | [ATAP](https://github.com/enygma-id/atap) | 37 manually delineated footprints, WGS 84 lon/lat |
 | [`dsm.tif`](../samples/TileO-Samples-01/data/dsm.tif) | ATAP | DSM, EPSG:32750 |
 | [`dtm.tif`](../samples/TileO-Samples-01/data/dtm.tif) | ATAP | DTM, EPSG:4326 |
-| `rgb-tif.tif` | TileO / Enygma | RGB GeoTIFF; source-specific metadata must be inspected |
+| `rgb.tif` | TileO / Enygma | RGB GeoTIFF; source-specific metadata must be inspected |
 
 Enygma designates all four datasets [CC BY 4.0](../samples/TileO-Samples-01/LICENSE-CC-BY-4.0.md). The ATAP-origin trio retains its original [data license](../samples/TileO-Samples-01/LICENSE-DATA.md), [source README](../samples/TileO-Samples-01/ATAP_SOURCE_README.md) and [unchanged original SHA-256 manifest](../samples/TileO-Samples-01/MANIFEST.sha256). RGB is maintained in the [TileO data manifest](../samples/TileO-Samples-01/DATA_MANIFEST.json), not appended retroactively to the ATAP source manifest.
 

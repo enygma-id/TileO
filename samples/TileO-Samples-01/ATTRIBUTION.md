@@ -21,11 +21,11 @@ An attribution to ATAP recognizes the **originating research/workflow**; the ATA
 
 ## TileO RGB GeoTIFF — included
 
-**Source:** Enygma / TileO (`data/rgb-tif.tif`). This dataset belongs to the TileO sample collection and is separate from the three-input ATAP source archive and checksum manifest.
+**Source:** Enygma / TileO (`data/rgb.tif`). This dataset belongs to the TileO sample collection and is separate from the three-input ATAP source archive and checksum manifest.
 
 **Suggested attribution:**
 
-> RGB GeoTIFF (`rgb-tif.tif`), © 2026 PT Enygma Solusi Negeri, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Published with TileO-Samples-01. Changes: [none / describe your changes].
+> RGB GeoTIFF (`rgb.tif`), © 2026 PT Enygma Solusi Negeri, licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Published with TileO-Samples-01. Changes: [none / describe your changes].
 
 ## Downstream transformation
 

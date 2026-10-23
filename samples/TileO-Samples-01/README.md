@@ -21,7 +21,7 @@ samples/TileO-Samples-01/
     ├── footprints.geojson
     ├── dsm.tif
     ├── dtm.tif
-    └── rgb-tif.tif
+    └── rgb.tif
 ```
 
 ## Included data
@@ -31,7 +31,7 @@ samples/TileO-Samples-01/
 | [`data/footprints.geojson`](data/footprints.geojson) | ATAP / Enygma | WGS 84 lon/lat; 37 manually delineated footprints | Vector inspection and supported MBTiles/PMTiles |
 | [`data/dsm.tif`](data/dsm.tif) | ATAP / Enygma | EPSG:32750; drone-survey DSM clipping | Elevation and raster conversion |
 | [`data/dtm.tif`](data/dtm.tif) | ATAP / Enygma | EPSG:4326; drone-survey DTM clipping | Terrain-reference inspection |
-| `data/rgb-tif.tif` | TileO / Enygma | RGB GeoTIFF; inspect source for actual CRS, bands and NoData | Imagery inspection, COG and raster tiles |
+| `data/rgb.tif` | TileO / Enygma | RGB GeoTIFF; inspect source for actual CRS, bands and NoData | Imagery inspection, COG and raster tiles |
 
 Original ATAP coordinates remain unchanged; this sample is **not geographically anonymized**. The files serve interoperability research and demonstration, **not** cadastral/surveying-grade accuracy claims.
 
@@ -40,7 +40,7 @@ Original ATAP coordinates remain unchanged; this sample is **not geographically 
 1. Start the TileO application from the root [Quick Start](../../README.md#quick-start) after its application source is incorporated.
 2. **Vector:** inspect `data/footprints.geojson`, convert using a supported vector workflow and validate output geometry and attributes.
 3. **DSM/DTM:** inspect rasters independently. Because DSM and DTM use different CRSs, resample/reproject to a common CRS, pixel grid, resolution and extent before any `nDSM = DSM − DTM` calculations. TileO does not claim to reproduce the full ATAP building-mass decomposition pipeline.
-4. **RGB:** inspect `data/rgb-tif.tif`, confirm actual raster metadata and run a supported COG or raster tile conversion. See [RGB_GEOTIFF_SAMPLE.md](RGB_GEOTIFF_SAMPLE.md).
+4. **RGB:** inspect `data/rgb.tif`, confirm actual raster metadata and run a supported COG or raster tile conversion. See [RGB_GEOTIFF_SAMPLE.md](RGB_GEOTIFF_SAMPLE.md).
 5. Record source metadata, processing options, output format, relevant checks and any loss of attributes/geospatial semantics.
 
 See [TileO formats and semantics](../../docs/FORMATS_AND_SEMANTICS.md) and [verification guidance](../../docs/VERIFICATION.md).

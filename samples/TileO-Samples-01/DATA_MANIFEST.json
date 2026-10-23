@@ -59,7 +59,7 @@
       "distribution": "included"
     },
     {
-      "file": "data/rgb-tif.tif",
+      "file": "data/rgb.tif",
       "format": "GeoTIFF",
       "source_project": "TileO",
       "creator": "PT Enygma Solusi Negeri",

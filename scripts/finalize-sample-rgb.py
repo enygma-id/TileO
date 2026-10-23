@@ -13,7 +13,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 SAMPLE = ROOT / "samples" / "TileO-Samples-01"
-TIFF = SAMPLE / "data" / "rgb-tif.tif"
+TIFF = SAMPLE / "data" / "rgb.tif"
 MANIFEST = SAMPLE / "DATA_MANIFEST.json"
 
 
@@ -46,7 +46,7 @@ def main() -> int:
     size = TIFF.stat().st_size
     digest = sha256(TIFF)
     doc = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    rows = [d for d in doc.get("datasets",[]) if d.get("file") == "data/rgb-tif.tif"]
+    rows = [d for d in doc.get("datasets",[]) if d.get("file") == "data/rgb.tif"]
     if len(rows)!=1:
         print("ERROR: expected one RGB record", file=sys.stderr)
         return 2
