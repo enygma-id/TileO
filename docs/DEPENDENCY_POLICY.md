@@ -2,7 +2,7 @@
 
 ## Principle
 
-TileO Community source is **AGPL-3.0-only**. The distinct internal target for distributed third-party code is **permissive-first**, with an aspirational strict permissive-only artifact profile for selected releases. Copyleft dependencies are not automatically prohibited by AGPL and are not automatically incompatible with commercial licensing. Obligations are evaluated for the actual component, linking and distribution.
+TileO Community source is **AGPL-3.0-only**. TileO applies a **permissive-first** dependency policy. Selected releases may pursue a strict permissive-only third-party artifact profile, but that designation requires verification of the actual distributed artifacts. Copyleft dependencies are not automatically prohibited by AGPL and are not automatically incompatible with commercial licensing. Obligations are evaluated for the actual component, linking and distribution.
 
 | License family | General review treatment |
 |---|---|

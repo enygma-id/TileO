@@ -12,4 +12,4 @@ Use this checklist whenever importing source or publishing a distributable TileO
 8. Preserve full upstream notices within the binary/image release, sign or checksum the artifact, generate SPDX and CycloneDX SBOMs, and record a human approval for any remaining policy exception.
 9. Evaluate Enygma's chain of title/contributor grants separately; third-party permissiveness alone does not prove Enterprise relicensing rights.
 
-This file is a process specification. The 284 packaged notices form a founding reference corpus; no independent tarball download/verification is claimed here.
+This document defines the release-time license verification process. The 284 collected npm notices are repository inventory evidence; they do not establish that each upstream package tarball and its exact-version LICENSE/NOTICE files have been independently verified.

@@ -10,7 +10,7 @@ Where a package's original license explicitly offers alternatives, the project r
 
 ## Data and native dependencies
 
-OpenStreetMap datasets carry their own ODbL rights and applicable tile usage policy; access to externally operated basemap services is not a software licensing grant. Native tools, GDAL/PROJ drivers, Node, linked libraries, fonts and icon assets must be assessed for the exact distributed build. Earlier scratch/minimal-image experiments are not authoritative for the project's primary `Dockerfile`. See [native dependency policy](third-party/NATIVE_COMPONENTS.md).
+OpenStreetMap datasets carry their own ODbL rights and applicable tile usage policy; access to externally operated basemap services is not a software licensing grant. Native tools, GDAL/PROJ drivers, Node, linked libraries, fonts and icon assets must be assessed for the exact distributed build. Licensing conclusions must be based on the actual distributed build and its linked or bundled dependencies, rather than on package metadata or an alternative container configuration alone. See [native dependency policy](third-party/NATIVE_COMPONENTS.md).
 
 ---
 

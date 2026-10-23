@@ -6,8 +6,6 @@
   "license_url": "https://creativecommons.org/licenses/by/4.0/legalcode",
   "attribution": "ATAP Sample Area 01 (footprints, DSM and DTM), created by Enygma; originating project ATAP (https://github.com/enygma-id/atap); plus TileO RGB GeoTIFF created by Enygma; CC BY 4.0",
   "source_code_license": "AGPL-3.0-only (separate software scope)",
-  "source_package": "atap-sample-area-01(1).zip",
-  "source_package_contents": "Original ATAP sample trio; README and LICENSE-DATA preserved unchanged; README renamed ATAP_SOURCE_README.md for integration",
   "originating_project": "ATAP",
   "originating_project_url": "https://github.com/enygma-id/atap",
   "original_checksum_manifest": "MANIFEST.sha256",
