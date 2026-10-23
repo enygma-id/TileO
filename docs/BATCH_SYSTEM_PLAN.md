@@ -1,6 +1,4 @@
-> **Reference implementation snapshot (supplied October 2026).** This technical document is preserved from the provided TileO code archive for historical/engineering continuity. Paths, endpoints, tests and commands apply to that snapshot and must be checked against the official code import before being represented as supported release behavior.
-
-# Rencana Batch System Vector TileO
+# TileO Vector Batching — Design and Implementation Notes
 
 Status: tahap 1–4 diimplementasikan; audit tahap 0–3 dan gate produksi tercatat di [BATCH_SYSTEM_AUDIT.md](BATCH_SYSTEM_AUDIT.md).  
 Tanggal pemeriksaan kode: 15 Oktober 2026.
@@ -259,7 +257,4 @@ Syarat selesai:
 
 Penggunaan pipe saja tidak menjamin GDAL memakai RAM kecil: driver dapat mengalokasikan memori ketika membuka atau menginspeksi sumber. Karena itu, preflight dan pembacaan incremental sebelum normalisasi merupakan bagian wajib dari rencana ini.
 
-
----
-
-**Snapshot note:** This founding documentation describes the TileO Clean 4 implementation baseline. Actual commands, integrations, drivers, versions, test results and release images must be verified when code is imported. See [Technical baseline](TECHNICAL_BASELINE.md) and [Release policy](RELEASE_POLICY.md).
+> These dated engineering notes document the stated implementation and test observations at the time of writing. They are not certification of every current platform or release image. For current installation and test steps see [Installation](INSTALLATION.md), [Testing](TESTING.md), and [Release Process](RELEASE_PROCESS.md).

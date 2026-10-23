@@ -1,6 +1,6 @@
 # Formats, conversions, and semantics
 
-This matrix summarizes workflows explicitly documented in the supplied `Tileo-Clean4.zip` reference snapshot. It is **not a blanket conformance certificate** for every version, input file, driver, and runtime environment.
+This matrix describes input/output workflows in the current TileO application and their geospatial interpretation. It is **not a blanket conformance certificate** for every input file, external driver, or deployment environment.
 
 | Input class | Documented supported input | Documented outputs | Important qualification |
 | --- | --- | --- | --- |
@@ -17,10 +17,10 @@ Inspection should report declared source CRS, coordinate units, georeference, ex
 
 - Preserve scale/offset, NoData and available unit information when producing a COG.
 - A DEM/DSM/DTM is not interchangeable with NDVI/temperature or other scientific raster.
-- Terrain-RGB stores heights at 0.1-m increments. The snapshot documents up to 0.05-m height *encoding-rounding* error after resampling; that is **not geodetic accuracy**.
+- Terrain-RGB stores heights at 0.1-m increments. The encoding introduces up to 0.05 m of *encoding-rounding* error, separately from any resampling error; that is **not geodetic accuracy**.
 - Terrarium encodes at 1/256-m increments within its numeric range.
 - Edge and NoData fill values may create artificial slopes. Unknown vertical reference must remain unknown.
-- The snapshot does **not** claim quantized-mesh output.
+- Quantized-mesh output is not included in the documented output contract.
 
 ## Vector preservation limits
 
@@ -28,13 +28,8 @@ Tile archives are for map delivery, not a replacement for the authoritative sour
 
 ## 3D placement and packaging
 
-The reference snapshot describes GLB placement options based on geographic location, orientation and scale, with both 3D Tiles 1.1 and B3DM-compatible packaging. A local GLB coordinate system is not geographic placement by itself. Do not claim support for all Draco, instancing, skins or morph-target inputs.
+The 3D processing workflow provides GLB placement options based on geographic location, orientation and scale, with both 3D Tiles 1.1 and B3DM-compatible packaging. A local GLB coordinate system is not geographic placement by itself. Do not claim support for all Draco, instancing, skins or morph-target inputs.
 
 ## Validation
 
 A successful output requires structure, metadata, driver-specific assertions, and representative sample checks. See [VERIFICATION.md](VERIFICATION.md); do not claim certification from a partial validation procedure.
-
-
----
-
-**Snapshot note:** This founding documentation describes the TileO Clean 4 implementation baseline. Actual commands, integrations, drivers, versions, test results and release images must be verified when code is imported. See [Technical baseline](TECHNICAL_BASELINE.md) and [Release policy](RELEASE_POLICY.md).

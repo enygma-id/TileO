@@ -37,7 +37,7 @@ Original ATAP coordinates remain unchanged; this sample is **not geographically 
 
 ## TileO exercises
 
-1. Start the TileO application from the root [Quick Start](../../README.md#quick-start) after its application source is incorporated.
+1. Start the TileO application using the repository [Quick Start](../../README.md#quick-start).
 2. **Vector:** inspect `data/footprints.geojson`, convert using a supported vector workflow and validate output geometry and attributes.
 3. **DSM/DTM:** inspect rasters independently. Because DSM and DTM use different CRSs, resample/reproject to a common CRS, pixel grid, resolution and extent before any `nDSM = DSM − DTM` calculations. TileO does not claim to reproduce the full ATAP building-mass decomposition pipeline.
 4. **RGB:** inspect `data/rgb.tif`, confirm actual raster metadata and run a supported COG or raster tile conversion. See [RGB_GEOTIFF_SAMPLE.md](RGB_GEOTIFF_SAMPLE.md).

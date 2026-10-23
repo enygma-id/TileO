@@ -1,11 +1,19 @@
 # Release and Distribution Policy
 
-## Separation of milestones
+TileO development, tagged releases and distributable images are separate milestones. Source code in the repository does not automatically imply that every documented capability or platform has been certified for production.
 
-1. **Founding documentation commit:** project identity, attribution, governance, licensing, samples scaffold and third-party reference inventory. No runnable application promised.
-2. **Official implementation import:** provenance-reviewed PR including source, test fixtures, actual CLI/API contract, lockfile and exact build scripts.
-3. **Candidate release:** execute tests and validate output formats, storage/security, reference dataset behavior, CI and platform support.
-4. **Distributable artifacts:** generate BOM and notices from the exact container/binary build; resolve native library licensing and attest image digests.
-5. **Public release:** tag only after maintainer/steward acceptance, with release notes and supported targets. Enterprise distribution additionally requires contributor rights clearance.
+## Release stages
 
-No snapshot test report is automatically a public release certification. A product label, version, README status or passing npm audit cannot override missing native notice compliance, skipped functional integration checks, or unclear authorship.
+1. **Development and review:** changes land through authorized review with clear provenance, suitable tests and updated documentation.
+2. **Release candidate:** freeze the candidate source, lockfile and build configuration; run relevant API, unit, geospatial-tool and platform-specific integration checks.
+3. **Artifact verification:** identify binary outputs and container image digests, verify sample data integrity, validate output formats and assess operational/security limitations.
+4. **Third-party compliance:** reconcile npm, native executable and linked library inventories against the exact distributed artifact; include required license texts and copyright notices.
+5. **Publication:** approved maintainers tag the release with accurate notes, checksums, supported targets, known limitations and upgrade guidance.
+
+A prior test report is useful evidence but is **not** an automatic certification of later software builds or different machines. Passing one automated license scan also does not establish complete rights clearance.
+
+## License boundaries
+
+TileO Community source is published under **AGPL-3.0-only**, except for clearly marked third-party code and other materials with their own licenses. Enterprise distribution requires a separate agreement and rights clearance. Samples use their [file-specific data licenses](../samples/TileO-Samples-01/LICENSE-CC-BY-4.0.md).
+
+See the [release process](RELEASE_PROCESS.md), [verification guidance](VERIFICATION.md), [dependency policy](DEPENDENCY_POLICY.md), and [third-party release gate](../third-party/RELEASE_GATE.md).

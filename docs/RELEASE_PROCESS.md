@@ -1,23 +1,29 @@
-# Release process
+# Release Process
 
-## Release prerequisites
+## Prerequisites
 
-- Approved implementation on protected branch with clean tests and reproducible build steps.
-- Versioned changelog matching actual shipped features.
-- Security review, vulnerability reporting channel and dependency/SBOM review.
-- Provenance, copyright, AGPL obligations, third-party notices and Enterprise rights reviewed.
-- Known limitations and migration instructions published.
-- Artifact checksums and release asset descriptions reproducible.
-- Tags and release publication performed by designated authorized maintainers only.
+- Confirm the candidate commit, protected branch approvals and authoritative version information.
+- Run build, typecheck and relevant unit/API and native-tool integration tests on supported target environments.
+- Verify security-sensitive inputs, storage credentials, API exposure and operational limits.
+- Review `package-lock.json`, native binaries and linked libraries against the exact candidate image; resolve required third-party notices and distribution obligations.
+- Verify contributor provenance, the applicable Community/Enterprise grant, sample data permissions and attribution.
+- Prepare release notes, known limitations, compatibility/migration guidance and reproducible checksums.
+- Have an authorized maintainer approve publication and record the released artifact digests.
+
+## Verification commands
+
+```sh
+npm ci
+npm run build
+npm run typecheck
+npm test
+npm run release:gate
+```
+
+Some real-tool integration and browser tests require dedicated fixtures, installed executables or explicit environment configuration. Do not treat skipped tests as successful end-to-end validation. See [Testing](TESTING.md), [Verification](VERIFICATION.md) and [Tools & Prerequisites](TOOLS.md).
 
 ## Edition labeling
 
-Do not label a Community artifact as Enterprise, or vice versa. Commercial license terms attach only to expressly covered code/artifacts under a separate signed agreement. A public AGPL release is not retroactively revocable.
+Identify Community and Enterprise artifacts distinctly. The separate commercial licensing path applies only to code and rights explicitly covered by an executed agreement; public AGPL permissions already granted are not retroactively revoked.
 
-
----
-
-**Snapshot note:** This founding documentation describes the TileO Clean 4 implementation baseline. Actual commands, integrations, drivers, versions, test results and release images must be verified when code is imported. See [Technical baseline](TECHNICAL_BASELINE.md) and [Release policy](RELEASE_POLICY.md).
-
-
-See [release policy](RELEASE_POLICY.md), [third-party release gate](../third-party/RELEASE_GATE.md) and [source import plan](FOUNDING_UPLOAD_PLAN.md).
+See [Release Policy](RELEASE_POLICY.md) and [Third-Party License Gate](../third-party/RELEASE_GATE.md).

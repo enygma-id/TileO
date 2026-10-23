@@ -1,8 +1,6 @@
-> **Implementation reference — TileO Clean 4, supplied 21 October 2026.** Commands and behavior are transcribed from the source document. This founding package has no runnable implementation; check the merged source before describing any behavior as release-certified.
-
 # TypeScript implementation architecture
 
-This folder is separate and does not replace the old Python service. The [original proposal](../docs/TYPESCRIPT_ARCHITECTURE.md) remains available; this document describes the actual implementation.
+This document describes the TileO TypeScript implementation, including the HTTP API, local SQLite queue, worker and native geospatial tools. It supplements the [Architecture](ARCHITECTURE.md) and [Operations](OPERATIONS.md) guides.
 
 ## Flow
 
@@ -84,6 +82,6 @@ Bound to localhost by default; remote requires a token/TLS reverse proxy. The to
 
 ## Platform and production acceptance
 
-The Windows GDAL bundle is auto-detected. The complete Windows pipeline uses Docker because the provided Tippecanoe is a Linux binary. Linux/macOS uses PATH or an explicit folder: see [TOOLS.md](TOOLS.md).
+The Windows GDAL bundle is auto-detected. On Windows, Docker or WSL2 is recommended for workflows requiring Tippecanoe; the native GDAL fallback applies only to supported Density workloads. Linux/macOS uses PATH or an explicit folder: see [TOOLS.md](TOOLS.md).
 
 Before production: real-tool tests, representative datasets, cancellation/restart, disk-full, backup/restore, client validation, and soak/load/security tests in the target environment. Windows native GDAL and Linux Docker do not prove macOS/ARM64 has been tested. Operational limits: [OPERATIONS.md](OPERATIONS.md).

@@ -63,19 +63,19 @@
       "format": "GeoTIFF",
       "source_project": "TileO",
       "creator": "PT Enygma Solusi Negeri",
-      "crs": null,
+      "crs": "EPSG:32749",
       "file_present": true,
-      "size_bytes": null,
-      "sha256": null,
+      "size_bytes": 21761353,
+      "sha256": "8b9ee6c0537da16d7fcdeb48f79c76ead30d4d2c79dcf70162f04ab2ffd001cc",
       "license": "CC-BY-4.0",
       "source_notice": "LICENSE-CC-BY-4.0.md",
       "distribution": "included",
       "metadata_review_complete": false,
-      "integrity_verified": false
+      "integrity_verified": true
     }
   ],
   "dataset_usage": "Demonstration and interoperability testing, not cadastral/survey accuracy reference",
-  "integrity_verified": false,
+  "integrity_verified": true,
   "status": "Four CC BY 4.0 sample datasets catalogued",
   "atap_source_integrity_verified": true
 }

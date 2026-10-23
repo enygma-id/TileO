@@ -1,29 +1,27 @@
-# Native Tools, System Packages and Non-npm Rights
+# Native Dependencies and Distribution Licenses
 
-## Scope
+TileO uses native geospatial tools and a Node.js runtime. **Their licensing and third-party notices depend on the exact versions, build flags, linked libraries and container images that are distributed.** This inventory is a starting point for release verification, not a complete license grant or a proof that the container is free of copyleft components.
 
-This is a careful summary of the *TileO Clean 4 evidence*, not a fresh decompilation or validated inventory of a downloadable final container. Core project licenses do not automatically account for binaries, enabled GDAL drivers and their linked dependencies.
+| Component | Function | Licensing observation | Verification needed for release |
+| --- | --- | --- | --- |
+| GDAL | Raster/vector conversion and inspection | GDAL core uses permissive-style terms; drivers and linked libraries can introduce additional licenses | Preserve exact source-version LICENSE/NOTICE and the enabled-driver/library closure |
+| PROJ | CRS transformation | Core license is permissive-style; bundled data and libraries have their own attribution | Preserve exact upstream notices and data terms |
+| Tippecanoe | Vector tiling | BSD-2-Clause core; additional code notices apply | Refer to [Tippecanoe notices](licenses/native/tippecanoe-2.79.0/) and verify built binary |
+| Node.js | API/worker runtime | Runtime distributes its own bundled third-party software | Verify bundled runtime license corpus for the actual binary |
+| SQLite and `better-sqlite3` | Queue and persistence | SQLite is public-domain; addon npm metadata declares MIT | Check specific binaries and linked libraries |
+| System libc and support libraries | Native execution | May include license exceptions, weak-copyleft or stronger-copyleft components | Audit package manifest and linked binaries in the actual image |
+| libcurl and related libraries | Transfer and URL access | libcurl core license does not establish licensing of transitively linked `libpsl`, `libidn2`, `libunistring`, etc. | Inspect runtime closure and preserve or remove dependencies according to policy |
+| Certificate trust bundle | TLS validation | Data and redistribution terms are separate from npm code | Record source, revision and applicable notice obligations |
 
-| Component | Snapshot description | License note | Distribution requirement |
-|---|---|---|---|
-| GDAL 3.11.4 restricted build | Raster/vector conversion | MIT-style core, additional notices may apply by source/driver/build | Ship exact version `LICENSE.TXT` and linked library notices |
-| PROJ 9.6.2 | Coordinate transformations | MIT-style core | Preserve relevant notices and any bundled data licensing |
-| Tippecanoe 2.79.0 | Vector tiling | BSD-2-Clause; additional Clipper2/Mapbox notices | Exact files supplied in `licenses/native/` |
-| Node.js 24 | API / worker runtime | MIT core and bundled upstream notices | Inspect exact runtime distribution |
-| SQLite / better-sqlite3 addon | Queue and data storage | SQLite public domain; addon MIT by npm metadata | Document bundled sqlite native build and linked libraries |
-| musl / libc, libstdc++, gcc support | Candidate scratch container | mixed permits/license exceptions depending on build | Identify precise packages and static/dynamic closure |
-| libcurl / libpsl | URL and transfer support | MIT-style libcurl but additional transitive requirements | Build-specific notices, ELF closure |
-| libidn2 2.3.8, libunistring 1.4.2 | Reported in `tileo:min-musl` | `GPL-2.0-or-later OR LGPL-3.0-or-later` reported | Not strict-permissive-only; remove/rebuild or document compliance |
-| ca-certificates-bundle | Public trust anchors | MPL-2.0 reported in candidate | Preserve actual certificate bundle terms, scope separately |
-| libpng, libjpeg-turbo, libwebp, zlib, expat, openjpeg | Raster ecosystem | various permissive/mixed component notices | Capture exact version licenses from final image |
+## Actual build versus historical alternatives
 
-## Distinguish build targets
+The repository's current [`Dockerfile`](../Dockerfile) and [`compose.yaml`](../compose.yaml) determine what the default build attempts to create. Do not substitute a separately tested scratch/musl candidate or historical image report for the actual release artifact. Tool versions must be derived from the final image, not merely copied from earlier engineering reports.
 
-Clean 4's **main `Dockerfile`** still has a Debian-based runtime stage. The `baseline/docker/Dockerfile.musl-min` file represents a **scratch/musl candidate**, not necessarily the image built and released by default. Both must not be described interchangeably. `release-gate.yml` in the implementation snapshot currently requests Node 22, contradicting its Node 24 engine requirement. These are code-import/release tasks, not barriers to publishing documentation.
+The checked [CI workflows](../.github/workflows/) use **Node.js 24**. Runtime licensing is not established by this Node version setting.
 
-See [source scope](../docs/TECHNICAL_BASELINE.md) and [release checks](RELEASE_GATE.md).
+## Compliance status
 
-
-## Clean 4 reference versus release image
-
-The Clean 4 repository has a multi-stage `Dockerfile` with a restricted GDAL/PROJ build and a `compose.yaml` that builds this Dockerfile; `baseline/docker/` also contains historical scratch/musl and glibc spike Dockerfiles. The image identified in those spike reports is **not automatically the image produced by the project root**. License/version differences in these artifacts require verification against the actual released image and its linked libraries.
+- [Tippecanoe notices](licenses/native/tippecanoe-2.79.0/) and [Lucide/Feather attribution](licenses/assets/lucide-icons/LICENSE-ISC-and-Feather-MIT.txt) are collected in this repository.
+- Native GDAL/PROJ and all linked library copyright/license files must still be reconciled against the final distributed artifacts.
+- Prior investigation reported possible LGPL/copyleft transitive components in alternative images; **do not assert their presence or absence in the current production image without a build-level audit**.
+- See [Dependency Policy](../docs/DEPENDENCY_POLICY.md), [License Coverage](LICENSE_COVERAGE.md), and [Release Gate](RELEASE_GATE.md).

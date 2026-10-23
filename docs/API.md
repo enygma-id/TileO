@@ -1,13 +1,15 @@
-> **Implementation reference — TileO Clean 4, supplied 21 October 2026.** Commands and behavior are transcribed from the source document. This founding package has no runnable implementation; check the merged source before describing any behavior as release-certified.
+# TileO HTTP API
 
-# TileO API
+This guide describes the HTTP endpoints provided by the TileO application in this repository. Use the [OpenAPI specification](../openapi.yaml) for machine-readable interface definitions, and the [API playground](http://localhost:8090/docs) when running TileO locally. For application setup, see [Installation](INSTALLATION.md) and [Tools & Prerequisites](TOOLS.md).
+
+The server accepts job submissions asynchronously. A successful submission creates a persisted job; inspect its status before requesting generated artifacts. Endpoint availability and output types depend on the submitted data and selected workflow.
 
 Base URL: `http://localhost:8090`
 
 Interactive API documentation and Playground: `http://localhost:8090/docs`  
 Raw OpenAPI specification: `http://localhost:8090/openapi.yaml`
 
-The API accepts raw file uploads and returns a persistent conversion job. The API does not wait for GDAL or Tippecanoe to finish; upload success is `202 Accepted`, then poll the job.
+For raw uploads, successful job creation returns `202 Accepted` while conversion proceeds in the worker. Poll the job endpoint for completion rather than assuming the upload response means conversion is finished.
 
 ## Authentication
 
@@ -44,7 +46,7 @@ GET /api/status
 
 ## Create a job from a public or authenticated URL
 
-The primary flow accepts a public HTTPS URL or a presigned/authenticated URL. Authentication is carried by the URL signature; access keys are not entered in the browser. The MVP accepts standalone `.tif`/`.tiff` COG objects that support HTTP Range and return an ETag.
+URL-based inspection accepts a public HTTPS URL or a presigned/authenticated URL. With presigned URLs, authorization is carried by the URL signature rather than raw access keys entered in the browser. This workflow supports standalone `.tif`/`.tiff` COG objects that support HTTP Range and return an ETag.
 
 ```http
 POST /api/storage/inspect
@@ -66,7 +68,7 @@ Content-Type: application/json
 
 Public internet URLs must use HTTPS and cannot resolve to local/private addresses. For an intentional private MinIO or development HTTP endpoint, the administrator must add its exact hostname to `TILEO_REMOTE_URL_HOSTS` on both API and worker.
 
-The previous server-side registry remains available as an advanced option:
+Administrators can also configure a server-side connection registry:
 
 ```http
 GET /api/storage/connections
@@ -98,7 +100,7 @@ Content-Type: application/json
 {"endpoint":"https://s3.example.com","region":"auto","bucket":"my-bucket","accessKeyId":"<key>","secretAccessKey":"<secret>","ttlSeconds":3600}
 ```
 
-For AWS IAM Role integration (Option 3, cross-account zero-password), query `GET /api/storage/iam-info` to obtain TileO's AWS Account ID and External ID. After creating the role with trust and `s3:GetObject` policies in your AWS account, register the role:
+For AWS IAM Role integration, query `GET /api/storage/iam-info` to obtain TileO's AWS Account ID and External ID. After creating the role with trust and `s3:GetObject` policies in your AWS account, register the role:
 
 ```http
 POST /api/storage/credentials
@@ -205,7 +207,7 @@ Vector jobs carry a per-attempt batch summary in `metadata.batch` (also rendered
  "normalizeMs":0,"tileMs":5026,"peakMemoryBytes":41451520,"peakScratchBytes":123456789}
 ```
 
-`mode`/`delivery` are frozen at attempt start (a mid-attempt config change never applies; rollback with `off` + restart takes effect on the next job). While running, `stage` carries progress such as `Vector: processed batch 3/15 (30,000 features)`; updates are throttled to ~1 Hz plus a final flush. Batch totals can be estimates until byte-limited grouping finishes. Batch policy is operator configuration, not a per-job option: `TILEO_VECTOR_BATCH_MODE` (`off`/`auto`/`on`, default `off`), `TILEO_VECTOR_BATCH_FEATURES` (default 10000), `TILEO_VECTOR_BATCH_MB` (default 16), `TILEO_VECTOR_MAX_FEATURE_MB` (default 16), `TILEO_VECTOR_BATCH_DELIVERY` (`file`/`stream`, default `file`). Qualified adapters include GeoJSON/GeoJSONL, GPKG, FGB and GDAL-recognized ZIP Shapefile. KML remains legacy in `auto` and is rejected in strict `on`. The fallback string can be `legacy:unqualified-driver:<driver>` as well as `gdal:tippecanoe-missing`. Streaming `normalizeMs`/`tileMs` overlap, `peakMemoryBytes` is nullable sampling, and `peakScratchBytes` excludes open-unlinked files. See `OPERATIONS.md` and `BATCH_SYSTEM_AUDIT.md` for evidence and rollout limits.
+`mode`/`delivery` are frozen at attempt start (a mid-attempt config change never applies; rollback with `off` + restart takes effect on the next job). While running, `stage` carries progress such as `Vector: processed batch 3/15 (30,000 features)`; updates are throttled to ~1 Hz plus a final flush. Batch totals can be estimates until byte-limited grouping finishes. Batch policy is operator configuration, not a per-job option: `TILEO_VECTOR_BATCH_MODE` (`off`/`auto`/`on`, default `off`), `TILEO_VECTOR_BATCH_FEATURES` (default 10000), `TILEO_VECTOR_BATCH_MB` (default 16), `TILEO_VECTOR_MAX_FEATURE_MB` (default 16), `TILEO_VECTOR_BATCH_DELIVERY` (`file`/`stream`, default `file`). Qualified adapters include GeoJSON/GeoJSONL, GPKG, FGB and GDAL-recognized ZIP Shapefile. KML remains legacy in `auto` and is rejected in strict `on`. The fallback string can be `legacy:unqualified-driver:<driver>` as well as `gdal:tippecanoe-missing`. Streaming `normalizeMs`/`tileMs` overlap, `peakMemoryBytes` is nullable sampling, and `peakScratchBytes` excludes open-unlinked files. See [Operations](OPERATIONS.md) and the [batch processing audit](BATCH_SYSTEM_AUDIT.md) for configuration boundaries and engineering evidence.
 
 ## Quick Open
 
@@ -238,9 +240,9 @@ Errors use this shape:
 
 Common codes include `AUTH_REQUIRED`, `INVALID_INPUT`, `INVALID_OPTIONS`, `INVALID_CRS`, `QUEUE_FULL`, `TOOL_MISSING`, `INVALID_STATE`, `NOT_FOUND`, and `DISK_FULL`.
 
-Machine-readable endpoint definitions are in `openapi.yaml` (provided with the approved code import).
+Machine-readable endpoint definitions are maintained in the repository root [OpenAPI specification](../openapi.yaml). See also the [API compatibility policy](API_CONTRACT.md).
 
-### Terrarium, PMTiles and WMTS
+## Source preview, Terrarium, PMTiles and WMTS
 
 Visual comparison shows the original upload on the left and the published output on the right, with synchronized map position and a movable divider. `GET /api/jobs/{id}/source-preview` renders imagery as a bounded 1536 px PNG, or converts vector sources to WGS84 GeoJSON. Optional `bbox=west,south,east,north` filters vector features intersecting a WGS84 viewport; geometries are not clipped or simplified. The compare view refreshes this area on pan/zoom. There is no total dataset feature-count rejection. Each response contains at most 5,000 features and reports `preview.truncated` and `preview.scope`; without bbox, the response is a bounded dataset preview. A partial preview is explicitly labeled: zoom in to inspect a smaller area. The native runner capture, memory and timeout budgets still apply; very complex geometries may exceed the size budget. Preview rendering accepts at most two concurrent requests. `GET /api/jobs/{id}/source` serves the original elevation GeoTIFF or GLB, with HTTP byte ranges; `GET /api/jobs/{id}/source-tileset.json` places the original GLB using the output placement transform. These routes require a completed job and the usual API authentication. Imagery previews are for visual inspection and do not expose full source resolution.
 

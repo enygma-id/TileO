@@ -1,5 +1,3 @@
-> **Implementation reference — TileO Clean 4, supplied 21 October 2026.** Commands and behavior are transcribed from the source document. This founding package has no runnable implementation; check the merged source before describing any behavior as release-certified.
-
 # Clean Export Guide
 
 `npm run copy:clean` copies this project to another folder as a clean snapshot you can publish, archive, or turn into a new repository. Source, docs, and configuration are kept; local state, secrets, build output, and vendored tool binaries are skipped.
@@ -7,13 +5,13 @@
 ## Usage
 
 ```bash
-npm run copy:clean -- D:/path/to/export
+npm run copy:clean -- /path/to/export
 ```
 
-Run it from the project folder. On Windows use forward slashes in the target path (`D:/path/to/export`) so the command works from cmd, PowerShell, and git-bash. To run it from anywhere:
+Run it from the project folder. On Windows use forward slashes in the target path (`/path/to/export`) so the command works from cmd, PowerShell, and git-bash. To run it from anywhere:
 
 ```bash
-npm --prefix D:\path\to\tileo run copy:clean -- D:/path/to/export
+npm --prefix /path/to/TileO run copy:clean -- /path/to/export
 ```
 
 ### Options
@@ -51,15 +49,15 @@ Unknown options, a missing target, or extra arguments print the usage and exit w
 - Failures print `copy:clean - <message>` on stderr and exit with code 1.
 - `--dry-run` never creates or changes anything on disk.
 
-## Example output
+## Illustrative output (not a current benchmark)
 
 Dry run:
 
 ```text
 Clean export (dry run - nothing is written)
-  source   D:\work\tileo
-  target   D:\work\tileo-clean
-  files    106 (1.2 MB)
+  source   D:\projects\TileO
+  target   D:\exports\tileo
+  files    <number of copied files>
   skipped  3 directories: .git, dist, node_modules
            1 files: .env
 ```
@@ -68,8 +66,8 @@ Real copy:
 
 ```text
 Clean export complete.
-  copied   106 files (1.2 MB) -> D:\work\tileo-clean
-  next     cd "D:\work\tileo-clean" && git init -b main && git add -A && git commit -m "Initial commit"
+  copied   <number of copied files> -> D:\exports\tileo
+  next     cd "D:\exports\tileo" && git init -b main && git add -A && git commit -m "Initial commit"
 ```
 
 ## Typical workflow
@@ -77,19 +75,19 @@ Clean export complete.
 1. Export the clean snapshot.
 
 ```bash
-npm run copy:clean -- D:/work/tileo-clean
+npm run copy:clean -- D:/exports/tileo
 ```
 
 2. Turn the export into a repository.
 
 ```bash
-cd D:/work/tileo-clean
+cd D:/exports/tileo
 git init -b main
 git add -A
 git commit -m "Initial commit"
 ```
 
-3. Push it to your own remote.
+3. Optionally publish the export to a new remote after reviewing its contents and licenses.
 
 ```bash
 git remote add origin https://github.com/<owner>/<repo>.git
@@ -117,6 +115,6 @@ Alternatively, copy the `tools/` bundle into the export to enable auto-detection
 
 ## Related
 
-- `README.md` - Docker and native run instructions.
-- `TOOLS.md` - where to get GDAL and Tippecanoe.
-- `npm run doctor` - verifies GDAL, Tippecanoe, the COG driver, and S3 capability.
+- [README](../README.md) - Docker and native run instructions.
+- [Tools](TOOLS.md) - GDAL and Tippecanoe prerequisites.
+- `npm run doctor` - checks availability of required tools and selected capabilities.

@@ -4,6 +4,8 @@
 **Data license:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](LICENSE-CC-BY-4.0.md)  
 **Location in collection:** `samples/TileO-Samples-01/data/rgb.tif`
 
+**Inspected sample characteristics:** GeoTIFF, EPSG:32749, 16,126 × 24,325 pixels, four 8-bit bands (Red, Green, Blue, Alpha). These are properties of the bundled sample, not a general statement about other RGB imagery.
+
 ## Purpose
 
 The RGB GeoTIFF is the imagery member of **[TileO-Samples-01](README.md)**, alongside the three ATAP-origin datasets. Use it to exercise source-raster inspection, georeferencing checks, supported COG creation, raster tiling and visual preview.

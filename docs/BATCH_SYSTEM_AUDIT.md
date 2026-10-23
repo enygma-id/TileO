@@ -1,8 +1,6 @@
-> **Reference implementation snapshot (supplied October 2026).** This technical document is preserved from the provided TileO code archive for historical/engineering continuity. Paths, endpoints, tests and commands apply to that snapshot and must be checked against the official code import before being represented as supported release behavior.
+# Vector Batching — Engineering Audit (15 October 2026)
 
-# Audit tahap 0–3 dan hasil tahap 4
-
-Tanggal: 15 Oktober 2026. Lingkungan: Linux x64, Node v24.21.0, GDAL 3.12.2, Tippecanoe 2.79.0.
+**Historical test context:** 15 October 2026. Environment: Linux x64, Node v24.21.0, GDAL 3.12.2, Tippecanoe 2.79.0.
 
 Tahap 4 sudah diimplementasikan untuk GPKG, FlatGeobuf, dan ZIP Shapefile yang dikenali GDAL sebagai `ESRI Shapefile`. KML diuji dan sengaja tidak dikualifikasikan untuk batching: pembacaan sumbernya memperlihatkan kenaikan memori seiring ukuran dataset. Mode `on` menolak KML sebelum membuka sumber; `auto` memakai jalur lama dan mencatat alasan fallback.
 
@@ -118,7 +116,4 @@ Catatan observabilitas: `peakMemoryBytes` nullable jika job lebih pendek dari in
 
 Catatan audit tahap 0: versi GDAL dalam Docker tidak dipin ke versi runtime persis karena image memasang paket `gdal-bin` dari apt. Daftar versi Dockerfile bukan bukti binary container yang sudah diverifikasi. Simpan digest image dan hasil doctor container pada deployment.
 
-
----
-
-**Snapshot note:** This founding documentation describes the TileO Clean 4 implementation baseline. Actual commands, integrations, drivers, versions, test results and release images must be verified when code is imported. See [Technical baseline](TECHNICAL_BASELINE.md) and [Release policy](RELEASE_POLICY.md).
+> These dated engineering notes document the stated implementation and test observations at the time of writing. They are not certification of every current platform or release image. For current installation and test steps see [Installation](INSTALLATION.md), [Testing](TESTING.md), and [Release Process](RELEASE_PROCESS.md).

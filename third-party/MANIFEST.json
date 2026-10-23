@@ -1,12 +1,12 @@
 {
   "project": "TileO",
-  "source": "TileO Clean 4",
-  "reference_lockfile": "third-party/reference/package-lock.clean4.json",
+  "source": "TileO committed repository inventory",
+  "reference_lockfile": "package-lock.json",
   "reference_lockfile_sha256": "70a37f180438e667479f0b8e29fbe282a020930397afc8dd964b403599897a61",
   "package_count": 284,
-  "notice_source": "third-party/reference/THIRD-PARTY-NOTICES.CLEAN4.md",
+  "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory and collected notice texts. Metadata-only fallback notices and native release artifacts are NOT independently certified.",
-  "generated_from": "user-supplied Tileo-Clean4.zip",
+  "generated_from": "Committed package-lock.json and collected package notice corpus; verify notices against upstream tarballs before binary release",
   "packages": [
     {
       "package_path": "node_modules/@deck.gl/core",

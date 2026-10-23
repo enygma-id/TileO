@@ -1,8 +1,8 @@
 # Third-Party License Release Gate
 
-The founding documentation is approved independently of a runtime distribution. Before releasing a Docker image, binary, npm package or Enterprise product, complete each gate below.
+Before publishing any Docker image, binary, npm package or Enterprise product, review the exact artifact and complete the applicable gates below. Having source code or documentation in GitHub is not proof that a distributed build has passed these gates.
 
-- [ ] Confirm imported code, versioned lockfile, container build recipe and dependency digests exactly match the release candidate.
+- [ ] Confirm committed code, versioned lockfile, container build recipe and dependency digests exactly match the release candidate.
 - [ ] Identify every distributed npm package, direct/transitive/optional package included in the artifact, including its full upstream notice and actual license expression.
 - [ ] Preserve all copyright notices, modified-file indications, patent and attribution conditions, NOTICE material and `OR` license elections.
 - [ ] List native binaries and **all transitive linked ELF/shared libraries**, including Node runtime, GDAL/PROJ drivers, libcurl/libpsl/libidn2/libunistring and their relevant versions.
@@ -15,4 +15,4 @@ The founding documentation is approved independently of a runtime distribution. 
 - [ ] Verify Enterprise rights (contractor contributions, license grant/CLA, source provenance) independently of third-party permissive status.
 - [ ] Record reviewer/date/results and publish complete notices with every required redistribution artifact.
 
-In the Clean 4 reference, npm SPDX metadata has permissive choices, but strict permissive-only *container* certification remains open due to native/report discrepancies documented in [NATIVE_COMPONENTS.md](NATIVE_COMPONENTS.md).
+The npm dependency inventory records permissive options and mixed expressions, but a strict permissive-only *container* classification requires binary-level verification and resolution of all applicable native and transitive obligations. See [NATIVE_COMPONENTS.md](NATIVE_COMPONENTS.md).

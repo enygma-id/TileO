@@ -1,13 +1,13 @@
-# Third-Party NPM Dependencies — TileO Clean 4
+# Third-Party NPM Dependency Inventory
 
-This is a full **reference inventory of 284 non-root `package-lock.json` entries** from TileO Clean 4 (direct, transitive, development and platform-optional packages). Entries do not necessarily correspond one-for-one to packages distributed in every platform image. Licenses and notices are not changed by TileO.
+This inventory lists **284 non-root entries from the committed `package-lock.json`** (direct, transitive, development and platform-optional packages). Entries do not necessarily correspond one-for-one to packages distributed in every platform image. Licenses and notices are not changed by TileO.
 
-- Reference lockfile SHA-256: `70a37f180438e667479f0b8e29fbe282a020930397afc8dd964b403599897a61`
+- `package-lock.json` SHA-256: `70a37f180438e667479f0b8e29fbe282a020930397afc8dd964b403599897a61`
 - Lockfile entries: **284** (252 non-development/production-classified; 32 development-classified, with optional platform packages included)
-- Archived notice texts: **284**; **36** upstream package notice filenames were unavailable to the Clean 4 generator and fallback texts were used. These require upstream version-specific copyright/NOTICE checks before distributing packages.
-- This is a **founding documentation inventory**, not a certification of the binary/container image.
+- Collected notice entries: **284**; **36** entries use standard-license fallback text rather than verified package-specific upstream LICENSE files. These require upstream version-specific copyright/NOTICE checks before distributing packages.
+- This is **npm dependency metadata and collected license evidence**, not a certification of the final binary/container image.
 
-## License metadata as declared in Clean 4
+## License metadata from the committed lockfile
 
 | SPDX expression | Entries |
 | --- | ---: |

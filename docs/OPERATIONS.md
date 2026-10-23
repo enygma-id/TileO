@@ -1,5 +1,3 @@
-> **Implementation reference — TileO Clean 4, supplied 21 October 2026.** Commands and behavior are transcribed from the source document. This founding package has no runnable implementation; check the merged source before describing any behavior as release-certified.
-
 # Operations and deployment limits
 
 ## Environment

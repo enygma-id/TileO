@@ -1,22 +1,19 @@
-# API contract and compatibility policy
+# API Contract and Compatibility Policy
 
-TileO's API is governed by the committed OpenAPI description **after it is imported and tested against the actual implementation**. API.md and `openapi.yaml` in the source snapshot are informative candidate inputs, not automatically canonical for releases that have not yet imported code.
+The committed [OpenAPI specification](../openapi.yaml) describes TileO's HTTP API. The application also serves its OpenAPI document at `/openapi.yaml` and the interactive API page at `/docs` when running. See the [HTTP API reference](../API.md) for explanations and examples, and [API guide](API.md) for usage-oriented details.
+
+The OpenAPI document and implementation should be reviewed together for every release. A committed contract does not, by itself, demonstrate that every endpoint has passed a compliance test.
 
 ## Contract rules
 
-1. Publish an OpenAPI spec alongside the implementation used for each release.
-2. Test representative success, validation failure, authentication failure, and missing-resource responses against the spec.
+1. Publish an OpenAPI specification alongside the implementation used for each release.
+2. Test representative success, validation-failure, authentication-failure and missing-resource responses against the specification.
 3. Document authentication and authorization separately from data conversion semantics.
-4. Do not silently repurpose fields, units, or geospatial reference meanings.
-5. Changes to response shapes, storage manifest schemas or jobs require compatibility discussion and changelog entry.
-6. Treat job creation, retries, remote downloads and storage connectors as security-sensitive surfaces.
-7. Never promise multi-tenant isolation absent independent security review and tests.
+4. Do not silently repurpose fields, units, geospatial reference systems or vertical semantics.
+5. Record compatibility implications for changes to response types, job states, storage manifests or API parameters.
+6. Treat uploads, job creation, retries, remote object access and storage credentials as security-sensitive surfaces.
+7. Do not promise multi-tenant isolation without a corresponding architecture and security review.
 
-## Status of reference input
+## Change review
 
-The provided archive contains `API.md` and `openapi.yaml`. The versioned contract will be incorporated after implementation approval; refer to [API.md](API.md) for snapshot-derived interface context.
-
-
----
-
-**Snapshot note:** This founding documentation describes the TileO Clean 4 implementation baseline. Actual commands, integrations, drivers, versions, test results and release images must be verified when code is imported. See [Technical baseline](TECHNICAL_BASELINE.md) and [Release policy](RELEASE_POLICY.md).
+When an endpoint or schema changes, update `openapi.yaml`, the relevant implementation and tests, and public documentation in the same pull request. Note breaking changes in [CHANGELOG.md](../CHANGELOG.md) and the [release process](RELEASE_PROCESS.md).

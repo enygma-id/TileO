@@ -1,10 +1,8 @@
-> **Implementation reference — TileO Clean 4, supplied 21 October 2026.** Commands and behavior are transcribed from the source document. This founding package has no runnable implementation; check the merged source before describing any behavior as release-certified.
-
 # GDAL and Tippecanoe on Windows, macOS, and Linux
 
 TileO needs GDAL for raster and vector input. Tippecanoe is the preferred vector tiler; Auto falls back to GDAL only when Tippecanoe cannot start and Density is selected. Preserve requires Tippecanoe. On Windows, GDAL can run natively; the official Tippecanoe project does not provide a native Windows installation, so use WSL2 or Docker for Tippecanoe.
 
-DSM/DTM conversion uses the same native GDAL installation (`gdalinfo`, `gdal_translate`, `gdalwarp`, and the COG/ENVI drivers). It needs neither Tippecanoe nor an additional Python installation. Run `npm run doctor` to check COG support. Select Elevation in the UI to preserve Int16/Float32/Float64 values rather than scaling them to imagery. See [DSM / DTM distribution](IMPLEMENTATION_REFERENCE.md#dsm--dtm-distribution) for output choices and NoData handling.
+DSM/DTM conversion uses the same native GDAL installation (`gdalinfo`, `gdal_translate`, `gdalwarp`, and the COG/ENVI drivers). It needs neither Tippecanoe nor an additional Python installation. Run `npm run doctor` to check COG support. Select Elevation in the UI to preserve Int16/Float32/Float64 values rather than scaling them to imagery. See [Formats and Semantics](FORMATS_AND_SEMANTICS.md#elevation-and-numeric-raster) for output choices and NoData handling.
 
 ### Manual COG check
 
@@ -47,7 +45,7 @@ The Windows installer requires Node.js 24 and GDAL. Missing native Tippecanoe is
 
 ## Docker Compose fallback
 
-From the `tileo-ts` directory:
+From the TileO repository root:
 
 ```sh
 docker compose up -d --build
@@ -58,14 +56,14 @@ The image includes Linux GDAL and Tippecanoe. On Windows, use Docker Linux conta
 
 ## Native installation
 
-Use Node.js 24.13+ within major version 24 and GDAL 3.8+ with MBTiles/WebP support. Tippecanoe is optional on Windows because TileO falls back to GDAL for vector jobs.
+Use Node.js 24.13+ within major version 24 and GDAL 3.8+ with MBTiles/WebP support. Tippecanoe may be absent on native Windows for supported Density vector jobs using the GDAL fallback, but the Preserve vector strategy requires Tippecanoe.
 
 ### Windows native GDAL
 
 Place native Windows bundles inside the project:
 
 ```text
-tileo-ts/tools/gdal/bin/gdal/apps/gdalinfo.exe
+tools/gdal/bin/gdal/apps/gdalinfo.exe
 ```
 
 Then run `.\scripts\install.ps1`. It checks Node.js and GDAL, installs npm dependencies, builds TileO, and runs `npm run doctor`. Docker is not required for raster jobs or vector jobs using the GDAL fallback.
@@ -73,8 +71,8 @@ Then run `.\scripts\install.ps1`. It checks Node.js and GDAL, installs npm depen
 If the tools folder is outside this project, set the paths before starting TileO:
 
 ```powershell
-$env:TILEO_GDAL_BIN = 'D:\Kerja\TilesO\tools\gdal\bin\gdal\apps'
-$env:TILEO_TIPPECANOE_BIN = 'D:\Kerja\TilesO\tools\bin'
+$env:TILEO_GDAL_BIN = 'C:\path\to\TileO\tools\gdal\bin\gdal\apps'
+$env:TILEO_TIPPECANOE_BIN = 'C:\path\to\TileO\tools\bin'
 ```
 
 Do not copy the Linux Tippecanoe binary into `tools/bin`. A Windows wrapper may be used only when WSL2 is installed and working. Otherwise use WSL2 directly or Docker.
@@ -101,18 +99,18 @@ If the Tippecanoe package is unavailable, build version 2.79.0 from the source c
 Install Node 24 with your team's version manager. With `nvm`:
 
 ```sh
-nvm install 24.13.1
-nvm use 24.13.1
+nvm install 24
+nvm use 24
 ```
 
 ### Common setup
 
-From the `tileo-ts` directory:
+From the TileO repository root:
 
 ```sh
 gdalinfo --version
 gdalinfo --format MBTiles
-tippecanoe --version
+tippecanoe --version  # when installed
 npm ci
 npm run build
 npm run doctor

@@ -1,43 +1,37 @@
 # TileO Project History
 
-This document records project formation separately from source-code authorship.
+TileO was established as an Enygma project to make geospatial data inspection, conversion, tiling, and web-ready distribution accessible through a practical, self-hosted workflow.
 
-## 1. Founding direction
+This page preserves the project's **historical founding record**. It is separate from Git commit authorship, intellectual-property ownership, current repository permissions, and maintainer appointments. The canonical role record is maintained in [Founding Team](../FOUNDING_TEAM.md).
 
-TileO originated within Enygma under the direction of **Erick Karya** ([@erickkarya](https://github.com/erickkarya)), CEO of Enygma at founding.
+## Founding vision
 
-Erick is recognized as the project's **Founder** and **Founding Vision Lead**.
+**[Erick Karya](https://github.com/erickkarya)**, CEO of Enygma at the project's founding, originated the project direction and commissioned its early exploration. He is recognized as **Founder** and **Founding Vision Lead**.
 
-## 2. First prototype
+The founding direction emphasized an integrated GIS-native toolkit that can inspect geospatial data, apply explicit conversion choices, and produce interoperable artifacts suitable for web applications and GIS consumers.
 
-**Hanafi** ([@hanafi2274](https://github.com/hanafi2274)) was the first person asked to create a TileO prototype.
+## Prototype development
 
-The prototype phase produced technical knowledge, feasibility experience, and implementation lessons that informed the official project direction.
+**[Hanafi](https://github.com/hanafi2274)** was the first engineer asked to develop an initial TileO prototype. That work provided early feasibility findings, practical knowledge, and lessons for the official implementation.
 
 Hanafi is recognized as **Founding Prototype Engineer** and **First Prototype Initiator**.
 
-## 3. First official implementation
+## Official implementation
 
-**Dony** ([@donyariefianto](https://github.com/donyariefianto)) subsequently built the first official TileO implementation using the knowledge and lessons developed through the prototype phase.
+**[Dony](https://github.com/donyariefianto)** subsequently developed the first official TileO implementation, informed by the knowledge and lessons from the prototype phase.
 
 Dony is recognized as **Founding Official Implementation Engineer** and **Initial Core Developer**.
 
-## 4. Knowledge transfer vs. source derivation
+The official [TileO repository](https://github.com/enygma-id/TileO) contains the application's source, documentation, and contribution history. Technical changes and authorship should be attributed using the relevant commits and source-level provenance, not inferred from the founding-role descriptions alone.
 
-The project deliberately distinguishes two different facts:
+## Distinguishing historical roles from code provenance
 
-- **knowledge transfer**: earlier experimentation informs later engineering decisions; and
-- **source derivation**: later code directly incorporates or adapts earlier source code.
+Prototype knowledge influencing a later implementation is **knowledge transfer**, not proof that the later source code was copied from the prototype. If earlier code is actually incorporated or adapted, the relevant authorship and license notices must be retained and reviewed.
 
-Knowledge transfer does not justify fabricating Git authorship. Direct source reuse does require preservation of authorship, licensing, and provenance.
+Likewise, historical founding status does not automatically confer permanent repository administration or merge authority. Those responsibilities are governed by [GOVERNANCE.md](../GOVERNANCE.md).
 
-The canonical Git history is the source of truth for implementation authorship once code is imported.
+## Stewardship and public development
 
-## 5. Public repository formation
+**PT Enygma Solusi Negeri (Enygma)** is recognized as TileO's founding organization and project steward. The canonical project is maintained through its public GitHub repository, with licensing, contributions, review and release procedures documented separately.
 
-The public repository is initialized documentation-first so that project identity, founding attribution, licensing, governance, and contribution rules exist before implementation source code is merged.
-
-
-## Clean 4 reference
-
-The public founding documentation uses the post-prototype TileO Clean 4 implementation snapshot to inform technical structure, but preserves Hanafi's prior prototype recognition and Dony's official implementation role as independent historical facts. The first repository commit must not imply that code was authored in a different chronological order.
+For further information, see [Founding Team](../FOUNDING_TEAM.md), [Governance](../GOVERNANCE.md), [Contributing](../CONTRIBUTING.md), and [AI Acknowledgement](../AI_ACKNOWLEDGEMENT.md).

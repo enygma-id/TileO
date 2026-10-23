@@ -1,27 +1,33 @@
-# Engineering verification strategy
+# Testing and Engineering Verification
+
+TileO uses TypeScript build/type checks, Node.js tests, browser tests and native geospatial-tool checks. Each test result is specific to its configuration, sample inputs, tool versions and date.
+
+## Standard commands
+
+```sh
+npm ci
+npm run build
+npm run typecheck
+npm test
+npm run test:browser
+```
+
+`npm test` builds the application before running the Node test suite. Browser tests require a suitable browser environment. Some integration tests depend on GDAL, Tippecanoe, environment flags, representative files or accessible storage providers and may be skipped without those prerequisites. Consult [Tools & Prerequisites](TOOLS.md) and [Installation](INSTALLATION.md).
 
 ## Coverage categories
 
 | Category | Verification objective |
 | --- | --- |
-| Parsing and inspect | Reject invalid inputs; detect CRS, georeferencing and metadata accurately |
-| Raster | COG layout, dimensions, NoData, scale/offset, full-resolution values, representative previews |
-| Terrain | Decode tiles at representative zoom levels; verify encoding semantics and boundary handling |
-| Vector | Verify geospatial extent, feature behavior, source-vs-tile limitations and loss disclosure |
-| 3D | Validate tileset schema/structure, placement transforms and actual loadability |
-| API | Contract tests, negative paths, auth, size limits and concurrency/race behavior |
-| Worker | Queue recovery, cancellation/retry semantics, timeouts, scratch limits and atomic publication |
-| Security | Upload parsing, URI validation, SSRF, path traversal, archive bombs, credentials and signed URL leakage |
-| Deployment | Container and native smoke tests; health signals, backup and recovery checks |
-| Licensing | Dependency inventory, binary and driver attribution, SBOM and contributor-rights review |
+| Parsing and inspection | Invalid inputs, CRS, bounds, raster metadata, vector schemas |
+| Raster and elevation | COG structure, NoData, scale/offset, decoded terrain tiles and loss disclosure |
+| Vector | Normalization, clipping/quantization, size limits and output validation |
+| 3D | Packaging, GLB transforms, tileset structure and viewer loading |
+| HTTP API | OpenAPI alignment, error paths, auth and upload limits |
+| Worker | Recovery, cancellation, retries, timeouts and atomic artifact publication |
+| Security | URL restrictions, traversal, resource exhaustion, credential redaction |
+| Deployment | Docker/native smoke tests, disk limits, backup and recovery |
+| Licensing | Source/asset notices, native dependencies, SBOM and contribution rights |
 
-## Standard before publication
+## Reporting evidence
 
-Each material capability claim must have a reproducible command/test, known configuration, input fixture, expected behavior, observed result and date. An assertion in a document is not evidence of a successful test run. Keep public limitations and failures discoverable.
-
-The reference snapshot includes Node test scripts and Playwright browser test files. Their presence alone does not mean the full suite passed in the current environment.
-
-
----
-
-**Snapshot note:** This founding documentation describes the TileO Clean 4 implementation baseline. Actual commands, integrations, drivers, versions, test results and release images must be verified when code is imported. See [Technical baseline](TECHNICAL_BASELINE.md) and [Release policy](RELEASE_POLICY.md).
+For material capability claims record the exact commit, OS/architecture, Node/native versions, inputs, commands, observed outcomes, failures and skipped checks. Reports under [Verification](VERIFICATION.md) and [Vector Batching Audit](BATCH_SYSTEM_AUDIT.md) are dated observations, not evergreen assertions that later releases passed identical tests.
