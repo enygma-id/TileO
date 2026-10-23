@@ -1,0 +1,4 @@
+# The nested `node_modules` directories below are archival paths for
+# package-specific LICENSE notices, not installed dependencies.
+# Override the repository-wide `node_modules/` ignore rule only here.
+!node_modules/
