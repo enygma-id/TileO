@@ -32,6 +32,10 @@ function sha256(buffer) {
   return crypto.createHash('sha256').update(buffer).digest('hex');
 }
 
+function canonicalLockSha(buffer) {
+  return sha256(Buffer.from(buffer.toString('utf8').replace(/\r\n/g, '\n'), 'utf8'));
+}
+
 function fence(text) {
   return `\`\`\`\`text\n${text.trim()}\n\`\`\`\``;
 }
@@ -45,7 +49,7 @@ function main() {
   const lock = JSON.parse(lockBuffer.toString('utf8'));
   const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf8'));
   const native = JSON.parse(fs.readFileSync(NATIVE_FILE, 'utf8'));
-  const lockSha = sha256(lockBuffer);
+  const lockSha = canonicalLockSha(lockBuffer);
 
   if (manifest.reference_lockfile_sha256 !== lockSha) {
     throw new Error('MANIFEST.json is stale: package-lock.json changed. Run scripts/verify-npm-notices.js --update.');

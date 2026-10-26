@@ -207,9 +207,10 @@ async function mapLimit(items, limit, worker) {
 }
 
 async function main() {
-  const lock = JSON.parse(fs.readFileSync(LOCK_FILE, 'utf8'));
+  const lockRaw = fs.readFileSync(LOCK_FILE, 'utf8');
+  const lock = JSON.parse(lockRaw);
   const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf8'));
-  const lockSha = sha256(fs.readFileSync(LOCK_FILE));
+  const lockSha = sha256(Buffer.from(lockRaw.replace(/\r\n/g, '\n'), 'utf8'));
   const entries = Object.entries(lock.packages || {}).filter(([key]) => key !== '');
   if (filter) {
     const selected = entries.filter(([key, meta]) => key.includes(filter) || meta.name?.includes(filter));

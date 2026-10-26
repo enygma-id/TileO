@@ -40,7 +40,7 @@ const lockBuffer = fs.readFileSync(path.join(ROOT, 'package-lock.json'));
 const lock = JSON.parse(lockBuffer.toString('utf8'));
 const manifest = readJson('third-party/MANIFEST.json');
 const native = readJson('third-party/native/components.json');
-const lockSha = sha256(lockBuffer);
+const lockSha = sha256(Buffer.from(lockBuffer.toString('utf8').replace(/\r\n/g, '\n'), 'utf8'));
 
 if (manifest.reference_lockfile_sha256 !== lockSha) {
   problems.push('MANIFEST.json lockfile hash is stale; run verify-npm-notices.js --update');

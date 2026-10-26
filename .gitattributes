@@ -1,2 +1,13 @@
+# Ensure text files use LF line endings deterministically across all OS
+* text=auto eol=lf
+
+# Explicitly ensure lockfile uses LF line endings
+package-lock.json text eol=lf
+
+# Third-party license corpus and native artifacts must be preserved byte-for-byte as binaries
+# to guarantee cryptographic integrity matches upstream tarballs regardless of host platform
+third-party/licenses/** -text
+third-party/native/** -text
+
 # RGB GeoTIFF sample: use Git LFS; original ATAP DSM/DTM retain Git blob hashes.
 samples/TileO-Samples-01/data/rgb.tif filter=lfs diff=lfs merge=lfs -text

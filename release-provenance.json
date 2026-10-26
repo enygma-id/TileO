@@ -23,9 +23,9 @@
     "source_files": {
       "Dockerfile": "7392e0d5069cefc4ac4268aa29007b4449b5337bb7fa3480901e861eb1128d54",
       "package.json": "8bf83b39db19d6fc0169ade68c0b620b922250e72924cf2066ab78a7904866c1",
-      "package-lock.json": "f5a068a0874824434b827b0e204bfa250a02104b2ef36d76f515c9e3d73e6cba",
-      "THIRD-PARTY-NOTICES.md": "f1e4b5a705fc04d0bdb6756ea5ba713c50faa111f6eaaf7b0c2a7a07da1d7b63",
-      "third-party/MANIFEST.json": "0ac63330dd42d2bd70e1ad3a2079b694bf3cd427832aa268806b66750f1d4d1c",
+      "package-lock.json": "d7a17b3fa9ec1d16131d2319805b52873245b31c4c508119e278d3d570128683",
+      "THIRD-PARTY-NOTICES.md": "d3336aae184f48c7e475f01559c12482ff797727d64cd457d5197c0bd3fefeb1",
+      "third-party/MANIFEST.json": "63ada4fc117bc0fb8ccf76946607278bc76f2b49a9de43533c19317e0857c473",
       "third-party/native/components.json": "ae71afdc659d6fceaa1d8cc022e3205e0000876cd8182cc7b527613672642b3f"
     }
   },
