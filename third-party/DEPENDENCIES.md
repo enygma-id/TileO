@@ -2,7 +2,7 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **291 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `d7a17b3fa9ec1d16131d2319805b52873245b31c4c508119e278d3d570128683`
+- `package-lock.json` SHA-256: `17cb95533a778f1d8c9f65cd459d9cdae7475613d11af96f0ae1ff8a004f996d`
 - Runtime entries: **253** · runtime-optional: **4** · development: **34**
 - Notice evidence: **252** verified from exact upstream tarballs · **39** metadata-only · **0** failed
 - Verification date: 2026-10-26 (scripts/verify-npm-notices.js@1)
