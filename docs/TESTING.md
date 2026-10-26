@@ -30,4 +30,4 @@ npm run test:browser
 
 ## Reporting evidence
 
-For material capability claims record the exact commit, OS/architecture, Node/native versions, inputs, commands, observed outcomes, failures and skipped checks. Reports under [Verification](VERIFICATION.md) and [Vector Batching Audit](BATCH_SYSTEM_AUDIT.md) are dated observations, not evergreen assertions that later releases passed identical tests.
+For material capability claims record the exact commit, OS/architecture, Node/native versions, inputs, commands, observed outcomes, failures and skipped checks. Follow the repeatable checks in [Verification](VERIFICATION.md) and the batch-specific checks in [Vector Batching](VECTOR_BATCHING.md). Store dated test reports and raw evidence against the candidate commit and artifact digest; do not treat previous runs as certification of a new release.

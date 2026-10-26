@@ -33,7 +33,7 @@ Native uses shell/service manager. Docker Compose reads `.env`; an example is pr
 | TILEO_REMOTE_INSPECT_SECONDS | `120` | API remote metadata deadline |
 | TILEO_MAX_REMOTE_STAGE_MB | `65536` | API + worker; maximum object size eligible for staging |
 
-Docker limits the API to 512 MiB and the worker to `${TILEO_WORKER_MEM_LIMIT:-6g}` / 2 CPU. The worker has outbound networking so configured S3/MinIO endpoints can be reached; the connection registry restricts buckets and prefixes. The local `.env` currently selects 14g for a 12 GiB tool budget. Adjust the container limit together with the tool budget. `TILEO_LOCAL_PROXY=1` is only for containers published on loopback; it does not bypass auth on public ports.
+Docker limits the API to 512 MiB and the worker to `${TILEO_WORKER_MEM_LIMIT:-6g}` / 2 CPU. The worker has outbound networking so configured S3/MinIO endpoints can be reached; the connection registry restricts buckets and prefixes. If you raise the tool memory budget, adjust the container limit to leave headroom for the worker and other native processes. `TILEO_LOCAL_PROXY=1` is only for containers published on loopback; it does not bypass auth on public ports.
 
 The primary UI accepts a public HTTPS URL or a presigned/authenticated URL. Query credentials are removed from API responses and redacted from native-tool logs. Arbitrary URLs are protected against local/private targets; add an exact hostname to `TILEO_REMOTE_URL_HOSTS` only when an administrator intentionally allows a private MinIO endpoint or development HTTP URL. URL input defaults to conditional staging; direct remote reading requires a `versionId` query parameter.
 
@@ -45,22 +45,12 @@ Each entry of `TILEO_S3_CONNECTIONS` declares `auth`: `static` (keys in server c
 
 Batching reads GeoJSON incrementally (preflight + bounded batches) instead of letting GDAL parse the whole file into RAM. Qualified adapters: `.geojson`, `.json`, `.geojsonl` (WGS84 direct or per-batch geometry reprojection), GPKG, FlatGeobuf and GDAL-recognized ZIP Shapefile. Native adapters use one sequential `ogr2ogr` read, with the same bounded-record writer for file/stream delivery. Driver identity and selected layer are checked; an extension alone does not qualify a format. KML remains legacy on `auto` (with an explicit fallback reason), and strict `on` rejects it before opening the document.
 
-See [BATCH_SYSTEM_AUDIT.md](BATCH_SYSTEM_AUDIT.md) for the current audit and measured driver qualification. GeoJSON preflight runs under a guardian with at most 256 MiB of memory; the API probe budget is independent of worker memory. Batch feature count is limited to 1–1,000,000 and byte settings to 1–256 MiB, with max-feature no greater than batch MiB. These are configuration validation ranges, not a recommendation to allocate the maximum on a 512 MiB API container.
+See [Vector Batching](VECTOR_BATCHING.md) for supported batch inputs, mode selection and validation requirements. GeoJSON preflight runs under a guardian with at most 256 MiB of memory; the API probe budget is independent of worker memory. Batch feature count is limited to 1–1,000,000 and byte settings to 1–256 MiB, with max-feature no greater than batch MiB. These are configuration validation ranges, not a recommendation to allocate the maximum on a 512 MiB API container.
 
 1. Ship with `TILEO_VECTOR_BATCH_MODE=off` (default; legacy path, unchanged behavior).
 2. Test explicitly with `on` on a benchmark dataset before trusting it: same input/zoom/preset/threads/disk for `off`, `on` + `file`, and `on` + `stream`. Record wall time, peak RSS/scratch, MBTiles size, and a decoded-tile comparison.
 3. Only then set `auto` (batch for qualified adapters, legacy otherwise). Keep `file` delivery as the comparison baseline; use `stream` to drop the full-dataset intermediate.
 4. Rollback is `off` + restart; it applies to the next job. The worker freezes mode/delivery per attempt (inspect and tiling always agree), so never change the variables mid-attempt — restart instead.
-
-Historical pre-audit reference run (synthetic 150k points, 23 MB single-line GeoJSON, z0–5 density, GDAL 3.12.2 + Tippecanoe 2.79.0, WSL Ubuntu; ogr-normalization path, 15 batches):
-
-| Pipeline | Wall | Peak RSS | Output |
-| --- | --- | --- | --- |
-| `off` (legacy) | 3.3 s | 74 MB | 6.80 MB |
-| `on` + `file` | 6.6 s | 222 MB | 6.78 MB |
-| `on` + `stream` | 6.5 s | 216 MB | 6.78 MB |
-
-That historical run decoded the same z5 tile across all three (629 features, same attributes), with equal output sizes for file/stream. The implementation now uses direct WGS84 batching even without an `id` property. The audit includes a new 516.52 MiB synthetic point comparison with identical payloads across all tiles; a large representative parcel/line dataset is still an open release gate.
 
 Per-attempt evidence lands in successful job `metadata.batch`: frozen `mode`/`delivery`, `active`, `stream`, `normalization` (`direct`/`ogr`), `featureCount`, `batchCount`, `bytesNormalized`, and `fallback` (`gdal:tippecanoe-missing` or `legacy:unqualified-driver:<driver>`). `normalizeMs` and `tileMs` are separate for file delivery; on streaming they overlap, so do not add them as wall time. Guardian `peakMemoryBytes` samples the shared worker tree every second (nullable/best effort), and worker `peakScratchBytes` samples visible directory files. Open-but-unlinked temporary files are not included in that directory peak; monitor free disk/container storage separately. Failed jobs do not yet retain a full partial batch summary. Progress updates are throttled to ~1 Hz plus a final flush. Persistent normalization checkpoint/resume remains deferred; retry starts a new attempt from the original input.
 

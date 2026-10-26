@@ -20,8 +20,8 @@ This index provides navigation to the public documentation maintained in the [Ti
 | API stability and compatibility | [API Contract](API_CONTRACT.md) |
 | Data formats, CRS and raster/3D semantics | [Formats and Semantics](FORMATS_AND_SEMANTICS.md) |
 | Remote object storage | [Storage](STORAGE.md) |
-| Test strategy and validation | [Testing](TESTING.md) and [Verification](VERIFICATION.md) |
-| Batch vector processing | [Batch Processing Audit](BATCH_SYSTEM_AUDIT.md) and [Batch Processing Plan](BATCH_SYSTEM_PLAN.md) |
+| Test strategy and validation | [Testing](TESTING.md) and [Verification Guide](VERIFICATION.md) |
+| Batch vector processing | [Vector Batching](VECTOR_BATCHING.md) |
 | Engineering decisions | [Architecture Decisions](DECISIONS.md) |
 
 ## Samples and licensing

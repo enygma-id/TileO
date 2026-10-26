@@ -30,7 +30,7 @@ src/
   worker.ts       job claim, pipeline, resource checks, publish
   jobs.ts         SQLite queue, lease, state transitions
   process.ts      bounded logs/output, timeout, abort
-  pipeline.ts     stdin streaming runner with backpressure (Tahap 2)
+  pipeline.ts     stdin streaming runner with backpressure
   vector-batch.ts batched normalization: scratch file or stdin stream
   vector-reader.ts incremental GeoJSON scanner, preflight, batch splitter
   json-stream.ts  bounded JSON records and lossless property rewriting
@@ -70,7 +70,7 @@ OGR normalizes vector to GeoJSONSeq EPSG:4326 on scratch with 15 decimal places;
 
 Large GeoJSON (`.geojson`/`.json`/`.geojsonl`) can bypass whole-file GDAL parsing: a streaming preflight collects count/schema/bounds/CRS, then bounded batches normalize either to a scratch GeoJSONSeq (`file` delivery) or straight into one Tippecanoe stdin pipe (`stream` delivery, no parallel flag, same single invocation). Policy (`TILEO_VECTOR_BATCH_*`) defaults to `off`, is frozen per attempt, and each attempt stores counts, bytes, stage durations, and memory/scratch peaks in job `metadata.batch`.
 
-Qualified GPKG/FGB/ZIP Shapefile readers use one sequential OGR pass for normalization. Stream data passes through inherited guardian descriptors with backpressure, never metadata IPC/capture. The same guardian owns file and streaming tools; worker IPC loss terminates native process groups. Streaming memory sampling includes the worker tree so sibling GDAL/Tippecanoe processes share a budget. Preflight runs in a separate supervised process with at most 256 MiB for API inspection. Source properties/IDs in projected GeoJSON are kept as raw tokens while OGR supplies normalized geometry. KML remains legacy because measured reader memory grows with document size. Retry still restarts from the original input; checkpoint evaluation and audit evidence are in [BATCH_SYSTEM_AUDIT.md](BATCH_SYSTEM_AUDIT.md).
+Qualified GPKG/FGB/ZIP Shapefile readers use one sequential OGR pass for normalization. Stream data passes through inherited guardian descriptors with backpressure, never metadata IPC/capture. The same guardian owns file and streaming tools; worker IPC loss terminates native process groups. Streaming memory sampling includes the worker tree so sibling GDAL/Tippecanoe processes share a budget. Preflight runs in a separate supervised process with at most 256 MiB for API inspection. Source properties/IDs in projected GeoJSON are kept as raw tokens while OGR supplies normalized geometry. KML remains legacy because measured reader memory grows with document size. Retry still restarts from the original input; resumable checkpoints are not part of the current contract. See [Vector Batching](VECTOR_BATCHING.md) for supported modes and operational limitations.
 
 ## Stability and security
 

@@ -1,49 +1,48 @@
-# Engineering Verification Report — 6 October 2026
+# Verification and Release Evidence
 
-## Environments reported for the 6 October 2026 test session
+This guide defines repeatable checks for TileO releases. **It does not claim that any particular commit, native-tool build or container image has passed.** Verification results must be identified by exact versions, environment and artifact digests, not inferred from historical test reports.
 
-- Windows host, Node 24.13.1, native GDAL from `../tools`.
-- Docker Linux amd64: Node 24.13.1, GDAL 3.10.3, Tippecanoe 2.79.0.
-- Microsoft Edge headless for desktop/mobile viewport UI.
+## Candidate identity
 
-The report does not establish successful testing of macOS/Apple Silicon or native Linux outside Docker. Instructions are available, but cross-platform success must still be proven with integration tests on the target machine.
+Before testing, record the source commit, lockfile and build configuration, operating system and architecture, Node.js, GDAL, PROJ and Tippecanoe versions, enabled GDAL drivers, container image digest, and relevant configuration values. A locally tagged image name by itself is not an immutable identity.
 
-## Results
+## Development checks
 
-| Check | Result |
+From the repository root:
+
+```sh
+npm ci
+npm run typecheck
+npm run build
+npm test
+```
+
+`npm test` may skip tests requiring native dependencies or an enabled integration environment. Record actual passed, failed and skipped counts, not merely the command's exit status. Check the relevant scripts in `package.json` for the current test entry points.
+
+## Integration and browser checks
+
+Run the repository's native-tool integration tests in a suitable environment with `TILEO_INTEGRATION=1`, Node test configuration, installed tools and representative fixtures. Run browser E2E tests against a live API and worker, setting `TILEO_TEST_URL` to the correct deployment URL as required by the suite. See [Testing](TESTING.md), [Tools](TOOLS.md) and [Installation](INSTALLATION.md).
+
+Cover raster/COG and elevation encoding, vector tiling and batching, 3D packaging, CRS and NoData handling, download/preview, invalid input, cancellation, timeout, worker recovery, storage and security restrictions. Representative datasets and checksum-qualified fixtures are required for material compatibility or performance claims.
+
+For vector batching specifically, compare `off/file`, `on/file` and `on/stream` when supported, including geometry, attributes, IDs, layer selection and resource use; see [Vector Batching](VECTOR_BATCHING.md). Explain intentional geometry quantization, clipping or feature thinning rather than suppressing differences.
+
+## Artifact and license verification
+
+For a distributable release, inspect the **actual final artifact**. Inventory npm packages, native executables and dynamically/statically linked dependencies, base-image packages, frontend assets and any included notices. Collect licenses and upstream provenance for the exact versions. Tie SBOM, license evidence and release authorization to the exact immutable artifact digest. An npm-only scan does not certify the complete runtime.
+
+See [Dependency Policy](DEPENDENCY_POLICY.md), [Release Process](RELEASE_PROCESS.md) and [Native Components](../third-party/NATIVE_COMPONENTS.md). Do not equate completion of documentation with engineering remediation.
+
+## Required evidence per release candidate
+
+| Evidence | Minimum contents |
 | --- | --- |
-| TypeScript build + unit/API | Passed: 5 tests; 2 integration tests intentionally skipped without environment opt-in |
-| GDAL native Windows | Raster WebP, embedded CRS, invalid EPSG, missing CRS passed |
-| Docker real-tool integration | 2 tests passed: raster GDAL and vector OGR/Tippecanoe |
-| Browser end-to-end | Passed: upload vector, SUCCEEDED, reload/persistence, preview, download SQLite, INVALID_CRS, mobile without horizontal overflow |
-| Queue tests | Persistence, exclusive claim, cancellation fencing, interruption/retry, SQLite backup/restore |
-| Process runner tests | Large stderr, nonzero exit, timeout termination |
-| npm dependency audit at build | 0 reported vulnerabilities; not a substitute for native/container/security audit |
-| Doctor container | All seven executables available |
+| Source and artifact identity | Commit, lockfile hash, image/build digest, platform |
+| Toolchain details | Node, GDAL, PROJ, Tippecanoe, enabled drivers and relevant native libraries |
+| Test results | Exact commands, pass/fail/skip counts, raw logs, fixtures and their SHA-256 hashes |
+| Functional output | Representative output files, decoded semantic checks and resource measurements |
+| Security and operations | Relevant negative tests, deployment limits and known unsupported targets |
+| License compliance | SBOM, upstream license/notice archive, native dependency inventory and exceptions/blockers |
+| Review | Reviewer, date, unresolved risks and an explicit GO/NO-GO decision |
 
-## MARISO.tif through the API console
-
-The original file was uploaded via the streaming endpoint used by the UI, not by automatically sending a 3.65 GB browser form. After acceptance, the upload request completes while the worker continues processing.
-
-| Parameter | Value |
-| --- | --- |
-| Job ID | `424c4114-0d1a-43af-bb8a-a3997704faeb` |
-| Input | 3,650,650,734 bytes; 39,354 × 59,655; RGB Byte |
-| Source CRS | Embedded `EPSG:32750`, no override |
-| Zoom / format | 0–22 / WebP quality 80 |
-| Accepted | 2026-10-06 02:48:10.869 UTC |
-| Completed | 2026-10-06 02:57:16.642 UTC |
-| Duration accepted-to-complete | 545.773 seconds, approximately 9 minutes 6 seconds; excludes upload |
-| Status | SUCCEEDED; 43,931 tiles; actual zoom 0–22 |
-| Output | 296,210,432 bytes, approximately 282.5 MiB |
-| Download after redeploy | HTTP 200, same size; job/artifact persisted |
-
-Input SHA-256: `19042476e7f65b2f6718925777aad40b55274fc5e7fab26c1f47173d9fe8bdb5`.
-
-No broken pipe occurred during this test. A single run result does not guarantee the error can never occur or prove that Node is faster than Python; a comparative benchmark must use identical options and storage. Worker container limits: 2 CPU / 5 GiB; tool threads 2. A single `docker stats` sample showed approximately 3.26 GiB container usage, **not** a peak RAM measurement.
-
-In the documented test session, the artifact was available through the local console for the MARISO job. The test report states that its input/output were retained in a Docker volume at the time of testing; current availability is not asserted. Temporary test containers were handled separately from persistent application data.
-
-## Limitations of the documented test evidence
-
-Soak/load test, real disk-full, power-loss, kill-tree across all OSes, production TLS proxy, untrusted hostile datasets, full production volume restore, and multi-user isolation. Native RSS limit is sampling only. The worker queue is single-host; horizontal scaling is not supported. Do not call these results production-certified without the additional verification listed above.
+**Release rule:** no failed required test, unresolved license blocker or unverified distributable component may be silently relabeled as passed. Where support is deliberately out of scope, state it explicitly in the product's supported-platform and release notes.
