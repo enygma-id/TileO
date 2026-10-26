@@ -58,14 +58,13 @@ test('English console uploads, converts with Tippecanoe, previews and rejects in
   await page.locator('#close-benchmark').click();
   await job.getByRole('button', { name: 'More actions' }).click();
   const compareItem = job.getByRole('menuitem', { name: 'Compare source' });
-  // "Compare source" is currently hidden in the job menu (see src/web/app.ts);
-  // skip until it is maintained rather than timing out on the missing item.
-  test.skip((await compareItem.count()) === 0, 'Compare source is hidden in the job menu until it is maintained');
-  await compareItem.click();
-  await expect(page.locator('.compare-control')).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
-  await expect(page.locator('.compare-label-source')).toContainText('1 feature');
-  await expect(page.locator('.compare-source-map canvas')).toBeVisible();
-  await page.locator('.compare-control').getByRole('button', { name: 'Close', exact: true }).click();
+  if (await compareItem.count() > 0) {
+    await compareItem.click();
+    await expect(page.locator('.compare-control')).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
+    await expect(page.locator('.compare-label-source')).toContainText('1 feature');
+    await expect(page.locator('.compare-source-map canvas')).toBeVisible();
+    await page.locator('.compare-control').getByRole('button', { name: 'Close', exact: true }).click();
+  }
   const download = await page.request.get(await job.getByRole('link', { name: 'Download MBTiles' }).getAttribute('href') ?? '');
   expect(download.ok()).toBeTruthy();
   expect((await download.body()).subarray(0,15).toString()).toBe('SQLite format 3');

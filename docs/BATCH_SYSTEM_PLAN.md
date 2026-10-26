@@ -16,9 +16,15 @@ Batching tidak menjamin semua file yang lolos upload akan berhasil dikonversi. S
 
 ## 2. Cakupan
 
-Prioritas pertama adalah `.geojson` dan `.json` berisi GeoJSON FeatureCollection, termasuk file yang seluruh isinya berada dalam satu baris. Tambahkan dukungan eksplisit `.geojsonl` pada validasi API dan UI jika format ini dibuka untuk upload; saat ini helper vector mengenal ekstensi tersebut, tetapi allowlist upload belum menerimanya.
+Prioritas pertama adalah `.geojson` dan `.json` berisi GeoJSON FeatureCollection, termasuk file yang seluruh isinya berada dalam satu baris. Dukungan eksplisit `.geojsonl` kini telah diaktifkan secara menyeluruh pada allowlist upload API (`src/api.ts`) dan web UI picker (`src/web/app.ts`).
 
-CRS WGS84 yang terverifikasi dapat melewati normalisasi GDAL. GeoJSON dengan CRS lain menggunakan normalisasi per batch setelah CRS ditentukan dan divalidasi. Format GeoPackage, FlatGeobuf, ZIP Shapefile, dan KML tetap memakai adapter lama sampai masing-masing lolos pengujian pembacaan bertahap.
+CRS WGS84 yang terverifikasi dapat melewati normalisasi GDAL. GeoJSON dengan CRS lain menggunakan normalisasi per batch setelah CRS ditentukan dan divalidasi. Berdasarkan hasil Tahap 4 dan audit, format GeoPackage (`.gpkg`), FlatGeobuf (`.fgb`), dan ZIP Shapefile (`/vsizip/*.zip`) telah ditingkatkan ke adapter sequential single-pass OGR streaming langsung ke Tippecanoe; format KML tetap mempertahankan adapter legacy pada mode `auto` dan ditolak pada mode `on`.
+
+> **Catatan Pembaruan Tahap 4 & Audit (26 Okt 2026):**
+> 1. Ekstensi `.geojsonl` telah resmi masuk ke allowlist upload API dan file picker web UI.
+> 2. Adapter `ogr-sequential` telah aktif untuk format GPKG, FlatGeobuf, dan ZIP Shapefile, dengan pembuktian runtime tepat satu invokasi OGR tanpa query pagination `OFFSET`.
+> 3. Format KML dikualifikasikan sebagai legacy reader dan ditolak aman pada mode batch `on`.
+> 4. Lingkungan container Docker saat ini menggunakan source build GDAL 3.11.4 Eganville (driver KML internal aktif), menggantikan image GDAL 3.12.2 pada lingkungan audit historis. Pengukuran memori scratch diklasifikasikan sebagai *best effort* berbasis sampling direktori aktif.
 
 Fase ini tidak mencakup upload resumable, batch upload banyak file, raster yang dipecah menjadi beberapa job, GLB, atau banyak worker sekaligus. Worker tetap menjalankan satu job aktif; batching berlangsung di dalam job tersebut.
 

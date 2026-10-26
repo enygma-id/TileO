@@ -22,9 +22,10 @@ test('adapter selection requires the actual GDAL driver, including ZIP contents'
   assert.equal(vectorAdapter('/vsizip/x.zip', { driver: 'GeoJSON' } as any), 'legacy');
   assert.equal(vectorAdapter('x.gpkg', { driver: 'SQLite' } as any), 'legacy');
   assert.equal(vectorAdapter('x.kml', { driver: 'LIBKML' } as any), 'legacy');
+  assert.equal(vectorAdapter('x.kml', { driver: 'KML' } as any), 'legacy');
 });
 
-for (const format of ['GPKG', 'FlatGeobuf', 'ESRI Shapefile', 'LIBKML']) {
+for (const format of ['GPKG', 'FlatGeobuf', 'ESRI Shapefile', 'KML']) {
   test(`real adapter: ${format}, one normalization, file/stream, exact attributes and selected layer`, { skip: !enabled, timeout: 60000 }, async () => {
     const dir = await mkdtemp(join(tmpdir(), 'tileo-adapter-'));
     const originalBatchSize = config.vectorBatchFeatures;
@@ -34,8 +35,13 @@ for (const format of ['GPKG', 'FlatGeobuf', 'ESRI Shapefile', 'LIBKML']) {
         properties: { code: `00${i}`, value: i, id: `key-${i}` }, geometry: { type: 'Point', coordinates: [106.7 + i * 0.01, -6.2] } }));
       const source = join(dir, 'source.geojson');
       await writeFile(source, JSON.stringify({ type: 'FeatureCollection', features }));
-      let input = join(dir, format === 'GPKG' ? 'source.gpkg' : format === 'FlatGeobuf' ? 'source.fgb' : format === 'LIBKML' ? 'source.kml' : 'shapes');
-      await run('ogr2ogr', ['-f', format, '-nln', 'parcels', ...(format === 'LIBKML' ? [] : ['-t_srs', 'EPSG:3857']), input, source]);
+      let ogrDriver = format;
+      if (format === 'KML') {
+        const formats = await run('ogrinfo', ['--formats'], { capture: true }).catch(() => '');
+        ogrDriver = formats.includes('LIBKML') ? 'LIBKML' : 'KML';
+      }
+      let input = join(dir, format === 'GPKG' ? 'source.gpkg' : format === 'FlatGeobuf' ? 'source.fgb' : format === 'KML' ? 'source.kml' : 'shapes');
+      await run('ogr2ogr', ['-f', ogrDriver, '-nln', 'parcels', ...(format === 'KML' ? [] : ['-t_srs', 'EPSG:3857']), input, source]);
       if (format === 'ESRI Shapefile') {
         const zipPath = join(dir, 'source.zip');
         const zip = new ZipFile();
@@ -46,7 +52,7 @@ for (const format of ['GPKG', 'FlatGeobuf', 'ESRI Shapefile', 'LIBKML']) {
       const options = parseOptions({ minZoom: 0, maxZoom: 0, vectorPreset: 'preserve', vectorEngine: 'tippecanoe' });
       const legacyInfo = await inspect(input, options, { batchMode: 'off' });
       assert.equal(legacyInfo.featureCount, 12);
-      if (format === 'LIBKML') {
+      if (format === 'KML') {
         await assert.rejects(inspect(input, options, { batchMode: 'on' }), /KML/);
         const scratch = join(dir, 'legacy'); await mkdir(scratch);
         const summary = await vector(input, join(scratch, 'out.mbtiles'), scratch, legacyInfo, options, { batchMode: 'auto' }, () => {});

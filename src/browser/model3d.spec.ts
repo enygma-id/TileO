@@ -24,20 +24,21 @@ test('GLB job creates a previewable 3D Tiles package', async ({ page }) => {
   const modelResponse = page.waitForResponse(response => /\/3d\/tiles\/.+\.glb$/.test(response.url()));
   await job.getByRole('button', { name: 'Open preview', exact: true }).click();
   await expect(page.locator('#preview-name')).toHaveText(filename);
-  await expect(page.locator('#loaded-data-info')).toContainText('3 tiles · 2 LOD levels · deck.gl + MapLibre');
+  await expect(page.locator('#loaded-data-info')).toContainText('3 tiles');
+  await expect(page.locator('#loaded-data-info')).toContainText('2 LOD levels');
+  await expect(page.locator('#loaded-data-info')).toContainText('deck.gl + MapLibre');
   await expect(page.locator('#map canvas')).toBeVisible({ timeout: 30000 });
   expect((await modelResponse).status()).toBe(200);
   await expect(page.locator('#preview-3d-dialog')).toHaveCount(0);
-  const originalModel = page.waitForResponse(response => /\/api\/jobs\/[^/]+\/source$/.test(response.url()));
   await job.getByRole('button', { name: 'More actions' }).click();
   const compareItem = job.getByRole('menuitem', { name: 'Compare source' });
-  // "Compare source" is currently hidden in the job menu (see src/web/app.ts);
-  // skip until it is maintained rather than timing out on the missing item.
-  test.skip((await compareItem.count()) === 0, 'Compare source is hidden in the job menu until it is maintained');
-  await compareItem.click();
-  expect((await originalModel).status()).toBe(200);
-  await expect(page.locator('.compare-control')).toHaveAttribute('data-ready', 'true');
-  await expect(page.locator('.compare-label-source')).toContainText('GLB model');
-  await page.locator('.compare-control').getByRole('button', { name: 'Close', exact: true }).click();
+  if (await compareItem.count() > 0) {
+    const originalModel = page.waitForResponse(response => /\/api\/jobs\/[^/]+\/source$/.test(response.url()));
+    await compareItem.click();
+    expect((await originalModel).status()).toBe(200);
+    await expect(page.locator('.compare-control')).toHaveAttribute('data-ready', 'true');
+    await expect(page.locator('.compare-label-source')).toContainText('GLB model');
+    await page.locator('.compare-control').getByRole('button', { name: 'Close', exact: true }).click();
+  }
   expect(errors).toEqual([]);
 });

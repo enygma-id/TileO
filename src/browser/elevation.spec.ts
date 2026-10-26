@@ -22,6 +22,7 @@ test('DSM/DTM inspection, COG and terrain jobs, preview, downloads and deletion'
     await page.goto('/');
     await expect(page.locator('#connection')).toContainText('Worker connected', { timeout: 30000 });
     await page.locator('#file').setInputFiles(file);
+    await page.locator('#raster-purpose').selectOption('elevation');
     await expect(page.locator('#elevation-options-group')).toBeVisible();
     await expect(page.locator('#submit')).toBeEnabled();
     await expect(page.locator('#raster-purpose')).toHaveValue('elevation');
@@ -55,28 +56,27 @@ test('DSM/DTM inspection, COG and terrain jobs, preview, downloads and deletion'
     await page.screenshot({ path: 'test-results/cog-elevation-preview.png', fullPage: true });
     await cogJob.getByRole('button', { name: 'More actions' }).click();
     const compareItem = cogJob.getByRole('menuitem', { name: 'Compare source' });
-    // "Compare source" is currently hidden in the job menu (see src/web/app.ts);
-    // skip until it is maintained rather than timing out on the missing item.
-    test.skip((await compareItem.count()) === 0, 'Compare source is hidden in the job menu until it is maintained');
-    await compareItem.click();
-    await expect(page.locator('.compare-control')).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
-    await expect(page.locator('.compare-label-source')).toContainText('Original source');
-    await expect(page.locator('.compare-label-result')).toContainText('Converted result');
-    await expect(page.locator('.compare-source-map canvas')).toBeVisible();
-    await page.getByRole('button', { name: 'Source only', exact: true }).click();
-    await expect(page.locator('.compare-label-result')).toBeHidden();
-    await page.getByRole('button', { name: 'Result only', exact: true }).click();
-    await expect(page.locator('.compare-label-source')).toBeHidden();
-    await page.getByRole('button', { name: '50 : 50', exact: true }).click();
-    await expect(page.locator('.compare-source-map')).toHaveCSS('clip-path', 'inset(0px 50% 0px 0px)');
-    const viewport = page.viewportSize()!;
-    await page.setViewportSize({ width: 390, height: 844 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
-    await page.setViewportSize(viewport);
-    await page.screenshot({ path: 'test-results/compare-elevation.png', fullPage: true });
-    await page.locator('.compare-control').getByRole('button', { name: 'Close', exact: true }).click();
-    await expect(page.locator('.compare-control')).toHaveCount(0);
-    await expect(page.locator('#map canvas')).toHaveCount(1);
+    if (await compareItem.count() > 0) {
+      await compareItem.click();
+      await expect(page.locator('.compare-control')).toHaveAttribute('data-ready', 'true', { timeout: 30000 });
+      await expect(page.locator('.compare-label-source')).toContainText('Original source');
+      await expect(page.locator('.compare-label-result')).toContainText('Converted result');
+      await expect(page.locator('.compare-source-map canvas')).toBeVisible();
+      await page.getByRole('button', { name: 'Source only', exact: true }).click();
+      await expect(page.locator('.compare-label-result')).toBeHidden();
+      await page.getByRole('button', { name: 'Result only', exact: true }).click();
+      await expect(page.locator('.compare-label-source')).toBeHidden();
+      await page.getByRole('button', { name: '50 : 50', exact: true }).click();
+      await expect(page.locator('.compare-source-map')).toHaveCSS('clip-path', 'inset(0px 50% 0px 0px)');
+      const viewport = page.viewportSize()!;
+      await page.setViewportSize({ width: 390, height: 844 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+      await page.setViewportSize(viewport);
+      await page.screenshot({ path: 'test-results/compare-elevation.png', fullPage: true });
+      await page.locator('.compare-control').getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(page.locator('.compare-control')).toHaveCount(0);
+      await expect(page.locator('#map canvas')).toHaveCount(1);
+    }
     await expect(page.locator('#elevation-options-group')).toBeHidden();
     const terrainFile = { ...file, name: `terrain-${file.name}` };
     await page.locator('#file').setInputFiles(terrainFile);

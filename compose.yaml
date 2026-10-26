@@ -18,6 +18,7 @@ services:
     command: [node, dist/api.js]
     ports: ["${TILEO_BIND_ADDRESS:-127.0.0.1}:${TILEO_PORT:-8090}:8090"]
     environment:
+      NODE_ENV: ${NODE_ENV:-development}
       TILEO_HOST: 0.0.0.0
       TILEO_LOCAL_PROXY: "1"
       TILEO_API_TOKEN: ${TILEO_API_TOKEN:-}
@@ -44,6 +45,7 @@ services:
     <<: *common
     command: [node, dist/worker.js]
     environment:
+      NODE_ENV: ${NODE_ENV:-development}
       TILEO_THREADS: ${TILEO_THREADS:-2}
       TILEO_TOOL_MEMORY_MB: ${TILEO_TOOL_MEMORY_MB:-4096}
       TILEO_JOB_TIMEOUT_SECONDS: ${TILEO_JOB_TIMEOUT_SECONDS:-7200}
