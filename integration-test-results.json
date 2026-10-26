@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-10-26T08:55:42.089Z",
+  "target_image": "--image",
+  "total_tests": 0,
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "duration_ms": 40,
+  "all_passed": false,
+  "tests": []
+}

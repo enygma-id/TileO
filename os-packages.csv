@@ -1,0 +1,2 @@
+Package,Version,License,Architecture,Type,Notes
+(none),scratch-rootfs,N/A,x86_64,scratch,"Container is FROM scratch with zero OS package managers (no dpkg, apt, apk, or rpm). All runtime dependencies are isolated musl binaries and shared libraries."

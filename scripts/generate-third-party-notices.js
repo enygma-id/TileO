@@ -1,164 +1,173 @@
+#!/usr/bin/env node
 /**
- * TileO - Third-Party Notices & Attribution Generator
+ * TileO - Third-Party Notices generator.
  *
- * Scans package-lock.json and node_modules to assemble an exhaustive,
- * deterministic THIRD-PARTY-NOTICES.md manifest.
+ * The document is assembled from committed evidence only:
+ *   - third-party/MANIFEST.json (exact-version npm tarball verification)
+ *   - third-party/native/components.json (native runtime corpus)
+ *   - third-party/licenses/** (extracted upstream license texts)
+ *
+ * No fallback license text is invented. A package whose tarball has no
+ * LICENSE/COPYING/NOTICE file is reported as metadata-only and flagged for
+ * review rather than being presented as verified.
  */
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { ELECTIONS, evaluatePackage, evaluateExpression } from './lib/license-policy.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
+const LOCK_FILE = path.join(ROOT, 'package-lock.json');
+const MANIFEST_FILE = path.join(ROOT, 'third-party', 'MANIFEST.json');
+const NATIVE_FILE = path.join(ROOT, 'third-party', 'native', 'components.json');
+const OUTPUT_FILE = process.env.TILEO_NOTICES_OUTPUT
+  ? path.resolve(process.env.TILEO_NOTICES_OUTPUT)
+  : path.join(ROOT, 'THIRD-PARTY-NOTICES.md');
+const BASELINE_FILE = path.join(ROOT, 'baseline', 'THIRD-PARTY-NOTICES.md');
+const writeBaseline = process.argv.includes('--baseline');
 
-const ROOT_DIR = path.resolve(__dirname, '..');
-const LOCK_FILE = path.join(ROOT_DIR, 'package-lock.json');
-const OUTPUT_FILE = path.join(ROOT_DIR, 'THIRD-PARTY-NOTICES.md');
-const BASELINE_OUTPUT = path.join(ROOT_DIR, 'baseline', 'THIRD-PARTY-NOTICES.md');
+function sha256(buffer) {
+  return crypto.createHash('sha256').update(buffer).digest('hex');
+}
 
-// Canonical fallback texts for packages lacking dedicated LICENSE file
-const CANONICAL_LICENSES = {
-  'MIT': `MIT License
+function fence(text) {
+  return `\`\`\`\`text\n${text.trim()}\n\`\`\`\``;
+}
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.`,
-  'BSD-3-Clause': `BSD 3-Clause License
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-3. Neither the name of the copyright holder nor the names of its
-   contributors may be used to endorse or promote products derived from
-   this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.`,
-  'ISC': `ISC License
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.`,
-  'Apache-2.0': `Apache License, Version 2.0 (Apache-2.0)
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.`
-};
+function formatBytes(bytes) {
+  return `${(bytes / 1024).toFixed(1)} KiB`;
+}
 
 function main() {
-  const lock = JSON.parse(fs.readFileSync(LOCK_FILE, 'utf8'));
-  const packages = lock.packages || {};
+  const lockBuffer = fs.readFileSync(LOCK_FILE);
+  const lock = JSON.parse(lockBuffer.toString('utf8'));
+  const manifest = JSON.parse(fs.readFileSync(MANIFEST_FILE, 'utf8'));
+  const native = JSON.parse(fs.readFileSync(NATIVE_FILE, 'utf8'));
+  const lockSha = sha256(lockBuffer);
 
-  const pkgs = [];
-  for (const [pkgPath, meta] of Object.entries(packages)) {
-    if (!pkgPath || pkgPath === '') continue; // skip root project
-    const name = pkgPath.replace(/^node_modules\//, '');
-    const dir = path.join(ROOT_DIR, pkgPath);
-    let licenseText = '';
-    let licenseFileFound = null;
-
-    if (fs.existsSync(dir)) {
-      const files = fs.readdirSync(dir);
-      const licFile = files.find(f => /^(licen[sc]e|copying|notice)(\.|$)/i.test(f));
-      if (licFile) {
-        licenseFileFound = licFile;
-        try {
-          licenseText = fs.readFileSync(path.join(dir, licFile), 'utf8').trim();
-        } catch {}
-      }
-    }
-
-    const declaredLicense = meta.license || (meta.licenses && meta.licenses[0]?.type) || 'UNKNOWN';
-
-    // If no physical license file, use canonical template
-    if (!licenseText) {
-      if (CANONICAL_LICENSES[declaredLicense]) {
-        licenseText = `${CANONICAL_LICENSES[declaredLicense]}\n\n(Declared license in package.json: ${declaredLicense})`;
-      } else {
-        licenseText = `Licensed under ${declaredLicense}. See upstream package repository for full details.`;
-      }
-    }
-
-    pkgs.push({
-      name,
-      version: meta.version || 'unknown',
-      license: declaredLicense,
-      licenseFile: licenseFileFound,
-      licenseText
-    });
+  if (manifest.reference_lockfile_sha256 !== lockSha) {
+    throw new Error('MANIFEST.json is stale: package-lock.json changed. Run scripts/verify-npm-notices.js --update.');
+  }
+  const manifestByPath = new Map((manifest.packages || []).map((entry) => [entry.package_path, entry]));
+  const lockEntries = Object.entries(lock.packages || {}).filter(([key]) => key !== '');
+  if (lockEntries.length !== manifest.packages.length) {
+    throw new Error(`MANIFEST.json lists ${manifest.packages.length} packages but package-lock.json has ${lockEntries.length}.`);
   }
 
-  // Sort alphabetically
-  pkgs.sort((a, b) => a.name.localeCompare(b.name));
+  const packages = lockEntries.map(([packagePath, meta]) => {
+    const record = manifestByPath.get(packagePath);
+    if (!record) throw new Error(`MANIFEST.json is missing ${packagePath}.`);
+    const verification = record.upstream_verification;
+    if (!verification) throw new Error(`MANIFEST.json has no upstream verification for ${packagePath}.`);
+    if (!['verified_upstream_tarball', 'metadata_only_no_license_file'].includes(verification.status)) {
+      throw new Error(`${packagePath}: verification status is ${verification.status}; refusing to generate notices.`);
+    }
+    const name = packagePath.replace(/^node_modules\//, '');
+    const dir = path.join(ROOT, 'third-party', 'licenses', 'npm', name, record.version);
+    const files = (verification.files || []).map((file) => {
+      const absolute = path.join(dir, file.stored);
+      if (!fs.existsSync(absolute)) throw new Error(`Missing stored notice ${absolute}`);
+      const data = fs.readFileSync(absolute);
+      if (sha256(data) !== file.sha256) throw new Error(`Stored notice hash mismatch for ${absolute}`);
+      return { ...file, text: data.toString('utf8') };
+    });
+    const declared = meta.license || record.declared_license || 'UNKNOWN';
+    const evaluation = evaluatePackage(name, declared);
+    const status = verification.status === 'verified_upstream_tarball'
+      ? 'VERIFIED_UPSTREAM'
+      : 'REVIEW_REQUIRED_METADATA_ONLY';
+    return {
+      name,
+      packagePath,
+      version: record.version || meta.version,
+      declared,
+      scope: meta.dev ? 'development' : meta.optional ? 'runtime-optional' : 'runtime',
+      evaluation,
+      status,
+      files,
+      tarballSha: verification.tarball_sha256,
+      verifiedAt: verification.verified_at,
+    };
+  });
 
-  // Build document
+  const shipped = packages.filter((pkg) => pkg.scope !== 'development');
+  const development = packages.filter((pkg) => pkg.scope === 'development');
+  const verifiedCount = packages.filter((pkg) => pkg.status === 'VERIFIED_UPSTREAM').length;
+  const metadataOnly = packages.filter((pkg) => pkg.status !== 'VERIFIED_UPSTREAM');
+  const runtimeMetadataOnly = metadataOnly.filter((pkg) => pkg.scope !== 'development');
+  const nativeExceptions = native.components.filter((component) => evaluateExpression(component.license_expression).exceptions.length > 0);
+  const nativePermissive = native.components.length - nativeExceptions.length;
+
   const lines = [];
   lines.push('# TileO Third-Party Software Notices and Licenses');
   lines.push('');
-  lines.push('This document contains third-party software notices and license agreements for dependencies utilized in TileO.');
+  lines.push('This document is generated from committed, exact-version license evidence. It is the redistribution notice set for TileO third-party components.');
+  lines.push('');
+  lines.push('> **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.');
+  lines.push('');
+  lines.push(`Generated: ${new Date().toISOString().slice(0, 10)} · Lockfile SHA-256: \`${lockSha}\``);
+  lines.push('');
+  lines.push('## Verification summary');
+  lines.push('');
+  lines.push('| Evidence set | Count | Method |');
+  lines.push('| --- | ---: | --- |');
+  lines.push(`| npm entries in \`package-lock.json\` | ${packages.length} | Direct, transitive, development and platform-optional entries |`);
+  lines.push(`| npm notices verified from exact tarball | ${verifiedCount} | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |`);
+  lines.push(`| npm metadata-only entries | ${metadataOnly.length} | Tarball has no license file; only \`package.json\` metadata retained |`);
+  lines.push(`| npm runtime entries marked metadata-only | ${runtimeMetadataOnly.length} | Review required before strict release |`);
+  lines.push(`| Native runtime components | ${native.components.length} | Pinned upstream license corpus |`);
+  lines.push(`| Native permissive expressions | ${nativePermissive} | Policy evaluation by \`scripts/lib/license-policy.js\` |`);
+  lines.push(`| Native documented exceptions | ${nativeExceptions.length} | GCC runtime exception + certificate data |`);
+  lines.push('');
+  lines.push('**Permissive Migration Objective**: TileO targets a distribution whose shipped third-party software is limited to verified permissive licenses. This objective is tracked per component. Components marked `REVIEW_REQUIRED_METADATA_ONLY` or `LEGAL_EXCEPTION_RECORDED` are not represented as permissive passes.');
+  lines.push('');
+  lines.push('---');
   lines.push('');
   lines.push('## Primary Application License');
   lines.push('');
-  lines.push('- **TileO Application**: Copyright (c) 2026 TileO Contributors. Licensed under **GNU Affero General Public License v3.0 only (AGPL-3.0-only)**.');
-  lines.push('- **Permissive Migration Objective**: All third-party software components bundled or dynamically linked in release artifacts have been migrated and audited to ensure they are distributed under strictly **permissive** open-source licenses (MIT, BSD-2-Clause, BSD-3-Clause, Apache-2.0, ISC, 0BSD, Zlib, Public Domain).');
+  lines.push('- **TileO Application**: Copyright (c) 2026 TileO Contributors. Licensed under **GNU Affero General Public License v3.0 only (AGPL-3.0-only)**. See [`LICENSE`](LICENSE).');
+  lines.push('- The AGPL-3.0-only license applies to TileO source code identified as such. Third-party components remain under their own licenses and notices.');
   lines.push('');
   lines.push('---');
   lines.push('');
   lines.push('## Dual-License / Multi-License Elections');
   lines.push('');
-  lines.push('For dependencies distributed under dual or multiple alternative licenses, the TileO project formally exercises and elects the following permissive license options:');
+  lines.push('Where upstream explicitly offers alternative licenses, TileO elects the following permissive option. Elections are valid only for the exact versions listed.');
   lines.push('');
   lines.push('| Package | Upstream Offered Options | Formal TileO Election | Rationale |');
   lines.push('|---|---|---|---|');
-  lines.push('| `jszip@3.10.2` | `MIT OR GPL-3.0-or-later` | **MIT** | Elects permissive MIT terms; copyleft GPL terms are not selected or exercised. |');
-  lines.push('| `expand-template@2.0.3` | `MIT OR WTFPL` | **MIT** | Elects standard permissive MIT terms. |');
-  lines.push('| `rc@1.2.8` | `BSD-2-Clause OR MIT OR Apache-2.0` | **BSD-2-Clause** | Elects standard permissive BSD-2-Clause terms. |');
-  lines.push('| `@maplibre/mlt@1.3.0` | `MIT OR Apache-2.0` | **MIT** | Elects standard permissive MIT terms. |');
+  for (const [name, election] of ELECTIONS) {
+    const pkg = packages.find((candidate) => candidate.name === name);
+    const version = pkg ? pkg.version : 'version in lockfile';
+    lines.push(`| \`${name}@${version}\` | \`${election.offered}\` | **${election.license}** | Elects the permissive terms; copyleft alternatives are not selected or exercised. |`);
+  }
+  lines.push('');
+  lines.push('---');
+  lines.push('');
+  lines.push('## Native Runtime Components');
+  lines.push('');
+  lines.push('The release target is a minimal scratch/musl image. The table below is the declared native component set. The final image audit must prove the exact versions and ELF closure; see [`third-party/NATIVE_COMPONENTS.md`](third-party/NATIVE_COMPONENTS.md).');
+  lines.push('');
+  lines.push('| Component | Version | License expression | Linkage | Evidence |');
+  lines.push('| --- | --- | --- | --- | --- |');
+  for (const component of native.components) {
+    const evaluation = evaluateExpression(component.license_expression);
+    const review = evaluation.exceptions.length > 0 ? ` **(${component.review || 'REVIEW REQUIRED'})**` : '';
+    const files = component.license_files.map((file) => `\`${path.relative(ROOT, path.join(ROOT, 'third-party', 'licenses', 'native', component.id, file.file)).replaceAll('\\', '/')}\``).join('<br>');
+    lines.push(`| ${component.name} | ${component.version} | \`${component.license_expression}\`${review} | ${component.linkage} | ${files} |`);
+  }
+  lines.push('');
+  lines.push('### Documented Exceptions');
+  lines.push('');
+  lines.push('These are **not** permissive licenses and must be approved explicitly before a strict permissive-only claim:');
+  lines.push('');
+  for (const component of nativeExceptions) {
+    lines.push(`- **${component.name} ${component.version}** — \`${component.license_expression}\`. ${component.notes || ''}`);
+  }
+  lines.push('');
+  lines.push('The GCC runtime exception permits distributing `libstdc++`/`libgcc` with independent programs. The CA bundle is data-scope MPL-2.0 and is not linked into TileO code. Both require a recorded human decision; neither is silently counted as permissive.');
   lines.push('');
   lines.push('---');
   lines.push('');
@@ -177,56 +186,80 @@ function main() {
   lines.push('');
   lines.push('---');
   lines.push('');
-  lines.push('## Native System Libraries & Executables (Container Artifacts)');
+  lines.push('## npm License Inventory');
   lines.push('');
-  lines.push('The production minimal scratch container (`tileo:min-musl`) incorporates the following native C/C++ libraries and binaries:');
+  lines.push('Each entry names the exact locked version, the recorded license expression, the verification state and the SHA-256 of the stored upstream notice. Development-only entries are not shipped in the runtime image; platform-optional entries are shipped only on matching platforms.');
   lines.push('');
-  lines.push('| Component | Version | License | Upstream Project / Notice Location |');
-  lines.push('|---|---|---|---|');
-  lines.push('| **Musl C Library** | 1.2.5 | MIT | Standard C runtime for Alpine Linux |');
-  lines.push('| **GDAL** (Restricted Build) | 3.11.4 | MIT / X11-style | OSGeo / `/usr/local/share/gdal/LICENSE.TXT` |');
-  lines.push('| **PROJ** | 9.6.2 | MIT | OSGeo / `/usr/local/share/proj/` |');
-  lines.push('| **Tippecanoe** | 2.79.0 | BSD-2-Clause | Felt / `/usr/local/share/tippecanoe-notices/` |');
-  lines.push('| **SQLite** | 3.48.0 | Public Domain / Blessing | sqlite.org |');
-  lines.push('| **libcurl** | 8.12.1 | curl license (MIT/X-derivative) | curl.se |');
-  lines.push('| **libpng** | 1.6.47 | libpng License (Permissive) | libpng.org |');
-  lines.push('| **libjpeg-turbo** | 3.1.0 | IJG / BSD-3 / zlib | libjpeg-turbo.org |');
-  lines.push('| **libwebp** | 1.5.0 | BSD-3-Clause | Google WebP |');
-  lines.push('| **zlib** | 1.3.1 | zlib License (Permissive) | zlib.net |');
-  lines.push('| **expat** | 2.6.4 | MIT | libexpat.github.io |');
-  lines.push('| **openjpeg** | 2.5.3 | BSD-2-Clause | uclouvain.github.io/openjpeg |');
-  lines.push('');
-  lines.push('### Residual Copyleft / Caveats in Minimal Container Spike');
-  lines.push('- **`libidn2` (2.3.8)** and **`libunistring` (1.4.2)**: Licensed under `GPL-2.0+ OR LGPL-3.0+` dual election. Transitively included in `tileo:min-musl` via Alpine package `libcurl -> libpsl -> libidn2`. Mitigation path for release: compile curl from source with `--without-libpsl`.');
-  lines.push('- **`ca-certificates-bundle`**: Licensed under **MPL-2.0** for public trust certificate data files.');
-  lines.push('');
-  lines.push('---');
-  lines.push('');
-  lines.push('## Complete Inventory of Node.js Runtime Dependencies');
-  lines.push('');
-  lines.push(`Total dependencies audited: **${pkgs.length}**.`);
+  lines.push(`### Runtime and optional entries (${shipped.length})`);
   lines.push('');
 
-  for (const pkg of pkgs) {
-    lines.push(`### ${pkg.name} (${pkg.version})`);
-    lines.push(`- **Declared License**: \`${pkg.license}\``);
-    if (pkg.licenseFile) {
-      lines.push(`- **Notice Source**: \`${pkg.licenseFile}\``);
+  for (const pkg of shipped) {
+    lines.push(`#### ${pkg.name} (${pkg.version})`);
+    lines.push(`- **Declared License**: \`${pkg.declared}\``);
+    lines.push(`- **Scope**: \`${pkg.scope}\``);
+    if (pkg.evaluation.elected) {
+      lines.push(`- **Election**: **${pkg.evaluation.elected}** (upstream: \`${pkg.evaluation.offered}\`)`);
+    }
+    lines.push(`- **Verification**: \`${pkg.status}\`${pkg.tarballSha ? ` · tarball SHA-256 \`${pkg.tarballSha}\`` : ''}`);
+    if (pkg.files.length === 0) {
+      lines.push('- **Notice**: no upstream notice file exists in the exact tarball; this entry requires review.');
     } else {
-      lines.push(`- **Notice Source**: Declared package metadata`);
+      for (const file of pkg.files) {
+        const relative = path.relative(ROOT, path.join(ROOT, 'third-party', 'licenses', 'npm', pkg.name, pkg.version, file.stored)).replaceAll('\\', '/');
+        lines.push(`- **Notice**: [\`${relative}\`](${relative}) · SHA-256 \`${file.sha256}\``);
+      }
     }
     lines.push('');
-    lines.push('```text');
-    lines.push(pkg.licenseText);
-    lines.push('```');
-    lines.push('');
+    for (const file of pkg.files) {
+      lines.push(fence(file.text));
+      lines.push('');
+    }
   }
+
+  lines.push(`### Development-only entries (${development.length})`);
+  lines.push('');
+  lines.push('These entries are part of the source build and test toolchain, not the runtime image. They are retained for reproducible source compliance.');
+  lines.push('');
+  for (const pkg of development) {
+    lines.push(`#### ${pkg.name} (${pkg.version})`);
+    lines.push(`- **Declared License**: \`${pkg.declared}\``);
+    lines.push(`- **Verification**: \`${pkg.status}\``);
+    for (const file of pkg.files) {
+      const relative = path.relative(ROOT, path.join(ROOT, 'third-party', 'licenses', 'npm', pkg.name, pkg.version, file.stored)).replaceAll('\\', '/');
+      lines.push(`- **Notice**: [\`${relative}\`](${relative}) · SHA-256 \`${file.sha256}\``);
+    }
+    lines.push('');
+    for (const file of pkg.files) {
+      lines.push(fence(file.text));
+      lines.push('');
+    }
+  }
+
+  lines.push('---');
+  lines.push('');
+  lines.push('## Evidence Files');
+  lines.push('');
+  lines.push('- [`third-party/MANIFEST.json`](third-party/MANIFEST.json) — per-package tarball hashes and extracted notice hashes.');
+  lines.push('- [`third-party/npm-upstream-verification.csv`](third-party/npm-upstream-verification.csv) — machine-readable npm verification table.');
+  lines.push('- [`third-party/native/components.json`](third-party/native/components.json) — native component declarations and license hashes.');
+  lines.push('- [`third-party/native-components.csv`](third-party/native-components.csv) — machine-readable native component table.');
+  lines.push('- [`third-party/licenses/`](third-party/licenses/) — captured upstream license texts (npm, native, assets).');
+  lines.push('');
+  lines.push('Re-verify offline with `node scripts/verify-npm-notices.js` and `node scripts/verify-native-licenses.js`. Refresh evidence only with `--update`, then review the diff before committing.');
+  lines.push('');
+  lines.push('> These notices document the stated source and artifact evidence at generation time. They are not a certification of every current platform or release image. For installation and test steps see [Installation](docs/INSTALLATION.md), [Testing](docs/TESTING.md), and [Release Process](docs/RELEASE_PROCESS.md).');
+  lines.push('');
 
   const output = lines.join('\n');
   fs.writeFileSync(OUTPUT_FILE, output, 'utf8');
-  fs.mkdirSync(path.dirname(BASELINE_OUTPUT), { recursive: true });
-  fs.writeFileSync(BASELINE_OUTPUT, output, 'utf8');
-  console.log(`Generated ${OUTPUT_FILE} (${pkgs.length} packages, ${output.length} bytes)`);
+  if (writeBaseline) {
+    fs.mkdirSync(path.dirname(BASELINE_FILE), { recursive: true });
+    fs.writeFileSync(BASELINE_FILE, output, 'utf8');
+  }
+  console.log(`Generated ${OUTPUT_FILE} (${packages.length} npm entries, ${native.components.length} native components, ${formatBytes(Buffer.byteLength(output))}).`);
+  if (runtimeMetadataOnly.length > 0) {
+    console.warn(`Review required: ${runtimeMetadataOnly.length} runtime npm entries have metadata-only notice evidence.`);
+  }
 }
 
 main();

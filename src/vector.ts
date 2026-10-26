@@ -10,6 +10,7 @@ import { JobError, type Options } from './types.js';
 import { config } from './config.js';
 import { processVectorBatches, streamVectorBatches, type StreamBatchResult } from './vector-batch.js';
 import { vectorAdapter } from './vector-adapter.js';
+import { writeVectorMbtiles } from './vector-mvt.js';
 
 export const DENSITY_DEFAULTS = { maxTileBytes: 500000, maxTileFeatures: 200000 } as const;
 // Sparse layers can afford roomier tiles so tippecanoe never thins data that
@@ -359,23 +360,16 @@ export async function vector(input: string, output: string, scratch: string, ins
     const file = await ensureNormalized();
     const started = Date.now();
     try {
-    progress('Vector: generating vector tiles with GDAL ogr2ogr', 45);
-    const tempDb = join(scratch, 'gdal_temp.db');
-    // Match the GDAL tile cap to the tippecanoe budget so the fallback engine
-    // thins the same way instead of silently allowing 5 MB tiles.
-    const plan = resolveVectorPlan(inspection, options);
-    const gdalArgs = [
-      '-f', 'MBTiles',
-      '-dsco', `MINZOOM=${options.minZoom}`,
-      '-dsco', `MAXZOOM=${options.maxZoom}`,
-      '-dsco', `TEMPORARY_DB=${tempDb}`,
-      '-dsco', 'COMPRESS=YES',
-      '-dsco', `MAX_SIZE=${plan.maxTileBytes}`,
-      output,
-      file,
-    ];
-      await run('ogr2ogr', gdalArgs, execution);
-      progress('Vector: tiles generated with GDAL', 85);
+      // GDAL's MBTiles vector writer requires GEOS (copyleft), which is not in
+      // the permissive runtime. Normalize with GDAL, then write MVT tiles with
+      // the permissive Node writer. Budgets match the Tippecanoe plan so the
+      // fallback thins instead of silently allowing oversized tiles.
+      const plan = resolveVectorPlan(inspection, options);
+      const stats = await writeVectorMbtiles(file, output, options, plan, execution, progress);
+      if (summary.featureCount === null) summary.featureCount = stats.featureCount;
+      if (stats.droppedFeatureIds > 0) progress(`Vector: ${stats.droppedFeatureIds.toLocaleString()} non-numeric feature ids were not encodable in MVT`, 84);
+      if (stats.oversizedTiles > 0) progress(`Vector: ${stats.oversizedTiles.toLocaleString()} single-feature tiles exceed the byte budget`, 84);
+      progress('Vector: tiles generated with permissive MVT writer', 85);
     } finally {
       summary.tileMs += Date.now() - started;
     }

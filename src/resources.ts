@@ -1,4 +1,4 @@
-import { readdir, stat, statfs } from 'node:fs/promises';
+import { readdir, readFile, stat, statfs } from 'node:fs/promises';
 import { join } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -41,6 +41,39 @@ export async function killProcessTree(pid: number | undefined, signal: NodeJS.Si
 // Best-effort aggregate RSS of a process tree in bytes. Native sampling is
 // advisory only; the container hard limit remains the production boundary.
 // Returns null when the process is gone or sampling fails.
+export interface ProcessRow { pid: number; ppid: number; rssBytes: number }
+
+// Parses the two fields TileO needs from /proc/<pid>/status. VmRSS is in kB and
+// is page-size independent, unlike statm's resident page count.
+export function parseProcStatus(text: string): { ppid: number; rssBytes: number } | null {
+  const ppid = /^PPid:\s+(\d+)/m.exec(text);
+  if (!ppid) return null;
+  const rss = /^VmRSS:\s+(\d+)\s+kB/m.exec(text);
+  return { ppid: Number(ppid[1]), rssBytes: rss ? Number(rss[1]) * 1024 : 0 };
+}
+
+export function sumProcessTree(rows: readonly ProcessRow[], pid: number): number | null {
+  const byPid = new Map(rows.map(row => [row.pid, row]));
+  if (!byPid.has(pid)) return null;
+  const children = new Map<number, number[]>();
+  for (const row of rows) {
+    const list = children.get(row.ppid) ?? [];
+    list.push(row.pid);
+    children.set(row.ppid, list);
+  }
+  const seen = new Set<number>([pid]);
+  const queue = [pid];
+  let total = 0;
+  while (queue.length > 0) {
+    const current = queue.pop()!;
+    total += byPid.get(current)?.rssBytes ?? 0;
+    for (const child of children.get(current) ?? []) {
+      if (!seen.has(child)) { seen.add(child); queue.push(child); }
+    }
+  }
+  return total;
+}
+
 export async function processTreeMemoryBytes(pid: number | undefined): Promise<number | null> {
   if (!pid) return null;
   try {
@@ -52,39 +85,17 @@ export async function processTreeMemoryBytes(pid: number | undefined): Promise<n
       const bytes = Number(stdout.trim());
       return Number.isFinite(bytes) && bytes > 0 ? bytes : null;
     }
-    // POSIX: sum RSS of pid plus all descendants via a single ps snapshot.
-    // Falls back to the root RSS when the table cannot be parsed.
-    const { stdout } = await execFileAsync('ps', ['-eo', 'pid=,ppid=,rss='], { timeout: 5000, maxBuffer: 1 << 20 });
-    const rows = stdout.split('\n').map(line => {
-      const parts = line.trim().split(/\s+/);
-      if (parts.length < 3) return null;
-      const [cpid, ppid, rss] = parts.map(Number);
-      if (!Number.isInteger(cpid) || !Number.isInteger(ppid) || !Number.isFinite(rss)) return null;
-      return { cpid: cpid!, ppid: ppid!, rss: rss! };
-    }).filter((r): r is { cpid: number; ppid: number; rss: number } => r !== null);
-    if (rows.length === 0) return null;
-    const children = new Map<number, number[]>();
-    for (const row of rows) {
-      const list = children.get(row.ppid) ?? [];
-      list.push(row.cpid);
-      children.set(row.ppid, list);
-    }
-    const rssByPid = new Map(rows.map(r => [r.cpid, r.rss]));
-    const seen = new Set<number>([pid]);
-    const queue = [pid];
-    let totalKb = 0;
-    while (queue.length > 0) {
-      const current = queue.pop()!;
-      const rss = rssByPid.get(current);
-      if (rss !== undefined) totalKb += rss;
-      else if (current !== pid) continue;
-      for (const kid of children.get(current) ?? []) {
-        if (!seen.has(kid)) { seen.add(kid); queue.push(kid); }
-      }
-    }
-    // Root vanished and no descendant matched: process is gone.
-    if (totalKb === 0 && !rssByPid.has(pid)) return null;
-    return totalKb * 1024;
+    // Linux: read one /proc snapshot. This replaces `ps` and removes procps
+    // from the runtime artifact. Other POSIX platforms are out of scope.
+    if (process.platform !== 'linux') return null;
+    const entries = await readdir('/proc', { withFileTypes: true });
+    const rows = (await Promise.all(entries.filter(entry => entry.isDirectory() && /^\d+$/.test(entry.name)).map(async entry => {
+      try {
+        const status = parseProcStatus(await readFile(`/proc/${entry.name}/status`, 'utf8'));
+        return status ? { pid: Number(entry.name), ppid: status.ppid, rssBytes: status.rssBytes } : null;
+      } catch { return null; }
+    }))).filter((row): row is ProcessRow => row !== null);
+    return sumProcessTree(rows, pid);
   } catch {
     return null;
   }

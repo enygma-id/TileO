@@ -1,0 +1,623 @@
+{
+  "schema": "tileo-native-components@1",
+  "description": "Runtime components distributed in the TileO container image. Build-only toolchain components are out of scope for the image artifact and are tracked separately. Populate hashes with `node scripts/verify-native-licenses.js --update`.",
+  "verified_at": "2026-10-26",
+  "components": [
+    {
+      "id": "musl",
+      "name": "Musl C Library",
+      "version": "1.2.5",
+      "license_expression": "MIT",
+      "scope": "runtime",
+      "linkage": "static",
+      "distribution": "Node.js musl runtime and statically linked TileO helpers",
+      "upstream": "https://musl.libc.org/",
+      "license_files": [
+        {
+          "upstream": "COPYRIGHT",
+          "url": "https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.5.tar.gz",
+          "archive_path": "musl-1.2.5/COPYRIGHT",
+          "file": "COPYING.txt",
+          "sha256": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af",
+          "bytes": 6204,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "node",
+      "name": "Node.js",
+      "version": "24.13.1",
+      "license_expression": "MIT",
+      "scope": "runtime",
+      "linkage": "executable",
+      "distribution": "Node.js 24.13.1 linux-musl x64 runtime",
+      "upstream": "https://nodejs.org/",
+      "notes": "The upstream LICENSE file also contains the license texts for Node.js bundled dependencies (V8, OpenSSL, ICU, brotli, zlib and others).",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/nodejs/node/v24.13.1/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "9ef8d3fa97d90d93543ee9e2b71394de59c09d8057625fd355d45303243527a3",
+          "bytes": 145496,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "icu",
+      "name": "ICU",
+      "version": "77.1",
+      "license_expression": "Unicode-3.0",
+      "scope": "runtime",
+      "linkage": "static",
+      "distribution": "Bundled in the Node.js runtime",
+      "upstream": "https://icu.unicode.org/",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/unicode-org/icu/release-77-1/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "451167c55c0fa447cc2d5632714f5e3c567fe4f1e1badefab2c1333852198aca",
+          "bytes": 26487,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "gdal",
+      "name": "GDAL",
+      "version": "3.11.4",
+      "license_expression": "MIT",
+      "scope": "runtime",
+      "linkage": "shared-library-and-executable",
+      "distribution": "libgdal, ogr2ogr, gdalinfo and enabled drivers",
+      "upstream": "https://gdal.org/",
+      "license_files": [
+        {
+          "upstream": "LICENSE.TXT",
+          "url": "https://raw.githubusercontent.com/OSGeo/gdal/v3.11.4/LICENSE.TXT",
+          "file": "LICENSE.txt",
+          "sha256": "1dae3468e81d00da56e2936f74d33b8b3ad09d726437f19ce209a5dabea41f77",
+          "bytes": 21841,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "proj",
+      "name": "PROJ",
+      "version": "9.6.2",
+      "license_expression": "MIT",
+      "scope": "runtime",
+      "linkage": "shared-library-and-data",
+      "distribution": "libproj and proj.db coordinate operation database",
+      "upstream": "https://proj.org/",
+      "license_files": [
+        {
+          "upstream": "COPYING",
+          "url": "https://raw.githubusercontent.com/OSGeo/PROJ/9.6.2/COPYING",
+          "file": "COPYING.txt",
+          "sha256": "6a8f30793e877d32e3f88b972f0970a051a3b5a26cd057d3993cb51e21c43319",
+          "bytes": 1784,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "tippecanoe",
+      "name": "Tippecanoe",
+      "version": "2.79.0",
+      "license_expression": "BSD-2-Clause",
+      "scope": "runtime",
+      "linkage": "executable",
+      "distribution": "tippecanoe and tile-join executables",
+      "upstream": "https://github.com/felt/tippecanoe",
+      "license_files": [
+        {
+          "upstream": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/felt/tippecanoe/2.79.0/LICENSE.md",
+          "file": "LICENSE.txt",
+          "sha256": "b2bf0673f687af82bd8b6b442fcf64631bcca7614f5ac7a752bb9676bf6b57c4",
+          "bytes": 1329,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "tippecanoe-protozero",
+      "name": "protozero (Tippecanoe)",
+      "version": "1.7.1",
+      "license_expression": "BSD-2-Clause",
+      "scope": "runtime",
+      "linkage": "static",
+      "distribution": "Compiled into the Tippecanoe executable",
+      "upstream": "https://github.com/mapbox/protozero",
+      "license_files": [
+        {
+          "upstream": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/mapbox/protozero/master/LICENSE.md",
+          "file": "LICENSE.txt",
+          "sha256": "254c0e9f18d261bfc55ff277cf12e3c1ca25839d56af17fba65d142396021466",
+          "bytes": 1297,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "tippecanoe-clipper2",
+      "name": "Clipper2 (Tippecanoe)",
+      "version": "1.5.4",
+      "license_expression": "BSL-1.0",
+      "scope": "runtime",
+      "linkage": "static",
+      "distribution": "Compiled into the Tippecanoe executable",
+      "upstream": "https://github.com/AngusJohnson/Clipper2",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/AngusJohnson/Clipper2/main/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566",
+          "bytes": 1338,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "tippecanoe-geometry",
+      "name": "mapbox geometry.hpp (Tippecanoe)",
+      "version": "2.0.3",
+      "license_expression": "ISC",
+      "scope": "runtime",
+      "linkage": "static",
+      "distribution": "Compiled into the Tippecanoe executable",
+      "upstream": "https://github.com/mapbox/geometry.hpp",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/mapbox/geometry.hpp/master/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "44b7f71c4d7f3da85e5e6a5d0cfa6942055d326a24f4d60a3728ebed26ea2b9d",
+          "bytes": 724,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "tippecanoe-variant",
+      "name": "mapbox variant (Tippecanoe)",
+      "version": "2.0.0",
+      "license_expression": "BSD-2-Clause",
+      "scope": "runtime",
+      "linkage": "static",
+      "distribution": "Compiled into the Tippecanoe executable",
+      "upstream": "https://github.com/mapbox/variant",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/mapbox/variant/master/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "7686f81e580cd6774f609a2d8a41b2cebdf79bc30e6b46c3efff5a656158981c",
+          "bytes": 1460,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "sqlite",
+      "name": "SQLite",
+      "version": "3.48.0",
+      "license_expression": "Public-Domain",
+      "scope": "runtime",
+      "linkage": "static",
+      "distribution": "Compiled into GDAL and better-sqlite3",
+      "upstream": "https://sqlite.org/",
+      "license_files": [
+        {
+          "upstream": "copyright.html",
+          "url": "https://sqlite.org/copyright.html",
+          "file": "COPYRIGHT.html",
+          "sha256": "44ca9f793055c8e32fc65f65a4f5bcf813a33f5bdaaa084067dd617a4ed3cc70",
+          "bytes": 8351,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "curl",
+      "name": "libcurl",
+      "version": "8.14.1",
+      "license_expression": "curl",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libcurl linked into GDAL for HTTP/HTTPS access",
+      "upstream": "https://curl.se/",
+      "license_files": [
+        {
+          "upstream": "COPYING",
+          "url": "https://raw.githubusercontent.com/curl/curl/curl-8_14_1/COPYING",
+          "file": "COPYING.txt",
+          "sha256": "e18f1989333b70044b2adfb7dc2f905d0119dbdcac3bc9f4bc9d540e3a29de5b",
+          "bytes": 1088,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "openssl",
+      "name": "OpenSSL",
+      "version": "3.5.1",
+      "license_expression": "Apache-2.0",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libssl and libcrypto linked into libcurl",
+      "upstream": "https://www.openssl.org/",
+      "license_files": [
+        {
+          "upstream": "LICENSE.txt",
+          "url": "https://raw.githubusercontent.com/openssl/openssl/openssl-3.5.1/LICENSE.txt",
+          "file": "LICENSE.txt",
+          "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a",
+          "bytes": 10175,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "nghttp2",
+      "name": "nghttp2",
+      "version": "1.64.0",
+      "license_expression": "MIT",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libnghttp2 linked into libcurl for HTTP/2",
+      "upstream": "https://nghttp2.org/",
+      "license_files": [
+        {
+          "upstream": "COPYING",
+          "url": "https://raw.githubusercontent.com/nghttp2/nghttp2/v1.64.0/COPYING",
+          "file": "COPYING.txt",
+          "sha256": "6b94f3abc1aabd0c72a7c7d92a77f79dda7c8a0cb3df839a97890b4116a2de2a",
+          "bytes": 1156,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "zlib",
+      "name": "zlib",
+      "version": "1.3.1",
+      "license_expression": "Zlib",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libz linked into GDAL, libpng, libtiff and Node.js",
+      "upstream": "https://zlib.net/",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/madler/zlib/v1.3.1/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "845efc77857d485d91fb3e0b884aaa929368c717ae8186b66fe1ed2495753243",
+          "bytes": 1002,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "libpng",
+      "name": "libpng",
+      "version": "1.6.47",
+      "license_expression": "libpng-2.0",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libpng16 linked into GDAL",
+      "upstream": "https://www.libpng.org/",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/pnggroup/libpng/v1.6.47/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "16d9daaafbf63a31a5bdc91d4600972548fef5aaa1244202393288dbd079c49a",
+          "bytes": 5345,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "libjpeg-turbo",
+      "name": "libjpeg-turbo",
+      "version": "3.1.0",
+      "license_expression": "IJG AND BSD-3-Clause AND Zlib",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libjpeg linked into GDAL",
+      "upstream": "https://libjpeg-turbo.org/",
+      "license_files": [
+        {
+          "upstream": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/libjpeg-turbo/libjpeg-turbo/3.1.0/LICENSE.md",
+          "file": "LICENSE.txt",
+          "sha256": "96f5b328adbb78eeaaec6980d73fd558cb1e4d62560ed615646bc3cf5e532430",
+          "bytes": 5620,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "libwebp",
+      "name": "libwebp",
+      "version": "1.5.0",
+      "license_expression": "BSD-3-Clause",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libwebp linked into GDAL",
+      "upstream": "https://chromium.googlesource.com/webm/libwebp",
+      "license_files": [
+        {
+          "upstream": "COPYING",
+          "url": "https://raw.githubusercontent.com/webmproject/libwebp/v1.5.0/COPYING",
+          "file": "COPYING.txt",
+          "sha256": "5aec868f669e384a22372a4e8a1a6cd7d44c64cd451f960ca69cc170d1e13acf",
+          "bytes": 1496,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "openjpeg",
+      "name": "OpenJPEG",
+      "version": "2.5.3",
+      "license_expression": "BSD-2-Clause",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libopenjp2 linked into GDAL",
+      "upstream": "https://www.openjpeg.org/",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/uclouvain/openjpeg/v2.5.3/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "a6af136f3e15038a666b61f376612a07d9a4e48cb7c01adbf3e33b3f14ab49b6",
+          "bytes": 2112,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "expat",
+      "name": "Expat",
+      "version": "2.6.4",
+      "license_expression": "MIT",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libexpat linked into GDAL",
+      "upstream": "https://libexpat.github.io/",
+      "license_files": [
+        {
+          "upstream": "COPYING",
+          "url": "https://github.com/libexpat/libexpat/releases/download/R_2_6_4/expat-2.6.4.tar.gz",
+          "archive_path": "expat-2.6.4/COPYING",
+          "file": "COPYING.txt",
+          "sha256": "122f2c27000472a201d337b9b31f7eb2b52d091b02857061a8880371612d9534",
+          "bytes": 1144,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "libtiff",
+      "name": "libtiff",
+      "version": "4.7.0",
+      "license_expression": "libtiff",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libtiff linked into GDAL",
+      "upstream": "https://libtiff.gitlab.io/libtiff/",
+      "license_files": [
+        {
+          "upstream": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/libsdl-org/libtiff/v4.7.0/LICENSE.md",
+          "file": "LICENSE.txt",
+          "sha256": "0780558a8bfba0af1160ec1ff11ade4f41c0d7deafd6ecfc796b492a788e380d",
+          "bytes": 1164,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "libgeotiff",
+      "name": "libgeotiff",
+      "version": "1.7.4",
+      "license_expression": "MIT",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libgeotiff linked into GDAL",
+      "upstream": "https://github.com/OSGeo/libgeotiff",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/OSGeo/libgeotiff/1.7.4/libgeotiff/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "a822a731a7ac4ba7d8f18fa0dc29db2e68a5dcfc315b46e4a4c8956720d55d93",
+          "bytes": 3634,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "libdeflate",
+      "name": "libdeflate",
+      "version": "1.23",
+      "license_expression": "MIT",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libdeflate linked into GDAL/libtiff",
+      "upstream": "https://github.com/ebiggers/libdeflate",
+      "license_files": [
+        {
+          "upstream": "COPYING",
+          "url": "https://raw.githubusercontent.com/ebiggers/libdeflate/v1.23/COPYING",
+          "file": "COPYING.txt",
+          "sha256": "4ad69099cb4374836fd27583d9991e2838cd86b6e4666ab26b2d32582c91e73a",
+          "bytes": 1078,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "xz",
+      "name": "XZ Utils",
+      "version": "5.8.1",
+      "license_expression": "0BSD",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "liblzma linked into GDAL",
+      "upstream": "https://tukaani.org/xz/",
+      "license_files": [
+        {
+          "upstream": "COPYING",
+          "url": "https://raw.githubusercontent.com/tukaani-project/xz/v5.8.1/COPYING",
+          "file": "COPYING.txt",
+          "sha256": "616a3ad264ce29b8f1cb97e53037b139d406899ca8d1f799651e17bfa09830b8",
+          "bytes": 3119,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "flatbuffers",
+      "name": "FlatBuffers",
+      "version": "25.2.10",
+      "license_expression": "Apache-2.0",
+      "scope": "runtime",
+      "linkage": "static",
+      "distribution": "Compiled into GDAL FlatGeobuf support",
+      "upstream": "https://google.github.io/flatbuffers/",
+      "license_files": [
+        {
+          "upstream": "LICENSE",
+          "url": "https://raw.githubusercontent.com/google/flatbuffers/v25.2.10/LICENSE",
+          "file": "LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "libstdc++",
+      "name": "GNU Standard C++ Library (libstdc++)",
+      "version": "14.2.0",
+      "license_expression": "GPL-3.0-only WITH GCC-exception-3.1",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libstdc++.so.6 required by GDAL and Tippecanoe",
+      "upstream": "https://gcc.gnu.org/",
+      "notes": "This is a documented exception to the permissive-only objective, covered by the GCC Runtime Library Exception 3.1. The exception permits distribution of the runtime library with independent programs.",
+      "review": "LEGAL_EXCEPTION_REQUIRED",
+      "license_files": [
+        {
+          "upstream": "COPYING3",
+          "url": "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING3",
+          "file": "COPYING3.txt",
+          "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+          "bytes": 35147,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        },
+        {
+          "upstream": "COPYING.RUNTIME",
+          "url": "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING.RUNTIME",
+          "file": "COPYING-RUNTIME.txt",
+          "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+          "bytes": 3324,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "libgcc",
+      "name": "GNU Compiler Collection runtime (libgcc)",
+      "version": "14.2.0",
+      "license_expression": "GPL-3.0-only WITH GCC-exception-3.1",
+      "scope": "runtime",
+      "linkage": "shared-library",
+      "distribution": "libgcc_s.so.1 required by GDAL and Tippecanoe",
+      "upstream": "https://gcc.gnu.org/",
+      "notes": "Same GCC Runtime Library Exception as libstdc++; recorded as a legal exception, not as a permissive license.",
+      "review": "LEGAL_EXCEPTION_REQUIRED",
+      "license_files": [
+        {
+          "upstream": "COPYING3",
+          "url": "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING3",
+          "file": "COPYING3.txt",
+          "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+          "bytes": 35147,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        },
+        {
+          "upstream": "COPYING.RUNTIME",
+          "url": "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING.RUNTIME",
+          "file": "COPYING-RUNTIME.txt",
+          "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74",
+          "bytes": 3324,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    },
+    {
+      "id": "ca-certificates",
+      "name": "Mozilla CA Certificate Bundle",
+      "version": "2025-06-19",
+      "license_expression": "MPL-2.0",
+      "scope": "runtime-data",
+      "linkage": "data",
+      "distribution": "ca-certificates.crt used for TLS validation",
+      "upstream": "https://curl.se/ca/cacert.pem",
+      "notes": "Trust-anchor data redistributed under MPL-2.0. It is not linked code and does not affect the TileO source license; it must be recorded as a data-scope obligation.",
+      "review": "DATA_LICENSE_RECORDED",
+      "license_files": [
+        {
+          "upstream": "MPL-2.0",
+          "url": "https://www.mozilla.org/media/MPL/2.0/index.txt",
+          "file": "MPL-2.0.txt",
+          "sha256": "3f3d9e0024b1921b067d6f7f88deb4a60cbe7a78e76c64e3f1d7fc3b779b9d04",
+          "bytes": 16726,
+          "verified_at": "2026-10-26",
+          "verifier": "scripts/verify-native-licenses.js@1"
+        }
+      ]
+    }
+  ],
+  "verifier": "scripts/verify-native-licenses.js@1"
+}

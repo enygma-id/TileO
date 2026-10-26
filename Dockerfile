@@ -1,39 +1,59 @@
-FROM node:24.13.1-trixie-slim AS gdal
-# Minimal, reproducible GDAL/PROJ profile. Optional drivers and optional external
-# libraries stay OFF so the runtime image contains only what TileO invokes and
-# the input formats TileO accepts. CLI apps: gdalinfo, gdal_translate, gdalwarp,
-# gdaladdo, ogrinfo, ogr2ogr, gdalsrsinfo.
+FROM alpine:3.21 AS gdal
+# Minimal, reproducible GDAL/PROJ profile on musl/Alpine.
+# Custom libcurl built from source with -DCURL_USE_LIBPSL=OFF -DUSE_LIBIDN2=OFF
+# to eliminate copyleft closure (libidn2, libunistring, libpsl).
 ARG GDAL_VERSION=3.11.4
 ARG PROJ_VERSION=9.6.2
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      build-essential cmake ninja-build ca-certificates curl sqlite3 \
-      libsqlite3-dev zlib1g-dev libpng-dev libjpeg62-turbo-dev \
-      libwebp-dev libopenjp2-7-dev libexpat1-dev libflatbuffers-dev \
-      libcurl4-openssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+ARG CURL_VERSION=8.14.1
+RUN apk add --no-cache \
+      build-base cmake ninja ca-certificates curl \
+      sqlite-dev zlib-dev libpng-dev libjpeg-turbo-dev \
+      libwebp-dev openjpeg-dev expat-dev flatbuffers-dev \
+      openssl-dev nghttp2-dev linux-headers
 
-# PROJ is required for reprojection (gdalwarp -t_srs, EPSG lookups).
+# Compile curl without libpsl or libidn2 (100% permissive runtime linkage: OpenSSL + nghttp2 + zlib)
+RUN curl -fsSL "https://curl.se/download/curl-${CURL_VERSION}.tar.gz" -o /tmp/curl.tar.gz \
+    && mkdir -p /tmp/curl && tar -xzf /tmp/curl.tar.gz -C /tmp/curl --strip-components=1 \
+    && cmake -S /tmp/curl -B /tmp/curl/build -G Ninja \
+       -DCMAKE_BUILD_TYPE=Release \
+       -DCMAKE_INSTALL_PREFIX=/usr/local \
+       -DBUILD_STATIC_LIBS=OFF \
+       -DBUILD_CURL_EXE=OFF \
+       -DBUILD_TESTING=OFF \
+       -DCURL_USE_LIBPSL=OFF \
+       -DUSE_LIBIDN2=OFF \
+       -DCURL_USE_OPENSSL=ON \
+       -DUSE_NGHTTP2=ON \
+       -DCURL_ZLIB=ON \
+    && cmake --build /tmp/curl/build --target install \
+    && rm -rf /tmp/curl /tmp/curl.tar.gz
+
+# PROJ 9.6.2 for reprojection and EPSG lookups
 RUN curl -fsSL "https://download.osgeo.org/proj/proj-${PROJ_VERSION}.tar.gz" -o /tmp/proj.tar.gz \
     && mkdir -p /tmp/proj && tar -xzf /tmp/proj.tar.gz -C /tmp/proj --strip-components=1 \
     && cmake -S /tmp/proj -B /tmp/proj/build -G Ninja \
        -DCMAKE_BUILD_TYPE=Release \
        -DCMAKE_INSTALL_PREFIX=/usr/local \
+       -DCMAKE_PREFIX_PATH=/usr/local \
        -DBUILD_TESTING=OFF \
-       -DENABLE_TIFF=OFF \
-       -DENABLE_CURL=OFF \
        -DBUILD_PROJSYNC=OFF \
-    && cmake --build /tmp/proj/build -j"$(nproc)" \
-    && cmake --install /tmp/proj/build \
+       -DENABLE_TIFF=OFF \
+       -DENABLE_CURL=ON \
+       -DSQLITE3_INCLUDE_DIR=/usr/include \
+       -DSQLITE3_LIBRARY=/usr/lib/libsqlite3.so \
+    && cmake --build /tmp/proj/build --target install \
     && rm -rf /tmp/proj /tmp/proj.tar.gz
 
 # GDAL core: MIT-style. Drivers are limited to TileO's documented inputs:
 # rasters (GeoTIFF/COG, ENVI, PNG, JPEG, WebP, JPEG2000, HFA/IMG, VRT, MBTiles,
-# XYZ) and vectors (GeoJSON/Seq, GPKG, FlatGeobuf, ESRI Shapefile, KML, MBTiles).
+# XYZ, Netpbm PNM/PPM/PGM via RAW, AAIGRID) and vectors (GeoJSON/Seq, GPKG, FlatGeobuf,
+# ESRI Shapefile, KML, MBTiles).
 RUN curl -fsSL "https://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz" -o /tmp/gdal.tar.gz \
     && mkdir -p /tmp/gdal && tar -xzf /tmp/gdal.tar.gz -C /tmp/gdal --strip-components=1 \
     && cmake -S /tmp/gdal -B /tmp/gdal/build -G Ninja \
        -DCMAKE_BUILD_TYPE=Release \
        -DCMAKE_INSTALL_PREFIX=/usr/local \
+       -DCMAKE_PREFIX_PATH=/usr/local \
        -DBUILD_TESTING=OFF \
        -DBUILD_PYTHON_BINDINGS=OFF \
        -DBUILD_JAVA_BINDINGS=OFF \
@@ -63,6 +83,8 @@ RUN curl -fsSL "https://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERS
        -DGDAL_ENABLE_DRIVER_VRT=ON \
        -DGDAL_ENABLE_DRIVER_XYZ=ON \
        -DGDAL_ENABLE_DRIVER_MBTILES=ON \
+       -DGDAL_ENABLE_DRIVER_RAW=ON \
+       -DGDAL_ENABLE_DRIVER_AAIGRID=ON \
        -DOGR_ENABLE_DRIVER_GPKG=ON \
        -DOGR_ENABLE_DRIVER_GEOJSON=ON \
        -DOGR_ENABLE_DRIVER_GEOJSONSEQ=ON \
@@ -73,14 +95,24 @@ RUN curl -fsSL "https://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERS
        -DOGR_ENABLE_DRIVER_MVT=ON \
        -DGDAL_ENABLE_DRIVER_WMS=OFF \
        -DGDAL_ENABLE_DRIVER_WMTS=OFF \
-    && cmake --build /tmp/gdal/build -j"$(nproc)" \
-    && cmake --install /tmp/gdal/build \
+    && cmake --build /tmp/gdal/build --target install \
     && rm -rf /tmp/gdal /tmp/gdal.tar.gz
 
-FROM node:24.13.1-trixie-slim AS build
-RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ git libsqlite3-dev zlib1g-dev ca-certificates && rm -rf /var/lib/apt/lists/*
+FROM alpine:3.21 AS build
 ARG TIPPECANOE_VERSION=2.79.0
-RUN git clone --depth 1 --branch ${TIPPECANOE_VERSION} https://github.com/felt/tippecanoe.git /tmp/tippecanoe && make -C /tmp/tippecanoe -j2 && make -C /tmp/tippecanoe install
+ARG NODE_VERSION=24.13.1
+RUN apk add --no-cache build-base python3 make g++ git bash sqlite-dev zlib-dev ca-certificates curl
+
+# Install Node.js linux-x64-musl into /usr/local
+RUN curl -fsSL "https://unofficial-builds.nodejs.org/download/release/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64-musl.tar.xz" -o /tmp/node.tar.xz \
+    && tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 \
+    && rm /tmp/node.tar.xz
+
+# Tippecanoe vector tile compressor
+RUN git clone --depth 1 --branch ${TIPPECANOE_VERSION} https://github.com/felt/tippecanoe.git /tmp/tippecanoe \
+    && make -C /tmp/tippecanoe -j$(nproc) \
+    && make -C /tmp/tippecanoe install
+
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
@@ -89,33 +121,102 @@ COPY src ./src
 COPY scripts ./scripts
 RUN npm run build && npm prune --omit=dev
 
-FROM node:24.13.1-trixie-slim
-# Runtime libraries required by the pinned GDAL/PROJ build. No Debian gdal-bin.
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      libsqlite3-0 zlib1g libpng16-16 libjpeg62-turbo libwebp7 \
-      libopenjp2-7 libexpat1 libstdc++6 libcurl4t64 procps ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-COPY --from=gdal /usr/local/bin /usr/local/bin
-COPY --from=gdal /usr/local/lib /usr/local/lib
-COPY --from=gdal /usr/local/share/gdal /usr/local/share/gdal
-COPY --from=gdal /usr/local/share/proj /usr/local/share/proj
-RUN ldconfig
-COPY --from=build /usr/local/bin/tippecanoe* /usr/local/bin/
-# Tippecanoe upstream notices (BSD-2-Clause core and permissive bundled
-# code), preserved into the runtime artifact for redistribution.
-COPY --from=build /tmp/tippecanoe/LICENSE.md /usr/local/share/tippecanoe-notices/tippecanoe-LICENSE.md
-COPY --from=build /tmp/tippecanoe/clipper2/LICENSE /usr/local/share/tippecanoe-notices/clipper2-LICENSE.txt
-COPY --from=build /tmp/tippecanoe/mapbox/LICENSE-geometry.hpp /usr/local/share/tippecanoe-notices/mapbox-geometry.hpp-ISC.txt
-COPY --from=build /tmp/tippecanoe/mapbox/LICENSE-variant /usr/local/share/tippecanoe-notices/mapbox-variant-BSD-2.txt
+FROM alpine:3.21 AS assemble-rootfs
+RUN apk add --no-cache \
+      libstdc++ libgcc sqlite-libs zlib openssl nghttp2-libs \
+      expat openjpeg libwebp libsharpyuv libpng libjpeg-turbo ca-certificates
+
+RUN mkdir -p /rootfs/lib \
+             /rootfs/usr/lib \
+             /rootfs/usr/local/lib \
+             /rootfs/usr/local/bin \
+             /rootfs/usr/local/share \
+             /rootfs/etc/ssl/certs \
+             /rootfs/tmp \
+             /rootfs/data \
+             /rootfs/app
+
+# Dynamic linker and library search path
+RUN cp -P /lib/ld-musl-x86_64.so.1 /rootfs/lib/ \
+    && ln -sf ld-musl-x86_64.so.1 /rootfs/lib/libc.musl-x86_64.so.1 \
+    && echo "/usr/local/lib:/usr/lib:/lib" > /rootfs/etc/ld-musl-x86_64.path
+
+# Copy system shared libraries from alpine packages (all permissive / GCC Exception / public domain)
+RUN cp -P /usr/lib/libstdc++.so* \
+          /usr/lib/libgcc_s.so* \
+          /usr/lib/libsqlite3.so* \
+          /usr/lib/libz.so* \
+          /usr/lib/libssl.so* \
+          /usr/lib/libcrypto.so* \
+          /usr/lib/libnghttp2.so* \
+          /usr/lib/libexpat.so* \
+          /usr/lib/libopenjp2.so* \
+          /usr/lib/libwebp.so* \
+          /usr/lib/libsharpyuv.so* \
+          /usr/lib/libpng16.so* \
+          /usr/lib/libjpeg.so* \
+          /rootfs/usr/lib/
+
+# Copy custom built libraries from gdal stage
+COPY --from=gdal /usr/local/lib/libcurl.so* /rootfs/usr/local/lib/
+COPY --from=gdal /usr/local/lib/libproj.so* /rootfs/usr/local/lib/
+COPY --from=gdal /usr/local/lib/libgdal.so* /rootfs/usr/local/lib/
+
+# Copy PROJ and GDAL share data
+COPY --from=gdal /usr/local/share/proj /rootfs/usr/local/share/proj
+COPY --from=gdal /usr/local/share/gdal /rootfs/usr/local/share/gdal
+
+# Copy CA bundle
+RUN cp /etc/ssl/certs/ca-certificates.crt /rootfs/etc/ssl/certs/ca-certificates.crt
+
+# Copy Node binary and create symlink
+COPY --from=build /usr/local/bin/node /rootfs/usr/local/bin/node
+RUN mkdir -p /rootfs/bin && ln -sf /usr/local/bin/node /rootfs/bin/node
+
+# Copy GDAL CLI binaries
+COPY --from=gdal /usr/local/bin/gdalinfo \
+                 /usr/local/bin/gdal_translate \
+                 /usr/local/bin/gdalwarp \
+                 /usr/local/bin/gdaladdo \
+                 /usr/local/bin/ogrinfo \
+                 /usr/local/bin/ogr2ogr \
+                 /usr/local/bin/gdalsrsinfo \
+                 /rootfs/usr/local/bin/
+
+# Copy Tippecanoe CLI binaries
+COPY --from=build /usr/local/bin/tippecanoe* /usr/local/bin/tile-join /rootfs/usr/local/bin/
+
+# Copy Tippecanoe notices
+COPY --from=build /tmp/tippecanoe/LICENSE.md /rootfs/usr/local/share/tippecanoe-notices/tippecanoe-LICENSE.md
+COPY --from=build /tmp/tippecanoe/clipper2/LICENSE /rootfs/usr/local/share/tippecanoe-notices/clipper2-LICENSE.txt
+COPY --from=build /tmp/tippecanoe/mapbox/LICENSE-geometry.hpp /rootfs/usr/local/share/tippecanoe-notices/mapbox-geometry.hpp-ISC.txt
+COPY --from=build /tmp/tippecanoe/mapbox/LICENSE-variant /rootfs/usr/local/share/tippecanoe-notices/mapbox-variant-BSD-2.txt
+
+# Copy application artifacts
+COPY --from=build /app/node_modules /rootfs/app/node_modules
+COPY --from=build /app/dist /rootfs/app/dist
+COPY package.json package-lock.json API.md openapi.yaml /rootfs/app/
+COPY web /rootfs/app/web
+COPY scripts /rootfs/app/scripts
+COPY THIRD-PARTY-NOTICES.md THIRD_PARTY_NOTICES.md /rootfs/app/
+COPY third-party /rootfs/app/third-party
+COPY baseline /rootfs/app/baseline
+
+# Setup users, permissions, and directories
+RUN echo "node:x:1000:1000:node:/app:/bin/false" > /rootfs/etc/passwd \
+    && echo "node:x:1000:" > /rootfs/etc/group \
+    && chmod 1777 /rootfs/tmp \
+    && chown -R 1000:1000 /rootfs/data /rootfs/app
+
+FROM scratch
+COPY --from=assemble-rootfs /rootfs /
+USER 1000:1000
 WORKDIR /app
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
-COPY API.md openapi.yaml ./
-COPY web ./web
-COPY scripts ./scripts
-RUN mkdir /data && chown node:node /data
-USER node
-ENV TILEO_DATA_DIR=/data NODE_ENV=production
+ENV PATH=/usr/local/bin:/usr/bin:/bin \
+    LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/lib \
+    PROJ_DATA=/usr/local/share/proj \
+    GDAL_DATA=/usr/local/share/gdal \
+    TILEO_DATA_DIR=/data \
+    NODE_ENV=production
 EXPOSE 8090
 CMD ["node", "dist/api.js"]
