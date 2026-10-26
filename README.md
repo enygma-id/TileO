@@ -152,6 +152,8 @@ The **ATAP cross-project sample** consists of 37 manually delineated building fo
 
 **Geospatial note:** the sample DSM uses EPSG:32750 and the DTM uses EPSG:4326. Reproject and align their grids, resolutions and extents before elevation differencing. The original ATAP sample coordinates remain identifiable as a real-world location, so this collection is not geographically anonymized.
 
+**Sample size and tiling behavior:** TileO sample datasets are intentionally compact for quick downloads, functional testing, and reproducible workflows, rather than imagery quality or large-scale performance benchmarking. Tiled output size does not necessarily correlate with source file size: small rasters may generate larger tile archives due to zoom-level pyramids, encoding, and storage overhead, while large rasters may produce substantially smaller outputs depending on resolution, zoom range, and compression. For production validation and performance benchmarking, use representative datasets at their native resolution.
+
 See the [sample catalogue](samples/README.md), [collection README](samples/TileO-Samples-01/README.md), [data manifest](samples/TileO-Samples-01/DATA_MANIFEST.json), [attribution guide](samples/TileO-Samples-01/ATTRIBUTION.md) and [sample policy](docs/SAMPLE_DATA_POLICY.md).
 ## API and integration
 
