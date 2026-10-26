@@ -1,5 +1,5 @@
 import { exec, fork, type ChildProcess } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const children = new Set<ChildProcess>();
 let stopping = false;
@@ -12,7 +12,7 @@ export function getBrowserCommand(url: string, platform = process.platform): str
   return `xdg-open "${url}"`;
 }
 
-function openBrowser(url: string) {
+export function openBrowser(url: string) {
   if (process.env.CI || process.env.TILEO_NO_BROWSER === '1' || process.env.NODE_ENV === 'test') return;
   if (process.platform === 'linux' && !process.env.DISPLAY && !process.env.WAYLAND_DISPLAY) return;
   try {
@@ -40,7 +40,12 @@ function launch(name: string) {
   child.on('exit', () => { children.delete(child); if (!stopping) setTimeout(() => launch(name), 5000); });
 }
 
-for (const name of ['api', 'worker']) launch(name);
 function stop() { stopping = true; for (const child of children) child.kill('SIGTERM'); }
-process.on('SIGINT', stop); process.on('SIGTERM', stop);
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  for (const name of ['api', 'worker']) launch(name);
+  process.on('SIGINT', stop);
+  process.on('SIGTERM', stop);
+}
+
 
