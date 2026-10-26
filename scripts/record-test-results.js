@@ -23,7 +23,13 @@ const env = {
   MSYS_NO_PATHCONV: '1'
 };
 
-const testFiles = fs.readdirSync(path.join(ROOT_DIR, 'dist', 'tests'))
+const distTestsDir = path.join(ROOT_DIR, 'dist', 'tests');
+if (!fs.existsSync(distTestsDir)) {
+  console.log('dist/tests not found, building project...');
+  execFileSync('npm', ['run', 'build'], { cwd: ROOT_DIR, stdio: 'inherit', shell: true });
+}
+
+const testFiles = fs.readdirSync(distTestsDir)
   .filter(f => f.endsWith('.test.js'))
   .sort()
   .map(f => `dist/tests/${f}`);
