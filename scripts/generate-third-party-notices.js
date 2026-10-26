@@ -37,7 +37,8 @@ function canonicalLockSha(buffer) {
 }
 
 function fence(text) {
-  return `\`\`\`\`text\n${text.trim()}\n\`\`\`\``;
+  const normalized = text.replace(/\r\n/g, '\n').trim();
+  return `\`\`\`\`text\n${normalized}\n\`\`\`\``;
 }
 
 function formatBytes(bytes) {

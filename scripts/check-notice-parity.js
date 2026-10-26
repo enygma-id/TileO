@@ -94,12 +94,16 @@ try {
   const committedNotices = path.join(ROOT, 'THIRD-PARTY-NOTICES.md');
   const committedDependencies = path.join(ROOT, 'third-party', 'DEPENDENCIES.md');
   if (fs.existsSync(generatedNotices) && fs.existsSync(committedNotices)) {
-    if (sha256(fs.readFileSync(generatedNotices)) !== sha256(fs.readFileSync(committedNotices))) {
+    const genNorm = fs.readFileSync(generatedNotices, 'utf8').replace(/\r\n/g, '\n');
+    const comNorm = fs.readFileSync(committedNotices, 'utf8').replace(/\r\n/g, '\n');
+    if (sha256(genNorm) !== sha256(comNorm)) {
       problems.push('THIRD-PARTY-NOTICES.md is stale; run scripts/generate-third-party-notices.js');
     }
   }
   if (fs.existsSync(generatedDependencies) && fs.existsSync(committedDependencies)) {
-    if (sha256(fs.readFileSync(generatedDependencies)) !== sha256(fs.readFileSync(committedDependencies))) {
+    const genNorm = fs.readFileSync(generatedDependencies, 'utf8').replace(/\r\n/g, '\n');
+    const comNorm = fs.readFileSync(committedDependencies, 'utf8').replace(/\r\n/g, '\n');
+    if (sha256(genNorm) !== sha256(comNorm)) {
       problems.push('third-party/DEPENDENCIES.md is stale; run scripts/generate-dependency-inventory.js');
     }
   }
