@@ -6,6 +6,7 @@ dist/
 .env.*
 !.env.example
 *.log
+!artifacts/compliance/*.log
 test-results/
 .DS_Store
 Thumbs.db

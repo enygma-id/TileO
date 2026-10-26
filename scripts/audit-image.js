@@ -32,12 +32,14 @@ function getArg(name, defaultValue) {
 }
 
 const IMAGE_TAG = getArg('image', 'tileo-ts:local');
-const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', '.'));
+const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', 'artifacts/compliance'));
 const SKIP_SYFT = args.includes('--skip-syft');
 
 if (!fs.existsSync(OUT_DIR)) {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 }
+
+const outDirPosix = OUT_DIR.replace(/\\/g, '/');
 
 console.log('===========================================================');
 console.log(` TileO Container Image Audit: ${IMAGE_TAG}`);
@@ -279,7 +281,7 @@ if (SKIP_SYFT) {
     runCmd('docker', [
       'run', '--rm',
       '-v', '//var/run/docker.sock:/var/run/docker.sock',
-      '-v', `${OUT_DIR}:/out`,
+      '-v', `${outDirPosix}:/out`,
       'anchore/syft:latest',
       IMAGE_TAG,
       '-o', 'spdx-json=/out/sbom-image.spdx.json',
@@ -290,7 +292,7 @@ if (SKIP_SYFT) {
     runCmd('docker', [
       'run', '--rm',
       '-v', '//var/run/docker.sock:/var/run/docker.sock',
-      '-v', `${OUT_DIR}:/out`,
+      '-v', `${outDirPosix}:/out`,
       'anchore/syft:latest',
       IMAGE_TAG,
       '-o', 'cyclonedx-json=/out/sbom-image.cdx.json',

@@ -1,0 +1,82 @@
+TileO Release Gate Negative Controls Test Runner
+Date: 2026-10-26T09:47:50.932Z
+Target: Permissive dependency enforcement and compliance gates
+
+======================================================
+TEST [NEG-01]: Banned package (sharp) rejection
+Description: Injects "sharp" into package-lock and runs release gate dependency check
+Expected rejection: Forbidden package "sharp" found in package-lock
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: FAIL: Forbidden package "sharp" found in package-lock: node_modules/sharp
+TEST [NEG-01] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NEG-02]: Copyleft GPL license rejection
+Description: Injects a GPL-3.0 package into production dependencies and evaluates license policy
+Expected rejection: Non-permissive license
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: FAIL: Non-permissive license "GPL-3.0-only": undefined
+TEST [NEG-02] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NEG-03]: Tampered native component hash rejection
+Description: Alters sha256 hash of a native component in components.json and runs verify-native-licenses
+Expected rejection: Hash mismatch for native license file
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: FAIL: Hash mismatch for native license file COPYING.txt expected 0000000000000000000000000000000000000000000000000000000000000000 got f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af
+TEST [NEG-03] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NEG-04]: Missing native component license file rejection
+Description: Sets a non-existent license file path in components.json and validates detection
+Expected rejection: License file does not exist
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: FAIL: License file does not exist: D:\Kerja\enygma-id\TileO\third-party\licenses\native\non-existent\LICENSE.txt
+TEST [NEG-04] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NEG-05]: Notice parity failure on missing package entry
+Description: Verifies parity checker fails when a required package notice is omitted from THIRD-PARTY-NOTICES.md
+Expected rejection: Parity check failed: missing 1 required packages in notices
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: Parity check failed: missing 1 required packages in notices: missing-package@2.0.0
+TEST [NEG-05] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NEG-06]: Forbidden dynamic ELF linkage rejection (libidn2)
+Description: Verifies image audit ELF closure checker rejects copyleft libraries
+Expected rejection: Forbidden dynamic linkage detected: libidn2.so.0
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: FAIL: Forbidden dynamic linkage detected: libidn2.so.0 in /usr/local/lib/libcurl.so
+TEST [NEG-06] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NEG-07]: Missing required GDAL driver rejection (GTiff)
+Description: Verifies image audit rejects when a critical GDAL driver is missing
+Expected rejection: Missing mandatory GDAL driver: GTiff
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: FAIL: Missing mandatory GDAL driver: GTiff, COG, JPEG, JP2OpenJPEG, WEBP, MBTiles, GPKG
+TEST [NEG-07] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NEG-08]: Missing or corrupted SBOM artifact rejection
+Description: Verifies image audit fails if Syft SBOM is empty or missing required fields
+Expected rejection: Invalid SBOM: missing packages or artifacts
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: FAIL: Invalid SBOM: missing packages or artifacts in SBOM
+TEST [NEG-08] STATUS: PASSED (Negative control verified)
+
+======================================================
+SUMMARY: All 8/8 negative control tests passed cleanly.
+Confirmed: Release gate and compliance tooling reject all tested non-permissive configurations.
+Execution log written to: D:\Kerja\enygma-id\TileO\artifacts\compliance\release-gate-negative-tests.log
+======================================================
+

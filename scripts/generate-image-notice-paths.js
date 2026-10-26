@@ -12,8 +12,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 
-const OUT_FILE = path.join(ROOT_DIR, 'image-notice-paths.csv');
-const IMAGE_TAG = process.argv[2] || 'tileo-ts:local';
+const args = process.argv.slice(2);
+function getArg(name, defaultValue) {
+  const idx = args.indexOf(`--${name}`);
+  if (idx !== -1 && idx + 1 < args.length) {
+    return args[idx + 1];
+  }
+  return defaultValue;
+}
+
+const IMAGE_TAG = args.find(a => !a.startsWith('--')) || 'tileo-ts:local';
+const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', 'artifacts/compliance'));
+if (!fs.existsSync(OUT_DIR)) {
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+}
+const OUT_FILE = path.join(OUT_DIR, 'image-notice-paths.csv');
 
 console.log(`Inspecting license and notice paths in image: ${IMAGE_TAG}...`);
 

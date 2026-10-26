@@ -5,6 +5,7 @@ dist
 data
 *.log
 test-results
+artifacts
 .env*
 release-gate-negative-tests.log
 samples

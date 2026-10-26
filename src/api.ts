@@ -1109,5 +1109,6 @@ export async function createApp(jobs = new Jobs()) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const app = await createApp();
   await app.listen({ host: config.host, port: config.port });
+  if (process.send) process.send({ type: 'ready', host: config.host, port: config.port, origin: config.origin });
   for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => void app.close());
 }

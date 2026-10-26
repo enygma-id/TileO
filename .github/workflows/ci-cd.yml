@@ -131,28 +131,17 @@ jobs:
       - name: Verify release gate pass record
         shell: bash
         run: |
-          test -f release-gate-pass.json || { echo "release-gate-pass.json missing!"; exit 1; }
-          test -f release-image-digest.txt || { echo "release-image-digest.txt missing!"; exit 1; }
-          echo "Verified audit pass record for $(cat release-image-digest.txt)"
+          test -f artifacts/compliance/release-gate-pass.json || { echo "release-gate-pass.json missing!"; exit 1; }
+          test -f artifacts/compliance/release-image-digest.txt || { echo "release-image-digest.txt missing!"; exit 1; }
+          echo "Verified audit pass record for $(cat artifacts/compliance/release-image-digest.txt)"
 
       - name: Archive release compliance evidence artifacts
         uses: actions/upload-artifact@v4
         with:
           name: tileo-release-compliance-evidence
           path: |
-            release-image-digest.txt
-            sbom-image.spdx.json
-            sbom-image.cdx.json
-            os-packages.csv
-            binary-linkage.csv
-            license-decisions.csv
-            native-components.csv
-            gdal-drivers.txt
-            image-notice-paths.csv
-            integration-test-results.json
-            release-gate-negative-tests.log
-            release-provenance.json
-            release-gate-pass.json
+            artifacts/compliance/**
+            third-party/native-components.csv
             THIRD-PARTY-NOTICES.md
             native-license-review.md
             release-approval.md

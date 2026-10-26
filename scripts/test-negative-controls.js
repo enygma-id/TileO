@@ -25,7 +25,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 
-const LOG_FILE = path.join(ROOT_DIR, 'release-gate-negative-tests.log');
+const args = process.argv.slice(2);
+function getArg(name, defaultValue) {
+  const idx = args.indexOf(`--${name}`);
+  if (idx !== -1 && idx + 1 < args.length) {
+    return args[idx + 1];
+  }
+  return defaultValue;
+}
+
+const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', 'artifacts/compliance'));
+if (!fs.existsSync(OUT_DIR)) {
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+}
+const LOG_FILE = path.join(OUT_DIR, 'release-gate-negative-tests.log');
 const logEntries = [];
 
 function log(msg) {

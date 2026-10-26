@@ -45,22 +45,22 @@ The following 16 required evidence artifacts have been generated, validated, and
 
 | # | Artifact Filename | Description | Status |
 |---|---|---|---|
-| 1 | `source-baseline.json` | Commit SHA, working tree dirty status, and SHA256 of all manifest/source files | **VERIFIED** |
-| 2 | `release-image-digest.txt` | Immutable Docker image ID and repository digest | **VERIFIED** |
-| 3 | `sbom-image.spdx.json` | Complete SPDX 2.3 container image SBOM (Syft) | **VERIFIED** |
-| 4 | `sbom-image.cdx.json` | Complete CycloneDX container image SBOM (Syft) | **VERIFIED** |
-| 5 | `os-packages.csv` | OS package manager audit (0 packages, scratch posture) | **VERIFIED** |
-| 6 | `binary-linkage.csv` | Dynamic linkage audit of all ELF binaries and shared libraries | **VERIFIED** |
-| 7 | `license-decisions.csv` | Per-component policy decisions (319 items, 100% ALLOW) | **VERIFIED** |
-| 8 | `native-components.csv` | Inventory of all 28 native runtime components and upstream URLs | **VERIFIED** |
-| 9 | `gdal-drivers.txt` | Exact GDAL raster and vector driver profile from runtime | **VERIFIED** |
+| 1 | `artifacts/compliance/source-baseline.json` | Commit SHA, working tree dirty status, and SHA256 of all manifest/source files | **VERIFIED** |
+| 2 | `artifacts/compliance/release-image-digest.txt` | Immutable Docker image ID and repository digest | **VERIFIED** |
+| 3 | `artifacts/compliance/sbom-image.spdx.json` | Complete SPDX 2.3 container image SBOM (Syft) | **VERIFIED** |
+| 4 | `artifacts/compliance/sbom-image.cdx.json` | Complete CycloneDX container image SBOM (Syft) | **VERIFIED** |
+| 5 | `artifacts/compliance/os-packages.csv` | OS package manager audit (0 packages, scratch posture) | **VERIFIED** |
+| 6 | `artifacts/compliance/binary-linkage.csv` | Dynamic linkage audit of all ELF binaries and shared libraries | **VERIFIED** |
+| 7 | `artifacts/compliance/license-decisions.csv` | Per-component policy decisions (319 items, 100% ALLOW) | **VERIFIED** |
+| 8 | `third-party/native-components.csv` | Inventory of all 28 native runtime components and upstream URLs | **VERIFIED** |
+| 9 | `artifacts/compliance/gdal-drivers.txt` | Exact GDAL raster and vector driver profile from runtime | **VERIFIED** |
 | 10 | `third-party/licenses/native/` | 34 hashed, committed upstream license files for native components | **VERIFIED** |
 | 11 | `native-license-review.md` | Legal analysis of GCC Runtime Exception 3.1 and MPL-2.0 Scope E | **VERIFIED** |
 | 12 | `third-party/npm-upstream-verification.csv` | Evidence of 291 upstream npm tarball inspections | **VERIFIED** |
-| 13 | `image-notice-paths.csv` | Mapping of 582 license/notice files in the container filesystem | **VERIFIED** |
-| 14 | `integration-test-results.json` | Container integration test execution results (129/129 passed) | **VERIFIED** |
-| 15 | `release-gate-negative-tests.log` | Execution log proving gate rejects non-permissive artifacts (8/8) | **VERIFIED** |
-| 16 | `release-provenance.json` | End-to-end build provenance, host environment, and compliance summary | **VERIFIED** |
+| 13 | `artifacts/compliance/image-notice-paths.csv` | Mapping of 582 license/notice files in the container filesystem | **VERIFIED** |
+| 14 | `artifacts/compliance/integration-test-results.json` | Container integration test execution results (129/129 passed) | **VERIFIED** |
+| 15 | `artifacts/compliance/release-gate-negative-tests.log` | Execution log proving gate rejects non-permissive artifacts (8/8) | **VERIFIED** |
+| 16 | `artifacts/compliance/release-provenance.json` | End-to-end build provenance, host environment, and compliance summary | **VERIFIED** |
 
 ---
 
