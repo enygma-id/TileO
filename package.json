@@ -18,9 +18,9 @@
     "copy:landing": "node scripts/copy-landing.js",
     "notices": "node scripts/generate-third-party-notices.js",
     "version:show": "npm pkg get version",
-    "release:patch": "npm version patch --no-git-tag-version && npm run build",
-    "release:minor": "npm version minor --no-git-tag-version && npm run build",
-    "release:major": "npm version major --no-git-tag-version && npm run build",
+    "release:patch": "node scripts/prepare-release.js patch",
+    "release:minor": "node scripts/prepare-release.js minor",
+    "release:major": "node scripts/prepare-release.js major",
     "test": "npm run build && node --test dist/tests/*.test.js",
     "test:browser": "playwright test",
     "release:gate": "node scripts/release-gate.js"
