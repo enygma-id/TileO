@@ -8,5 +8,7 @@ dist/
 *.log
 !artifacts/compliance/*.log
 test-results/
+TileO-main*-Audit*.md
+TileO-*-Audit*.md
 .DS_Store
 Thumbs.db

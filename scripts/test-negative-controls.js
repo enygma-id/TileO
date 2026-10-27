@@ -2,22 +2,23 @@
 /**
  * TileO Release Gate Negative Controls Test Suite
  *
- * Verifies that the release gate, license policy engine, notice parity checker,
- * native license verifier, and image audit rigorously fail when encountering:
- *  1. Non-permissive / Copyleft npm package in package-lock
- *  2. Banned package (sharp, ndarray-pixels, etc.) in package-lock
- *  3. Tampered native license hash in components.json
- *  4. Missing native license file in licenses/native
- *  5. Notice parity mismatch (missing package notice)
- *  6. Forbidden dynamic ELF linkage in image (e.g., libidn2, libgeos)
- *  7. Missing required GDAL driver in image audit (e.g. GTiff, PNM)
- *  8. Missing or truncated SBOM artifact in image audit
+ * Verifies that the release gate, license policy engine, native license verifier,
+ * and certification gate rigorously fail when encountering:
+ *  1. Banned package (sharp) in package-lock (invokes scripts/verify-npm-notices.js)
+ *  2. Copyleft GPL package in package-lock (invokes scripts/verify-npm-notices.js)
+ *  3. Tampered native component hash in manifest (invokes scripts/verify-native-licenses.js)
+ *  4. Missing native component license file (invokes scripts/verify-native-licenses.js)
+ *  5. Failed or missing integration tests (invokes scripts/certify-release-gate.js)
+ *  6. Banned binary detected in SBOM (PVRTexToolCLI) (invokes scripts/certify-release-gate.js)
+ *  7. Forbidden dynamic linkage (libidn2) in image (invokes scripts/certify-release-gate.js)
+ *  8. Missing human approval signoff (invokes scripts/certify-release-gate.js)
  *
  * Emits execution record to release-gate-negative-tests.log
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
@@ -66,11 +67,12 @@ function runNegativeTest({ id, name, description, execute, expectedError }) {
     log(`RESULT: FAILED - Control did not reject! Returned output: ${result}`);
     throw new Error(`Negative test ${id} failed: Expected rejection did not occur.`);
   } catch (err) {
-    const errorMsg = String(err.stdout || err.stderr || err.message);
+    const errorMsg = String(err.stdout || '') + String(err.stderr || '') + String(err.message || '');
     const matches = errorMsg.includes(expectedError);
     if (matches) {
       log(`REJECTION DETECTED: Correctly rejected with expected diagnostic.`);
-      log(`Diagnostic output snippet: ${errorMsg.trim().split('\n').slice(0, 3).join(' | ')}`);
+      const snippet = errorMsg.split('\n').filter(l => l.includes(expectedError))[0] || errorMsg.trim().split('\n')[0];
+      log(`Diagnostic output snippet: ${snippet.trim()}`);
       log(`TEST [${id}] STATUS: PASSED (Negative control verified)`);
       passedTests++;
     } else {
@@ -81,229 +83,244 @@ function runNegativeTest({ id, name, description, execute, expectedError }) {
   }
 }
 
-log(`TileO Release Gate Negative Controls Test Runner`);
+log(`TileO Release Gate Negative Controls Test Runner (End-to-End Gate Verification)`);
 log(`Date: ${new Date().toISOString()}`);
-log(`Target: Permissive dependency enforcement and compliance gates`);
+log(`Target: Release gate and compliance enforcement scripts`);
 
-// Test 1: Banned package in package-lock.json
+// Helper to copy valid compliance artifacts to a temporary directory
+function createTmpEvidenceDir() {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-gate-neg-'));
+  const sourceFiles = [
+    'release-image-digest.txt', 'gdal-drivers.txt', 'os-packages.csv',
+    'binary-linkage.csv', 'license-decisions.csv', 'sbom-image.spdx.json',
+    'sbom-image.cdx.json', 'source-baseline.json', 'release-provenance.json',
+    'integration-test-results.json'
+  ];
+  for (const f of sourceFiles) {
+    const src = path.join(OUT_DIR, f);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, path.join(tmpDir, f));
+    }
+  }
+  return tmpDir;
+}
+
+// Test 1: Banned package in package-lock.json (executes release-gate.js)
 runNegativeTest({
   id: 'NEG-01',
-  name: 'Banned package (sharp) rejection',
-  description: 'Injects "sharp" into package-lock and runs release gate dependency check',
+  name: 'Banned package (sharp) rejection in release-gate.js',
+  description: 'Injects "sharp" into package-lock and invokes real release-gate.js',
   expectedError: 'Forbidden package "sharp" found in package-lock',
   execute: () => {
     const lockPath = path.join(ROOT_DIR, 'package-lock.json');
-    const originalContent = fs.readFileSync(lockPath, 'utf8');
-    const lock = JSON.parse(originalContent);
+    const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
     lock.packages['node_modules/sharp'] = {
       version: '0.33.5',
       resolved: 'https://registry.npmjs.org/sharp/-/sharp-0.33.5.tgz',
       integrity: 'sha512-fake',
       license: 'Apache-2.0'
     };
-    const tmpLock = path.join(ROOT_DIR, 'package-lock.test.json');
+    const tmpLock = path.join(os.tmpdir(), `package-lock-sharp-${Date.now()}.json`);
     fs.writeFileSync(tmpLock, JSON.stringify(lock, null, 2), 'utf8');
 
-    // Run release gate logic with temporary lockfile
-    const script = `
-      import fs from 'node:fs';
-      const lock = JSON.parse(fs.readFileSync('${tmpLock.replace(/\\/g, '/')}', 'utf8'));
-      const FORBIDDEN = ['sharp'];
-      for (const b of FORBIDDEN) {
-        for (const k of Object.keys(lock.packages)) {
-          if (k.endsWith('node_modules/' + b) || k === b) {
-            console.error('FAIL: Forbidden package "' + b + '" found in package-lock: ' + k);
-            process.exit(1);
-          }
-        }
-      }
-    `;
     try {
-      return execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
+      return execFileSync('node', ['scripts/release-gate.js', '--lockfile', tmpLock], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
     } finally {
       if (fs.existsSync(tmpLock)) fs.unlinkSync(tmpLock);
     }
   }
 });
 
-// Test 2: Copyleft package in package-lock.json
+// Test 2: Copyleft GPL package in package-lock.json (executes release-gate.js)
 runNegativeTest({
   id: 'NEG-02',
-  name: 'Copyleft GPL license rejection',
-  description: 'Injects a GPL-3.0 package into production dependencies and evaluates license policy',
-  expectedError: 'Non-permissive license',
+  name: 'Copyleft GPL license rejection in release-gate.js',
+  description: 'Injects a GPL-3.0 package into package-lock and invokes real release-gate.js',
+  expectedError: 'Non-permissive license "GPL-3.0-only"',
   execute: () => {
-    const script = `
-      import { evaluateExpression } from './scripts/lib/license-policy.js';
-      const res = evaluateExpression('GPL-3.0-only');
-      if (res.decision !== 'ALLOW') {
-        console.error('FAIL: Non-permissive license "GPL-3.0-only": ' + res.reason);
-        process.exit(1);
-      }
-    `;
-    return execFileSync(process.execPath, ['--input-type=module', '-e', script], {
-      cwd: ROOT_DIR,
-      encoding: 'utf8'
-    });
+    const lockPath = path.join(ROOT_DIR, 'package-lock.json');
+    const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+    lock.packages['node_modules/gpl-test-tool'] = {
+      version: '1.0.0',
+      resolved: 'https://registry.npmjs.org/gpl-test-tool/-/gpl-test-tool-1.0.0.tgz',
+      integrity: 'sha512-fake',
+      license: 'GPL-3.0-only'
+    };
+    const tmpLock = path.join(os.tmpdir(), `package-lock-gpl-${Date.now()}.json`);
+    fs.writeFileSync(tmpLock, JSON.stringify(lock, null, 2), 'utf8');
+
+    try {
+      return execFileSync('node', ['scripts/release-gate.js', '--lockfile', tmpLock], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
+    } finally {
+      if (fs.existsSync(tmpLock)) fs.unlinkSync(tmpLock);
+    }
   }
 });
 
-// Test 3: Tampered native license file hash in components.json
+// Test 3: Tampered native license file hash in components.json (executes verify-native-licenses.js)
 runNegativeTest({
   id: 'NEG-03',
-  name: 'Tampered native component hash rejection',
-  description: 'Alters sha256 hash of a native component in components.json and runs verify-native-licenses',
-  expectedError: 'Hash mismatch for native license file',
+  name: 'Tampered native component hash rejection in verify-native-licenses.js',
+  description: 'Alters sha256 hash in components.json and invokes real verify-native-licenses.js',
+  expectedError: 'sha256 mismatch',
   execute: () => {
     const compPath = path.join(ROOT_DIR, 'third-party', 'native', 'components.json');
-    const originalContent = fs.readFileSync(compPath, 'utf8');
-    const comp = JSON.parse(originalContent);
+    const comp = JSON.parse(fs.readFileSync(compPath, 'utf8'));
     comp.components[0].license_files[0].sha256 = '0000000000000000000000000000000000000000000000000000000000000000';
 
-    const tmpComp = path.join(ROOT_DIR, 'third-party', 'native', 'components.test.json');
+    const tmpComp = path.join(os.tmpdir(), `components-tampered-${Date.now()}.json`);
     fs.writeFileSync(tmpComp, JSON.stringify(comp, null, 2), 'utf8');
 
-    const script = `
-      import fs from 'node:fs';
-      import crypto from 'node:crypto';
-      import path from 'node:path';
-      const manifest = JSON.parse(fs.readFileSync('${tmpComp.replace(/\\/g, '/')}', 'utf8'));
-      for (const c of manifest.components) {
-        for (const lf of c.license_files) {
-          const fullPath = path.join('${ROOT_DIR.replace(/\\/g, '/')}', 'third-party', 'licenses', 'native', c.id, lf.file);
-          const content = fs.readFileSync(fullPath);
-          const actual = crypto.createHash('sha256').update(content).digest('hex');
-          if (actual !== lf.sha256) {
-            console.error('FAIL: Hash mismatch for native license file ' + lf.file + ' expected ' + lf.sha256 + ' got ' + actual);
-            process.exit(1);
-          }
-        }
-      }
-    `;
     try {
-      return execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
+      return execFileSync('node', ['scripts/verify-native-licenses.js', '--manifest', tmpComp], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
     } finally {
       if (fs.existsSync(tmpComp)) fs.unlinkSync(tmpComp);
     }
   }
 });
 
-// Test 4: Missing native license file
+// Test 4: Missing native license file in components.json (executes verify-native-licenses.js)
 runNegativeTest({
   id: 'NEG-04',
-  name: 'Missing native component license file rejection',
-  description: 'Sets a non-existent license file path in components.json and validates detection',
-  expectedError: 'License file does not exist',
+  name: 'Missing native component license file rejection in verify-native-licenses.js',
+  description: 'Injects non-existent license file into components.json and invokes real verify-native-licenses.js',
+  expectedError: 'missing',
   execute: () => {
-    const script = `
-      import fs from 'node:fs';
-      import path from 'node:path';
-      const fullPath = path.join('${ROOT_DIR.replace(/\\/g, '/')}', 'third-party/licenses/native/non-existent/LICENSE.txt');
-      if (!fs.existsSync(fullPath)) {
-        console.error('FAIL: License file does not exist: ' + fullPath);
-        process.exit(1);
-      }
-    `;
-    return execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
+    const compPath = path.join(ROOT_DIR, 'third-party', 'native', 'components.json');
+    const comp = JSON.parse(fs.readFileSync(compPath, 'utf8'));
+    comp.components[0].license_files.push({
+      file: 'NON_EXISTENT_LICENSE.txt',
+      sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+    });
+
+    const tmpComp = path.join(os.tmpdir(), `components-missing-${Date.now()}.json`);
+    fs.writeFileSync(tmpComp, JSON.stringify(comp, null, 2), 'utf8');
+
+    try {
+      return execFileSync('node', ['scripts/verify-native-licenses.js', '--manifest', tmpComp], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
+    } finally {
+      if (fs.existsSync(tmpComp)) fs.unlinkSync(tmpComp);
+    }
   }
 });
 
-// Test 5: Notice parity mismatch (missing package from THIRD-PARTY-NOTICES.md)
+// Test 5: Failed integration tests rejection in certify-release-gate.js
 runNegativeTest({
   id: 'NEG-05',
-  name: 'Notice parity failure on missing package entry',
-  description: 'Verifies parity checker fails when a required package notice is omitted from THIRD-PARTY-NOTICES.md',
-  expectedError: 'Parity check failed: missing 1 required packages in notices',
+  name: 'Failed integration test suite rejection in certify-release-gate.js',
+  description: 'Creates test results with 2 failures and invokes certify-release-gate.js',
+  expectedError: 'Gate 4 Failed: Integration tests did not pass',
   execute: () => {
-    const script = `
-      const notices = '### dummy-package@1.0.0\\nLicense: MIT';
-      const required = ['dummy-package@1.0.0', 'missing-package@2.0.0'];
-      const missing = required.filter(r => !notices.includes(r));
-      if (missing.length > 0) {
-        console.error('Parity check failed: missing ' + missing.length + ' required packages in notices: ' + missing.join(', '));
-        process.exit(1);
-      }
-    `;
-    return execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
+    const tmpEvidence = createTmpEvidenceDir();
+    const resultsFile = path.join(tmpEvidence, 'integration-test-results.json');
+    fs.writeFileSync(resultsFile, JSON.stringify({
+      target_image: 'tileo-ts:local',
+      image_id: 'test-image-id',
+      total_tests: 129,
+      passed: 127,
+      failed: 2,
+      all_passed: false
+    }, null, 2), 'utf8');
+
+    try {
+      return execFileSync('node', ['scripts/certify-release-gate.js', '--out-dir', tmpEvidence], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
+    } finally {
+      fs.rmSync(tmpEvidence, { recursive: true, force: true });
+    }
   }
 });
 
-// Test 6: Forbidden dynamic ELF linkage in image audit
+// Test 6: Banned binary detected in SPDX SBOM (PVRTexToolCLI) in certify-release-gate.js
 runNegativeTest({
   id: 'NEG-06',
-  name: 'Forbidden dynamic ELF linkage rejection (libidn2)',
-  description: 'Verifies image audit ELF closure checker rejects copyleft libraries',
-  expectedError: 'Forbidden dynamic linkage detected: libidn2.so.0',
+  name: 'Banned binary (PVRTexToolCLI) rejection in certify-release-gate.js',
+  description: 'Injects PVRTexToolCLI into SPDX SBOM and invokes certify-release-gate.js',
+  expectedError: 'Gate 3 Failed: Banned binary or component "PVRTexToolCLI" detected in SPDX SBOM',
   execute: () => {
-    const script = `
-      const FORBIDDEN_LINKAGES = ['libidn2.so', 'libunistring.so', 'libgeos.so', 'libgpl.so'];
-      const mockScanelfOutput = [
-        'ET_DYN libcurl.so.4.8.0 libssl.so.3,libcrypto.so.3,libidn2.so.0,libc.musl-x86_64.so.1 /usr/local/lib/libcurl.so'
-      ];
-      for (const line of mockScanelfOutput) {
-        const parts = line.trim().split(/\\s+/);
-        const needed = parts[2] ? parts[2].split(',') : [];
-        for (const dep of needed) {
-          for (const forbidden of FORBIDDEN_LINKAGES) {
-            if (dep.includes(forbidden)) {
-              console.error('FAIL: Forbidden dynamic linkage detected: ' + dep + ' in ' + parts[3]);
-              process.exit(1);
-            }
-          }
-        }
-      }
-    `;
-    return execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
+    const tmpEvidence = createTmpEvidenceDir();
+    const spdxFile = path.join(tmpEvidence, 'sbom-image.spdx.json');
+    const spdx = fs.readFileSync(spdxFile, 'utf8');
+    const mutated = spdx.replace('"packages": [', '"packages": [{"name": "PVRTexToolCLI", "versionInfo": "1.0"},');
+    fs.writeFileSync(spdxFile, mutated, 'utf8');
+
+    try {
+      return execFileSync('node', ['scripts/certify-release-gate.js', '--out-dir', tmpEvidence], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
+    } finally {
+      fs.rmSync(tmpEvidence, { recursive: true, force: true });
+    }
   }
 });
 
-// Test 7: Missing required GDAL driver in image audit
+// Test 7: Forbidden dynamic linkage (libidn2) in certify-release-gate.js
 runNegativeTest({
   id: 'NEG-07',
-  name: 'Missing required GDAL driver rejection (GTiff)',
-  description: 'Verifies image audit rejects when a critical GDAL driver is missing',
-  expectedError: 'Missing mandatory GDAL driver: GTiff',
+  name: 'Forbidden dynamic ELF linkage (libidn2) rejection in certify-release-gate.js',
+  description: 'Injects libidn2 linkage into binary-linkage.csv and invokes certify-release-gate.js',
+  expectedError: 'Gate 3 Failed: Copyleft library detected in binary linkage',
   execute: () => {
-    const script = `
-      const REQUIRED_DRIVERS = ['GTiff', 'COG', 'AAIGrid', 'PNG', 'JPEG', 'JP2OpenJPEG', 'WEBP', 'MBTiles', 'PNM', 'GPKG'];
-      const mockGdalFormats = 'AAIGrid -raster-\\nPNM -raster-\\nPNG -raster-';
-      const missing = [];
-      for (const drv of REQUIRED_DRIVERS) {
-        const regex = new RegExp('^\\\\s*' + drv + '\\\\b', 'mi');
-        if (!regex.test(mockGdalFormats)) {
-          missing.push(drv);
-        }
-      }
-      if (missing.length > 0) {
-        console.error('FAIL: Missing mandatory GDAL driver: ' + missing.join(', '));
-        process.exit(1);
-      }
-    `;
-    return execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
+    const tmpEvidence = createTmpEvidenceDir();
+    const linkageFile = path.join(tmpEvidence, 'binary-linkage.csv');
+    fs.appendFileSync(linkageFile, '\n/usr/local/lib/libcurl.so,libidn2.so.0,NON_ALLOW\n', 'utf8');
+
+    try {
+      return execFileSync('node', ['scripts/certify-release-gate.js', '--out-dir', tmpEvidence], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
+    } finally {
+      fs.rmSync(tmpEvidence, { recursive: true, force: true });
+    }
   }
 });
 
-// Test 8: Missing or invalid SBOM artifact in image audit
+// Test 8: Unapproved release governance signoff in certify-release-gate.js
 runNegativeTest({
   id: 'NEG-08',
-  name: 'Missing or corrupted SBOM artifact rejection',
-  description: 'Verifies image audit fails if Syft SBOM is empty or missing required fields',
-  expectedError: 'Invalid SBOM: missing packages or artifacts',
+  name: 'Unapproved release governance signoff rejection in certify-release-gate.js',
+  description: 'Invokes certify-release-gate.js with --enforce-human-approval against unfinalized approval doc',
+  expectedError: 'Gate 6 Failed: Human approval in release-approval.md has PENDING',
   execute: () => {
-    const script = `
-      const mockSbom = { spdxVersion: 'SPDX-2.3' }; // missing packages array
-      if (!Array.isArray(mockSbom.packages) || mockSbom.packages.length === 0) {
-        console.error('FAIL: Invalid SBOM: missing packages or artifacts in SBOM');
-        process.exit(1);
-      }
-    `;
-    return execFileSync(process.execPath, ['--input-type=module', '-e', script], { encoding: 'utf8' });
+    const tmpEvidence = createTmpEvidenceDir();
+    try {
+      return execFileSync('node', ['scripts/certify-release-gate.js', '--out-dir', tmpEvidence, '--enforce-human-approval'], {
+        cwd: ROOT_DIR,
+        encoding: 'utf8',
+        stdio: 'pipe'
+      });
+    } finally {
+      fs.rmSync(tmpEvidence, { recursive: true, force: true });
+    }
   }
 });
 
 log(`\n======================================================`);
 log(`SUMMARY: All ${passedTests}/${totalTests} negative control tests passed cleanly.`);
-log(`Confirmed: Release gate and compliance tooling reject all tested non-permissive configurations.`);
+log(`Confirmed: Release certification gate and compliance scripts reject all tested non-permissive configurations.`);
 log(`Execution log written to: ${LOG_FILE}`);
 log(`======================================================\n`);
 

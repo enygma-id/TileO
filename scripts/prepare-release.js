@@ -47,7 +47,17 @@ run('npm run build');
 run('node scripts/release-gate.js');
 run('node scripts/test-negative-controls.js');
 
-// 6. Commit and create annotated git tag
+// 6. Enforce human approval signoff in release-approval.md before creating git tag
+const approvalDoc = fs.readFileSync('release-approval.md', 'utf8');
+const hasPending = /\bPENDING\b/i.test(approvalDoc) || /\[\s*\]/i.test(approvalDoc);
+const hasApprovedSignoff = /Decision:\s*\*\*GO\*\*/i.test(approvalDoc);
+if (hasPending || !hasApprovedSignoff) {
+  console.error('\nERROR: Cannot create release tag. release-approval.md has PENDING reviewer signatures or unchecked items.');
+  console.error('Explicit human legal/engineering approval signoff is required before creating a release tag.\n');
+  process.exit(1);
+}
+
+// 7. Commit and create annotated git tag
 run('git add package.json package-lock.json third-party/ THIRD-PARTY-NOTICES.md artifacts/');
 run(`git commit -m "chore(release): ${tag}"`);
 run(`git tag -a ${tag} -m "Release ${tag}"`);

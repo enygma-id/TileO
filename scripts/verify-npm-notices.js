@@ -24,14 +24,17 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const LOCK_FILE = path.join(ROOT, 'package-lock.json');
+const args = process.argv.slice(2);
+const lockArgIdx = args.indexOf('--lockfile');
+const LOCK_FILE = lockArgIdx !== -1 && lockArgIdx + 1 < args.length
+  ? path.resolve(args[lockArgIdx + 1])
+  : path.join(ROOT, 'package-lock.json');
 const MANIFEST_FILE = path.join(ROOT, 'third-party', 'MANIFEST.json');
 const CORPUS_DIR = path.join(ROOT, 'third-party', 'licenses', 'npm');
 const CSV_FILE = path.join(ROOT, 'third-party', 'npm-upstream-verification.csv');
 const CACHE_DIR = path.join(os.tmpdir(), 'tileo-npm-tarballs');
 const VERIFIER = 'scripts/verify-npm-notices.js@1';
 
-const args = process.argv.slice(2);
 const update = args.includes('--update');
 const filterIndex = args.indexOf('--filter');
 const filter = filterIndex >= 0 ? args[filterIndex + 1] : null;
@@ -84,7 +87,7 @@ function readTar(buffer) {
 
 function noticeEntries(tarEntries) {
   const found = [];
-  const allowedExtension = /(^$|\.(txt|md|markdown|rst|html?)$)/i;
+  const allowedExtension = /(^$|\.(txt|md|markdown|mkd|rst|html?|mit|bsd|apache\d*)$)/i;
   for (const entry of tarEntries) {
     const base = path.basename(entry.name);
     if (!LICENSE_FILE.test(base)) continue;

@@ -41,13 +41,6 @@ jobs:
       - name: Run negative control release gate checks
         run: node scripts/test-negative-controls.js
 
-      - name: Generate notices and SBOM baseline artifacts
-        run: |
-          npm run notices
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
-          syft . -o spdx-json=baseline/sbom.spdx.json -q
-          syft . -o cyclonedx-json=baseline/sbom.cyclonedx.json -q
-
       - name: Run tests
         run: npm test
 
@@ -59,13 +52,10 @@ jobs:
           TILEO_INTEGRATION: '1'
         run: node --test dist/tests/elevation.test.js dist/tests/source-preview.test.js
 
-  publish:
-    name: Build, Audit & Publish (Single-Build Pattern)
+  candidate:
+    name: Build, Audit & Test Candidate (Single-Build Pattern)
     needs: test
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -74,17 +64,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-
-      - name: Verify package version matches tag
-        if: startsWith(github.ref, 'refs/tags/v')
-        shell: bash
-        run: |
-          package_version=$(node -p "require('./package.json').version")
-          tag_version="${GITHUB_REF_NAME#v}"
-          test "$package_version" = "$tag_version" || {
-            echo "package.json is $package_version but the tag is $tag_version"
-            exit 1
-          }
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -130,12 +109,13 @@ jobs:
       - name: Generate image notice file path inventory
         run: node scripts/generate-image-notice-paths.js tileo-release:candidate
 
-      - name: Verify release gate pass record
-        shell: bash
+      - name: Certify release gate compliance (Fail-Closed)
         run: |
-          test -f artifacts/compliance/release-gate-pass.json || { echo "release-gate-pass.json missing!"; exit 1; }
-          test -f artifacts/compliance/release-image-digest.txt || { echo "release-image-digest.txt missing!"; exit 1; }
-          echo "Verified audit pass record for $(cat artifacts/compliance/release-image-digest.txt)"
+          if [ "${{ startsWith(github.ref, 'refs/tags/v') }}" = "true" ]; then
+            node scripts/certify-release-gate.js --image tileo-release:candidate --enforce-human-approval
+          else
+            node scripts/certify-release-gate.js --image tileo-release:candidate
+          fi
 
       - name: Archive release compliance evidence artifacts
         uses: actions/upload-artifact@v4
@@ -148,8 +128,75 @@ jobs:
             native-license-review.md
             release-approval.md
 
-      - name: Log in to GHCR
+      - name: Export candidate image for release publication
         if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          mkdir -p /tmp/image-export
+          docker save tileo-release:candidate | gzip > /tmp/image-export/candidate-image.tar.gz
+
+      - name: Upload candidate image artifact
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: tileo-candidate-image
+          path: /tmp/image-export/candidate-image.tar.gz
+          retention-days: 1
+
+  publish:
+    name: Publish Verified Candidate to GHCR (Protected Environment)
+    needs: [test, candidate]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Verify package version matches tag
+        shell: bash
+        run: |
+          package_version=$(node -p "require('./package.json').version")
+          tag_version="${GITHUB_REF_NAME#v}"
+          test "$package_version" = "$tag_version" || {
+            echo "package.json is $package_version but the tag is $tag_version"
+            exit 1
+          }
+
+      - name: Download compliance evidence artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: tileo-release-compliance-evidence
+          path: evidence
+
+      - name: Download candidate image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tileo-candidate-image
+          path: /tmp/image-export
+
+      - name: Load verified candidate image
+        shell: bash
+        run: |
+          gunzip -c /tmp/image-export/candidate-image.tar.gz | docker load
+          test -f evidence/artifacts/compliance/release-gate-pass.json || { echo "release-gate-pass.json missing from evidence!"; exit 1; }
+          test -f evidence/artifacts/compliance/release-image-digest.txt || { echo "release-image-digest.txt missing!"; exit 1; }
+          expected_id=$(grep -oE 'IMAGE_ID=[^ ]+' evidence/artifacts/compliance/release-image-digest.txt | cut -d= -f2)
+          actual_id=$(docker inspect --format='{{.Id}}' tileo-release:candidate)
+          echo "Comparing Image IDs: expected=$expected_id, actual=$actual_id"
+          test "$expected_id" = "$actual_id" || {
+            echo "CRITICAL: Image ID mismatch between audited candidate and release image!"
+            exit 1
+          }
+
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -157,7 +204,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare image tags
-        if: startsWith(github.ref, 'refs/tags/v')
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -166,10 +212,8 @@ jobs:
             type=raw,value=${{ github.ref_name }}
             type=raw,value=latest
 
-      # Push the EXACT audited local image candidate by re-tagging it.
-      # Never re-build!
+      # Push the EXACT audited candidate image without rebuilding.
       - name: Publish verified image to GHCR
-        if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
         run: |
           for tag in ${{ steps.meta.outputs.tags }}; do

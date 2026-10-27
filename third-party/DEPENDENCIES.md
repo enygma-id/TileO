@@ -1,10 +1,10 @@
 # Third-Party NPM Dependency Inventory
 
-This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **291 non-root entries** (direct, transitive, development and platform-optional packages).
+This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **285 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `5d73fad94a8a28054ca30da1ac7bf5a4a9edf7a4f7f6449762d8b762895059ec`
-- Runtime entries: **253** · runtime-optional: **4** · development: **34**
-- Notice evidence: **252** verified from exact upstream tarballs · **39** metadata-only · **0** failed
+- `package-lock.json` SHA-256: `043f86e4589e4c704f09d017cd6ae64ffe9126c7837f52954af8176719a47697`
+- Runtime entries: **247** · runtime-optional: **4** · development: **34**
+- Notice evidence: **249** verified from exact upstream tarballs · **36** metadata-only · **0** failed
 - Verification date: 2026-10-26 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
@@ -21,10 +21,10 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `0BSD` | 1 |
 | `Apache-2.0` | 15 |
 | `BSD-2-Clause` | 2 |
-| `BSD-3-Clause` | 19 |
+| `BSD-3-Clause` | 18 |
 | `CC0-1.0` | 1 |
 | `ISC` | 24 |
-| `MIT` | 222 |
+| `MIT` | 217 |
 | `MIT AND BSD-3-Clause` | 1 |
 
 ## Complete package-level inventory
@@ -108,9 +108,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@luma.gl/gltf/node_modules/@loaders.gl/loader-utils` | 4.4.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/gltf/node_modules/@loaders.gl/schema` | 4.4.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/gltf/node_modules/@loaders.gl/schema-utils` | 4.4.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `@luma.gl/gltf/node_modules/@loaders.gl/textures` | 4.4.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/gltf/node_modules/@loaders.gl/worker-utils` | 4.4.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `@luma.gl/gltf/node_modules/ktx-parse` | 0.7.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/gpgpu` | 9.4.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/shadertools` | 9.4.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/webgl` | 9.4.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -166,7 +164,6 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `anynum` | 1.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `apache-arrow` | 21.2.0 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `apache-arrow/node_modules/@types/node` | 25.9.9 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `argparse` | 1.0.10 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `atomic-sleep` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `avvio` | 9.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `base64-js` | 1.5.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -179,12 +176,12 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `buf-compare` | 1.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `buffer` | 5.7.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `buffer-crc32` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `charenc` | 0.0.2 | `BSD-3-Clause` | runtime | `metadata_only_no_license_file` | `package.json` |
+| `charenc` | 0.0.2 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `chownr` | 1.1.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `cookie` | 2.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `core-assert` | 0.2.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `core-util-is` | 1.0.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `crypt` | 0.0.2 | `BSD-3-Clause` | runtime | `metadata_only_no_license_file` | `package.json` |
+| `crypt` | 0.0.2 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `decompress-response` | 6.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `deep-extend` | 0.6.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `deep-strict-equal` | 0.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -216,7 +213,6 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `gl-matrix` | 3.4.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `h3-js` | 4.5.0 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `ieee754` | 1.2.1 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `image-size` | 0.7.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `immediate` | 3.0.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `inherits` | 2.0.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `ini` | 1.3.8 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -274,7 +270,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `quick-format-unescaped` | 4.0.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `quick-lru` | 6.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `quickselect` | 3.0.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `rc` | 1.2.8 | `(BSD-2-Clause OR MIT OR Apache-2.0)` | runtime | `metadata_only_no_license_file` | `package.json` |
+| `rc` | 1.2.8 | `(BSD-2-Clause OR MIT OR Apache-2.0)` | runtime | `verified_upstream_tarball` | `LICENSE.txt`<br>`LICENSE.BSD.txt`<br>`LICENSE.MIT.txt` |
 | `readable-stream` | 2.3.8 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `real-require` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `require-from-string` | 2.0.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -294,14 +290,12 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `snappyjs` | 0.6.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `sonic-boom` | 4.2.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `split2` | 4.2.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `sprintf-js` | 1.0.3 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `string_decoder` | 1.1.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `strip-json-comments` | 2.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `strnum` | 2.5.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `tar-fs` | 2.1.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `tar-stream` | 2.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `tar-stream/node_modules/readable-stream` | 3.6.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `texture-compressor` | 1.0.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt`<br>`LICENSE-astcenc.txt`<br>`LICENSE-crunch.txt`<br>`LICENSE-PVRTexToolCLI.txt` |
 | `thread-stream` | 4.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `tinyqueue` | 3.0.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `toad-cache` | 3.7.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |

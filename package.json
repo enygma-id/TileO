@@ -25,6 +25,9 @@
     "test:browser": "playwright test",
     "release:gate": "node scripts/release-gate.js"
   },
+  "overrides": {
+    "@loaders.gl/textures": "^4.5.4"
+  },
   "dependencies": {
     "@deck.gl/geo-layers": "^9.4.0",
     "@deck.gl/maplibre": "^9.4.0",

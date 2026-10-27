@@ -47,7 +47,10 @@ console.log('=== TileO Release Gate Verification ===');
 
 // Gate 1: Check package-lock.json for banned packages and license policy
 console.log('[1/5] Auditing production dependencies in package-lock.json...');
-const lockPath = path.join(ROOT_DIR, 'package-lock.json');
+const lockArgIdx = process.argv.indexOf('--lockfile');
+const lockPath = lockArgIdx !== -1 && lockArgIdx + 1 < process.argv.length
+  ? path.resolve(process.argv[lockArgIdx + 1])
+  : path.join(ROOT_DIR, 'package-lock.json');
 if (!fs.existsSync(lockPath)) {
   console.error('FAIL: package-lock.json not found');
   process.exit(1);

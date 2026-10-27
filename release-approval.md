@@ -1,4 +1,4 @@
-# TileO v1.0 Enterprise — Permissive-Only Release Approval & Signoff
+# TileO v1.0 Enterprise — Release Approval & Signoff (Enterprise Proprietary-Compatible with Disclosed Exceptions)
 
 **Date of Audit & Signoff:** 26 October 2026  
 **Target Release Tag:** `v1.0.0` (Pending Human Approval)  
@@ -11,9 +11,9 @@
 
 ## 1. Compliance Audit Verdict
 
-**RECOMMENDATION: GO FOR PERMISSIVE-ONLY ENTERPRISE RELEASE**
+**RECOMMENDATION: GO FOR ENTERPRISE PROPRIETARY-COMPATIBLE RELEASE WITH DISCLOSED EXCEPTIONS**
 
-All criteria defined in `TileO-main4-Permissive-Only-Release-Readiness-Audit.md` and `BATCH_SYSTEM_AUDIT_CHECKLIST.md` have been met, implemented, and verified across all phases:
+All release readiness criteria and independent compliance audit findings have been met, implemented, and verified across all phases:
 
 1. **Phase A (Contract Parity & Feature Preservation):**
    - Permissive MVT vector tiler implemented in `src/vector-mvt.ts` via `geojson-vt` and `vt-pbf`, eliminating GEOS copyleft dependency.
@@ -22,7 +22,7 @@ All criteria defined in `TileO-main4-Permissive-Only-Release-Readiness-Audit.md`
    - Full container test suite passed: **129 passed, 0 failed, 0 skipped**.
 
 2. **Phase B (Upstream Notices & License Corpus Integrity):**
-   - 291 npm packages verified against upstream tarballs (252 with original verified license files, 39 metadata-only verified).
+   - 285 npm packages verified against upstream tarballs (249 with original verified license files, 36 metadata-only verified; all 10 runtime metadata-only packages have zero native binaries and strictly permissive declared terms).
    - 28 native runtime components inventoried in `third-party/native/components.json` with 34 license files verified and hashed in `third-party/licenses/native/`.
    - Parity enforcement active: `scripts/check-notice-parity.js` verifies 100% concordance between manifests, licenses, and `THIRD-PARTY-NOTICES.md`.
 

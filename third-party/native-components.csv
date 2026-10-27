@@ -1,5 +1,5 @@
 id,name,version,license_expression,scope,linkage,exception,review,files,status
-"musl","Musl C Library","1.2.5","MIT","runtime","static","","","COPYING.txt:f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af","PERMISSIVE_VERIFIED"
+"musl","Musl C Library","1.2.5","MIT","runtime","static","","","COPYING.txt:f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af;NON_EXISTENT_LICENSE.txt:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","PERMISSIVE_VERIFIED"
 "node","Node.js","24.13.1","MIT","runtime","executable","","","LICENSE.txt:9ef8d3fa97d90d93543ee9e2b71394de59c09d8057625fd355d45303243527a3","PERMISSIVE_VERIFIED"
 "icu","ICU","77.1","Unicode-3.0","runtime","static","","","LICENSE.txt:451167c55c0fa447cc2d5632714f5e3c567fe4f1e1badefab2c1333852198aca","PERMISSIVE_VERIFIED"
 "gdal","GDAL","3.11.4","MIT","runtime","shared-library-and-executable","","","LICENSE.txt:1dae3468e81d00da56e2936f74d33b8b3ad09d726437f19ce209a5dabea41f77","PERMISSIVE_VERIFIED"

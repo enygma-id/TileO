@@ -18,7 +18,10 @@ import { evaluateExpression } from './lib/license-policy.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const COMPONENTS_FILE = path.join(ROOT, 'third-party', 'native', 'components.json');
+const manifestArgIdx = process.argv.indexOf('--manifest');
+const COMPONENTS_FILE = manifestArgIdx !== -1 && manifestArgIdx + 1 < process.argv.length
+  ? path.resolve(process.argv[manifestArgIdx + 1])
+  : path.join(ROOT, 'third-party', 'native', 'components.json');
 const CORPUS_DIR = path.join(ROOT, 'third-party', 'licenses', 'native');
 const CSV_FILE = path.join(ROOT, 'third-party', 'native-components.csv');
 const CACHE_DIR = path.join(os.tmpdir(), 'tileo-native-licenses');

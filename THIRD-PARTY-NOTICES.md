@@ -4,16 +4,16 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated: 2026-10-26 · Lockfile SHA-256: `5d73fad94a8a28054ca30da1ac7bf5a4a9edf7a4f7f6449762d8b762895059ec`
+Generated: 2026-10-27 · Lockfile SHA-256: `043f86e4589e4c704f09d017cd6ae64ffe9126c7837f52954af8176719a47697`
 
 ## Verification summary
 
 | Evidence set | Count | Method |
 | --- | ---: | --- |
-| npm entries in `package-lock.json` | 291 | Direct, transitive, development and platform-optional entries |
-| npm notices verified from exact tarball | 252 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
-| npm metadata-only entries | 39 | Tarball has no license file; only `package.json` metadata retained |
-| npm runtime entries marked metadata-only | 13 | Review required before strict release |
+| npm entries in `package-lock.json` | 285 | Direct, transitive, development and platform-optional entries |
+| npm notices verified from exact tarball | 249 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
+| npm metadata-only entries | 36 | Tarball has no license file; only `package.json` metadata retained |
+| npm runtime entries marked metadata-only | 10 | Review required before strict release |
 | Native runtime components | 28 | Pinned upstream license corpus |
 | Native permissive expressions | 25 | Policy evaluation by `scripts/lib/license-policy.js` |
 | Native documented exceptions | 3 | GCC runtime exception + certificate data |
@@ -108,7 +108,7 @@ The GCC runtime exception permits distributing `libstdc++`/`libgcc` with indepen
 
 Each entry names the exact locked version, the recorded license expression, the verification state and the SHA-256 of the stored upstream notice. Development-only entries are not shipped in the runtime image; platform-optional entries are shipped only on matching platforms.
 
-### Runtime and optional entries (257)
+### Runtime and optional entries (251)
 
 #### @deck.gl/core (9.4.0)
 - **Declared License**: `MIT`
@@ -2470,55 +2470,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ````
 
-#### @luma.gl/gltf/node_modules/@loaders.gl/textures (4.4.5)
-- **Declared License**: `MIT`
-- **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `9c28678e57d255a5f5e2e6f47402ad70f6257d19c331c19c1dd80d95690a4855`
-- **Notice**: [`third-party/licenses/npm/@luma.gl/gltf/node_modules/@loaders.gl/textures/4.4.5/LICENSE.txt`](third-party/licenses/npm/@luma.gl/gltf/node_modules/@loaders.gl/textures/4.4.5/LICENSE.txt) · SHA-256 `092a0a3ad1bc93e3667f666257cadb82b9a2acac483d6c798df3aed156c876e3`
-
-````text
-loaders.gl is licensed under the MIT license
-
-Copyright (c) vis.gl contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
---- 
-
-Copyright (c) 2015 Uber Technologies, Inc.
-
-loaders.gl includes certain files from Cesium (https://github.com/AnalyticalGraphicsInc/cesium) 
-under the  Apache 2 License (found in the submodule: modules/3d-tiles):)
-
-Copyright 2011-2018 CesiumJS Contributors
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and limitations under the License.
-````
-
 #### @luma.gl/gltf/node_modules/@loaders.gl/worker-utils (4.4.5)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
@@ -2566,36 +2517,6 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
-````
-
-#### @luma.gl/gltf/node_modules/ktx-parse (0.7.1)
-- **Declared License**: `MIT`
-- **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `9c189a0c97a63edc39e8e37613e7916bc8cbde315c6ea9e06ef7d31168236ed7`
-- **Notice**: [`third-party/licenses/npm/@luma.gl/gltf/node_modules/ktx-parse/0.7.1/LICENSE.txt`](third-party/licenses/npm/@luma.gl/gltf/node_modules/ktx-parse/0.7.1/LICENSE.txt) · SHA-256 `79847431f9ecef9cf399085cb863452e71a6dab99738f4f0c1ea06c6484b5692`
-
-````text
-The MIT License (MIT)
-
-Copyright (c) 2020 Don McCurdy
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 ````
 
 #### @luma.gl/gpgpu (9.4.2)
@@ -5404,36 +5325,6 @@ MIT License
     SOFTWARE
 ````
 
-#### argparse (1.0.10)
-- **Declared License**: `MIT`
-- **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `7faa149cd7811b7e11fc8353dc6e4e9c4de68a02f8221aa8f7dc22108315ac0d`
-- **Notice**: [`third-party/licenses/npm/argparse/1.0.10/LICENSE.txt`](third-party/licenses/npm/argparse/1.0.10/LICENSE.txt) · SHA-256 `c8442419dc614089ea022b3da6bfc089b41a58fb7b9030d1e651f2f36189dce2`
-
-````text
-(The MIT License)
-
-Copyright (C) 2012 by Vitaly Puzrin
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-````
-
 #### atomic-sleep (1.0.0)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
@@ -5830,34 +5721,37 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 #### charenc (0.0.2)
 - **Declared License**: `BSD-3-Clause`
 - **Scope**: `runtime`
-- **Verification**: `REVIEW_REQUIRED_METADATA_ONLY` · tarball SHA-256 `e36769a5316880df93e88212368f8987c8ef3f0f65b5de67d3fdf2ceefe1e89a`
-- **Notice**: [`third-party/licenses/npm/charenc/0.0.2/package.json`](third-party/licenses/npm/charenc/0.0.2/package.json) · SHA-256 `c7d1cdd93aabca9fd7ac1c27445a633435fd18ff6666e94645358f08ed22363c`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `e36769a5316880df93e88212368f8987c8ef3f0f65b5de67d3fdf2ceefe1e89a`
+- **Notice**: [`third-party/licenses/npm/charenc/0.0.2/LICENSE.txt`](third-party/licenses/npm/charenc/0.0.2/LICENSE.txt) · SHA-256 `74e116190bb682ea35c0632159c71801815c5554df4e01a9c9ba08662f61949f`
 
 ````text
-{
-  "author": "Paul Vorbach <paul@vorb.de> (http://vorb.de)",
-  "name": "charenc",
-  "description": "character encoding utilities",
-  "tags": [
-    "utf8",
-    "binary",
-    "byte",
-    "string"
-  ],
-  "version": "0.0.2",
-  "license": "BSD-3-Clause",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/pvorb/node-charenc.git"
-  },
-  "bugs": {
-    "url": "https://github.com/pvorb/node-charenc/issues"
-  },
-  "main": "charenc.js",
-  "engines": {
-    "node": "*"
-  }
-}
+Copyright © 2011, Paul Vorbach. All rights reserved.
+Copyright © 2009, Jeff Mott. All rights reserved.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this
+  list of conditions and the following disclaimer in the documentation and/or
+  other materials provided with the distribution.
+* Neither the name Crypto-JS nor the names of its contributors may be used to
+  endorse or promote products derived from this software without specific prior
+  written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ````
 
 #### chownr (1.1.4)
@@ -5977,32 +5871,37 @@ IN THE SOFTWARE.
 #### crypt (0.0.2)
 - **Declared License**: `BSD-3-Clause`
 - **Scope**: `runtime`
-- **Verification**: `REVIEW_REQUIRED_METADATA_ONLY` · tarball SHA-256 `011d343351e9ac1de36a622a3e678f0f393f188f1cffb5988b7387834a519099`
-- **Notice**: [`third-party/licenses/npm/crypt/0.0.2/package.json`](third-party/licenses/npm/crypt/0.0.2/package.json) · SHA-256 `c9f1d099aac008e1fa481ce494b28333e1dfbc90c76a77e75b75b2c25fc8f605`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `011d343351e9ac1de36a622a3e678f0f393f188f1cffb5988b7387834a519099`
+- **Notice**: [`third-party/licenses/npm/crypt/0.0.2/LICENSE.txt`](third-party/licenses/npm/crypt/0.0.2/LICENSE.txt) · SHA-256 `74e116190bb682ea35c0632159c71801815c5554df4e01a9c9ba08662f61949f`
 
 ````text
-{
-  "author": "Paul Vorbach <paul@vorb.de> (http://vorb.de)",
-  "name": "crypt",
-  "description": "utilities for encryption and hashing",
-  "tags": [
-    "hash",
-    "security"
-  ],
-  "version": "0.0.2",
-  "license": "BSD-3-Clause",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/pvorb/node-crypt.git"
-  },
-  "bugs": {
-    "url": "https://github.com/pvorb/node-crypt/issues"
-  },
-  "main": "crypt.js",
-  "engines": {
-    "node": "*"
-  }
-}
+Copyright © 2011, Paul Vorbach. All rights reserved.
+Copyright © 2009, Jeff Mott. All rights reserved.
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, this
+  list of conditions and the following disclaimer in the documentation and/or
+  other materials provided with the distribution.
+* Neither the name Crypto-JS nor the names of its contributors may be used to
+  endorse or promote products derived from this software without specific prior
+  written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ````
 
 #### decompress-response (6.0.0)
@@ -7428,24 +7327,6 @@ Redistribution and use in source and binary forms, with or without modification,
 3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-````
-
-#### image-size (0.7.5)
-- **Declared License**: `MIT`
-- **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `881e71322c963e472c37e71a87627e4a485419170221f4a67f7912bfb6f21943`
-- **Notice**: [`third-party/licenses/npm/image-size/0.7.5/LICENSE.txt`](third-party/licenses/npm/image-size/0.7.5/LICENSE.txt) · SHA-256 `54d0b82d1e7d0bc60a4b48b6172f1a9fa7385cfa8a448d14ad3a638930ef417c`
-
-````text
-The MIT License (MIT)
-
-Copyright © 2017 Aditya Yadav, http://netroy.in
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ````
 
 #### immediate (3.0.6)
@@ -10018,39 +9899,83 @@ THIS SOFTWARE.
 - **Declared License**: `(BSD-2-Clause OR MIT OR Apache-2.0)`
 - **Scope**: `runtime`
 - **Election**: **BSD-2-Clause** (upstream: `BSD-2-Clause OR MIT OR Apache-2.0`)
-- **Verification**: `REVIEW_REQUIRED_METADATA_ONLY` · tarball SHA-256 `03a5fae485203eb424dd3e9b1c4cf9ce3d04c03b154cb4fb6604497815cae93b`
-- **Notice**: [`third-party/licenses/npm/rc/1.2.8/package.json`](third-party/licenses/npm/rc/1.2.8/package.json) · SHA-256 `96f035349a8e6034d380348ec3d454ed8ea3a602c7a5700eb36ff48310bdbe9f`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `03a5fae485203eb424dd3e9b1c4cf9ce3d04c03b154cb4fb6604497815cae93b`
+- **Notice**: [`third-party/licenses/npm/rc/1.2.8/LICENSE.txt`](third-party/licenses/npm/rc/1.2.8/LICENSE.txt) · SHA-256 `e8734448285a2dd773d40136ed5d5e8163a70701dd540cdc796cfca232f67d55`
+- **Notice**: [`third-party/licenses/npm/rc/1.2.8/LICENSE.BSD.txt`](third-party/licenses/npm/rc/1.2.8/LICENSE.BSD.txt) · SHA-256 `65e7e4d223688c601f42959defde380f8c4aa677fa4706da3b4a53f129bd78a3`
+- **Notice**: [`third-party/licenses/npm/rc/1.2.8/LICENSE.MIT.txt`](third-party/licenses/npm/rc/1.2.8/LICENSE.MIT.txt) · SHA-256 `d72dea1a8cdf3f4dfa2f594253d0c5b37baefc76e806f5ecb0e426393edcd505`
 
 ````text
-{
-  "name": "rc",
-  "version": "1.2.8",
-  "description": "hardwired configuration loader",
-  "main": "index.js",
-  "browser": "browser.js",
-  "scripts": {
-    "test": "set -e; node test/test.js; node test/ini.js; node test/nested-env-vars.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dominictarr/rc.git"
-  },
-  "license": "(BSD-2-Clause OR MIT OR Apache-2.0)",
-  "keywords": [
-    "config",
-    "rc",
-    "unix",
-    "defaults"
-  ],
-  "bin": "./cli.js",
-  "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)",
-  "dependencies": {
-    "deep-extend": "^0.6.0",
-    "ini": "~1.3.0",
-    "minimist": "^1.2.0",
-    "strip-json-comments": "~2.0.1"
-  }
-}
+Apache License, Version 2.0
+
+Copyright (c) 2011 Dominic Tarr
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+````
+
+````text
+Copyright (c) 2013, Dominic Tarr
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met: 
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer. 
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution. 
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies, 
+either expressed or implied, of the FreeBSD Project.
+````
+
+````text
+The MIT License
+
+Copyright (c) 2011 Dominic Tarr
+
+Permission is hereby granted, free of charge, 
+to any person obtaining a copy of this software and 
+associated documentation files (the "Software"), to 
+deal in the Software without restriction, including 
+without limitation the rights to use, copy, modify, 
+merge, publish, distribute, sublicense, and/or sell 
+copies of the Software, and to permit persons to whom 
+the Software is furnished to do so, 
+subject to the following conditions:
+
+The above copyright notice and this permission notice 
+shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ````
 
 #### readable-stream (2.3.8)
@@ -10622,39 +10547,6 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
 IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ````
 
-#### sprintf-js (1.0.3)
-- **Declared License**: `BSD-3-Clause`
-- **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `3afb26bcc328dc90f516515acf2783ad35b08dbfe9e0ada18264c3c4ddaa1a83`
-- **Notice**: [`third-party/licenses/npm/sprintf-js/1.0.3/LICENSE.txt`](third-party/licenses/npm/sprintf-js/1.0.3/LICENSE.txt) · SHA-256 `a4cdda44b5adea4731d53dcae78fb5124f8fd853e994f01e25d8c33a7daf818b`
-
-````text
-Copyright (c) 2007-2014, Alexandru Marasteanu <hello [at) alexei (dot] ro>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-* Redistributions of source code must retain the above copyright
-  notice, this list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright
-  notice, this list of conditions and the following disclaimer in the
-  documentation and/or other materials provided with the distribution.
-* Neither the name of this software nor the names of its contributors may be
-  used to endorse or promote products derived from this software without
-  specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-````
-
 #### string_decoder (1.1.1)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
@@ -10885,262 +10777,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 """
-````
-
-#### texture-compressor (1.0.2)
-- **Declared License**: `MIT`
-- **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `9c871e064f568442c7f4cc54d9e583ceff3e409e990fc2c8fedb15ad8ca0e72f`
-- **Notice**: [`third-party/licenses/npm/texture-compressor/1.0.2/LICENSE.txt`](third-party/licenses/npm/texture-compressor/1.0.2/LICENSE.txt) · SHA-256 `0969fa65680b694452c2c65981df14af5c192da24f2b1f87bdd51d8ed24efcfa`
-- **Notice**: [`third-party/licenses/npm/texture-compressor/1.0.2/LICENSE-astcenc.txt`](third-party/licenses/npm/texture-compressor/1.0.2/LICENSE-astcenc.txt) · SHA-256 `565412eb7838fcad0da201a4b4b7b823791dd8ba6bd66ebb3a3d9fc78139f986`
-- **Notice**: [`third-party/licenses/npm/texture-compressor/1.0.2/LICENSE-crunch.txt`](third-party/licenses/npm/texture-compressor/1.0.2/LICENSE-crunch.txt) · SHA-256 `ad55612d70772c3b01b62add44d8a39af3d0914ea3246667a88df1de99c08b87`
-- **Notice**: [`third-party/licenses/npm/texture-compressor/1.0.2/LICENSE-PVRTexToolCLI.txt`](third-party/licenses/npm/texture-compressor/1.0.2/LICENSE-PVRTexToolCLI.txt) · SHA-256 `a428a4a9b6c73387c6d4c22b5abeba44c45351c058182092ad01499c2a315013`
-
-````text
-MIT License
-
-Copyright (c) 2019 Tim van Scherpenzeel
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-````
-
-````text
-END USER LICENCE AGREEMENT FOR THE MALI ASTC SPECIFICATION AND SOFTWARE CODEC,
-VERSION: 1.3
-
-THIS END USER LICENCE AGREEMENT ("LICENCE") IS A LEGAL AGREEMENT BETWEEN YOU
-(EITHER A SINGLE INDIVIDUAL, OR SINGLE LEGAL ENTITY) AND ARM LIMITED ("ARM")
-FOR THE USE OF THE SOFTWARE ACCOMPANYING THIS LICENCE. ARM IS ONLY WILLING
-TO LICENSE THE SOFTWARE TO YOU ON CONDITION THAT YOU ACCEPT ALL OF THE TERMS
-IN THIS LICENCE. BY CLICKING "I AGREE" OR BY INSTALLING OR OTHERWISE USING
-OR COPYING THE SOFTWARE YOU INDICATE THAT YOU AGREE TO BE BOUND BY ALL THE
-TERMS OF THIS LICENCE.
-
-IF YOU DO NOT AGREE TO THE TERMS OF THIS LICENCE, ARM IS UNWILLING TO LICENSE
-THE SOFTWARE TO YOU AND YOU MAY NOT INSTALL, USE OR COPY THE SOFTWARE.
-
-1.  DEFINITIONS.
-
-"Authorised Purpose" means the use of the Software solely to develop products
-and tools which implement the Khronos ASTC specification to;
-(i) compress texture images into ASTC format ("Compression Results"); 
-(ii) distribute such Compression Results to third parties; and 
-(iii) decompress texture images stored in ASTC format.
-
-"Software" means the source code and Software binaries accompanying this
-Licence, and any printed, electronic or online documentation supplied with it,
-in all cases relating to the MALI ASTC SPECIFICATION AND SOFTWARE CODEC.
-
-2. LICENCE GRANT.
-
-ARM hereby grants to you, subject to the terms and conditions of this Licence,
-a nonexclusive, nontransferable, free of charge, royalty free, worldwide
-licence to use, copy, modify and (subject to Clause 3 below) distribute the
-Software solely for the Authorised Purpose.
-
-No right is granted to use the Software to develop hardware.
-
-Notwithstanding the foregoing, nothing in this Licence prevents you from
-using the Software to develop products that conform to an application
-programming interface specification issued by The Khronos Group Inc.
-("Khronos"), provided that you have licences to develop such products
-under the relevant Khronos agreements.
-
- 3. RESTRICTIONS ON USE OF THE SOFTWARE.
-
-RESTRICTIONS ON TRANSFER OF LICENSED RIGHTS: The rights granted to you under
-this Licence may not be assigned by you to any third party without the prior
-written consent of ARM.
-
-TITLE AND RESERVATION OF RIGHTS: You acquire no rights to the Software other
-than as expressly provided by this Licence. The Software is licensed not sold.
-ARM does not transfer title to the Software to you. In no event shall the
-licences granted in Clause 2 be construed as granting you expressly or by
-implication, estoppel or otherwise, licences to any ARM technology other than
-the Software.
-
-NOTICES: You shall not remove from the Software any copyright notice or other
-notice (whether ARM's or its licensor's), and you shall ensure that any such
-notice is reproduced in any copies of the whole or any part of the Software
-made by you.  You shall not use ARM's or its licensor's name, logo or
-trademarks to market Compression Results. If you distribute the Software to a
-third party, you agree to include a copy of this Licence with such
-distribution.
-
-4. NO SUPPORT.
-
-ARM has no obligation to support or to continue providing or updating any of
-the Software.
-
-5. NO WARRANTIES.
-
-YOU AGREE THAT THE SOFTWARE IS LICENSED "AS IS", AND THAT ARM EXPRESSLY
-DISCLAIMS ALL REPRESENTATIONS, WARRANTIES, CONDITIONS OR OTHER TERMS, EXPRESS,
-IMPLIED OR STATUTORY, TO THE FULLEST EXTENT PERMITTED BY LAW. YOU EXPRESSLY
-ASSUME ALL LIABILITIES AND RISKS, FOR USE OR OPERATION OF ANY APPLICATION
-PROGRAMS YOU CREATE WITH THE SOFTWARE, AND YOU ASSUME THE ENTIRE COST OF ALL
-NECESSARY SERVICING, REPAIR OR CORRECTION.
-
-6. LIMITATION OF LIABILITY.
-
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL ARM BE
-LIABLE FOR ANY INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES
-(INCLUDING LOSS OF PROFITS) ARISING OUT OF THE USE OR INABILITY TO USE THE
-SOFTWARE WHETHER BASED ON A CLAIM UNDER CONTRACT, TORT OR OTHER LEGAL THEORY,
-EVEN IF ARM WAS ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-
-ARM does not seek to limit or exclude liability for death or personal injury
-arising from ARM's negligence and because some jurisdictions do not permit the
-exclusion or limitation of liability for consequential or incidental damages
-the above limitation relating to liability for consequential damages may not
-apply to you.
-
-NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED IN THIS LICENCE, THE
-MAXIMUM LIABILITY OF ARM TO YOU IN AGGREGATE FOR ALL CLAIMS MADE AGAINST ARM
-IN CONTRACT TORT OR OTHERWISE UNDER OR IN CONNECTION WITH THE SUBJECT MATTER
-OF THIS LICENCE SHALL NOT EXCEED THE GREATER OF THE TOTAL OF SUMS PAID BY YOU
-TO ARM (IF ANY) FOR THIS LICENCE AND US$5.00.
-
-7. U.S. GOVERNMENT END USERS.
-
-US Government Restrictions: Use, duplication, reproduction, release,
-modification, disclosure or transfer of this commercial product and
-accompanying documentation is restricted in accordance with the terms
-of this Licence.
-
-8. TERM AND TERMINATION.
-
-This Licence shall remain in force until terminated by you or by ARM. Without
-prejudice to any of its other rights if you are in breach of any of the terms
-and conditions of this Licence then ARM may terminate this Licence immediately
-upon giving written notice to you. You may terminate this Licence at any time.
-
-Upon termination of this Licence by you or by ARM you shall stop using the
-Software and destroy all copies of the Software in your possession together
-with all documentation and related materials. The provisions of Clauses 1, 3,
-4, 5, 6, 7, 8 and 9  shall survive termination of this Licence.
-
-9. GENERAL.
-
-This Licence is governed by English Law. Except where ARM agrees otherwise in
-a written contract signed by you and ARM, this is the only agreement between
-you and ARM relating to the Software and it may only be modified by written
-agreement between you and ARM. Except as expressly agreed in writing, this
-Licence may not be modified by purchase orders, advertising or other
-representation by any person. If any clause in this Licence is held by a court
-of law to be illegal or unenforceable the remaining provisions of this Licence
-shall not be affected thereby. The failure by ARM to enforce any of the
-provisions of this Licence, unless waived in writing, shall not constitute a
-waiver of ARM's rights to enforce such provision or any other provision of
-this Licence in the future.
-
-You agree to comply fully with all laws and regulations of the United States
-and other countries ("Export Laws") to assure that the Software is not;
-(1) exported, directly or indirectly, in violation of Export Laws, either to
-any countries that are subject to U.S.A. export restrictions or to any end
-user who has been prohibited from participating in the U.S.A. export
-transactions by any federal agency of the U.S.A. government; or 
-(2) intended to be used for any purpose prohibited by Export Laws, including,
-without limitation, nuclear, chemical, or biological weapons proliferation.
-````
-
-````text
-crunch/crnlib uses a modified ZLIB license. Specifically, it's the same as zlib except that 
-public credits for using the library are *required*.
-
-Copyright (c) 2010-2016 Richard Geldreich, Jr., Tenacious Software, and Binomial LLC
-
-This software is provided 'as-is', without any express or implied
-warranty.  In no event will the authors be held liable for any damages
-arising from the use of this software.
-
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute it
-freely, subject to the following restrictions:
-
-1. The origin of this software must not be misrepresented; you must not
-claim that you wrote the original software. 
-
-2. If you use this software in a product, this acknowledgment in the product 
-documentation or credits is required:
-
-"Crunch Library Copyright (c) 2010-2016 Richard Geldreich, Jr., Tenacious Software, and Binomial LLC"
-
-3. Altered source versions must be plainly marked as such, and must not be
-misrepresented as being the original software.
-
-4. This notice may not be removed or altered from any source distribution.
-````
-
-````text
-PLEASE READ THIS AGREEMENT CAREFULLY. BY USING ANY PORTION OF THE POWERVR TOOLS SOFTWARE YOU WILL BE LEGALLY BOUND TO THESE TERMS.
-Imagination Technologies Limited (“Imagination”) provides this Software subject to the terms of this Agreement. If you do not agree with any of these terms, then do not install or otherwise use the Software.
-
-Definitions
-“Software” means all or any component comprising the software in source or binary form, documentation, or other materials including any related updates or upgrades made available by Imagination under this Agreement from time to time.
-
-License Grant
-Subject to your compliance with the terms of this Agreement, Imagination grants to you a non-exclusive, non-assignable license to:
-
-(a)	use the Software for the sole purpose of developing, profiling, or assisting in the optimisation of internal, commercial, or non-commercial applications;
-
-(b)	distribute the Software as a component of your application, provided that:
-
-you do not distribute the Software on a stand alone basis;
-you distribute such Software under terms no less restrictive than those in this Agreement;
-you comply with the attribution requirements set out in Appendix 1;
-you are solely responsible for any update, support obligation or other liability that may arise from such distribution; and
-you do not make any statements that your application or its performance are certified, guaranteed or otherwise endorsed by Imagination; and
-(c)	use the Software as expressly authorised by Imagination in writing, on the payment and/or support terms set out in Appendix 2 (if applicable).
-
-Restrictions
-Other than as expressly permitted herein, you may not: (i) use the Software for any unauthorised purpose; (ii) modify, disassemble, decompile, reverse engineer, revise or enhance the Software, create derivative works or attempt to discover the source code for any element of the Software not already provided in source code form; (iii) remove any proprietary or copyright notices on or accompanying the Software; or (iv) incorporate or combine the Software, with any open source software in such a way that would cause the Software, or any portion thereof, to be subject to all or part of the license obligations or other intellectual property related terms with respect to such open source software.
-
-Ownership and Contributions
-Imagination retains all ownership of the Software, including without limitation all copyrights and other intellectual property rights therein. To the extent you provide any feedback or make any contributions in connection with the Software (collectively “contributions”), you agree to assign all intellectual property rights in such contribution to Imagination and agree not to assert any related rights against Imagination or any of its customers or licensees. You understand and agree that Imagination is not required to make any use of any contribution that you provide, but that if Imagination makes use of your contribution, neither Imagination nor any of its customers or licensees are required to credit or compensate you for your contribution. You represent and warrant that you have sufficient rights in your contribution to comply with the foregoing.
-
-Warranty Disclaimer
-THE SOFTWARE IS PROVIDED “AS IS”. IMAGINATION HEREBY DISCLAIMS ALL EXPRESS OR IMPLIED WARRANTIES AND CONDITIONS WITH REGARD TO THE SOFTWARE, INCLUDING ALL WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT.
-
-Limitation of Liability
-IN NO EVENT WILL IMAGINATION BE LIABLE TO YOU FOR ANY DAMAGES, CLAIMS OR COSTS WHATSOEVER ARISING FROM THIS AGREEMENT AND/OR YOUR USE OF THE SOFTWARE OR ANY COMPONENT THEREOF, INCLUDING WITHOUT LIMITATION ANY CONSEQUENTIAL, INDIRECT, INCIDENTAL DAMAGES, OR ANY LOST PROFITS OR LOST SAVINGS, EVEN IF IMAGINATION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH LOSS, DAMAGES, CLAIMS OR COSTS OR FOR ANY CLAIM BY ANY THIRD PARTY. THE FOREGOING LIMITATIONS AND EXCLUSIONS APPLY TO THE EXTENT PERMITTED BY APPLICABLE LAW IN YOUR JURISDICTION.
-
-Third Party Materials
-All third party materials packaged with the Software, including without limitation, artwork, graphics, game demos and patches, are the sole and exclusive property of such third parties. Imagination makes no representations or warranties about the accuracy, usability or validity of any third party materials, and disclaims all liabilities in connection with such third party materials.
-
-Term
-This Agreement is effective until terminated. Imagination has the right to terminate this Agreement immediately if you fail to comply with any term of this Agreement. You may terminate this Agreement by destroying or returning to Imagination all copies of the Software in your possession.
-
-Governing Law
-This Agreement is governed by and shall be construed in accordance with English law and each party agrees to submit to the exclusive jurisdiction of the courts of England.
-
-
-APPENDIX 1: ATTRIBUTION REQUIREMENTS
-If source code is released as it is, the Copyright notice should be kept in a visible position. If object code is bundled with a product, all branding should be kept as it was originally, and the following acknowledgement should be displayed clearly in any associated documentation or other collateral in printed or electronic form distributed with the product incorporating the Software: “This product includes components of the PowerVR Tools Software from Imagination Technologies Limited”. If source code is used to compile a product, the following acknowledgement should be displayed clearly in any associated documentation or other collateral in printed or electronic form distributed with the product incorporating the Software: “This product includes components of the PowerVR Tools Software from Imagination Technologies Limited”.
-
-
-APPENDIX 2: FEES
-LICENSE FEES: 0 (Zero)
-
-ROYALTY FEES: 0 (Zero)
-
-SUPPORT AND MAINTENANCE TERMS AND FEES: 0 (Zero)
 ````
 
 #### thread-stream (4.2.0)

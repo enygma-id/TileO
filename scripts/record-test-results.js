@@ -13,16 +13,24 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 
 const args = process.argv.slice(2);
-function getArg(name, defaultValue) {
-  const idx = args.indexOf(`--${name}`);
-  if (idx !== -1 && idx + 1 < args.length) {
-    return args[idx + 1];
+let imageTag = null;
+let outDir = 'artifacts/compliance';
+let mountDist = false;
+
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === '--image' && i + 1 < args.length) {
+    imageTag = args[++i];
+  } else if (args[i] === '--out-dir' && i + 1 < args.length) {
+    outDir = args[++i];
+  } else if (args[i] === '--mount-dist') {
+    mountDist = true;
+  } else if (!args[i].startsWith('--') && !imageTag) {
+    imageTag = args[i];
   }
-  return defaultValue;
 }
 
-const IMAGE_TAG = args.find(a => !a.startsWith('--')) || 'tileo-ts:local';
-const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', 'artifacts/compliance'));
+const IMAGE_TAG = imageTag || 'tileo-ts:local';
+const OUT_DIR = path.resolve(ROOT_DIR, outDir);
 if (!fs.existsSync(OUT_DIR)) {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 }
@@ -30,7 +38,18 @@ const OUT_FILE = path.join(OUT_DIR, 'integration-test-results.json');
 
 console.log(`Running container integration tests on ${IMAGE_TAG}...`);
 
-const distPathPosix = ROOT_DIR.replace(/\\/g, '/') + '/dist';
+let imageId = 'unknown';
+try {
+  imageId = execFileSync('docker', ['inspect', '--format', '{{.Id}}', IMAGE_TAG], { encoding: 'utf8' }).trim();
+} catch (e) {
+  console.warn(`Warning: Could not inspect image ${IMAGE_TAG}: ${e.message}`);
+}
+
+let gitCommit = 'unknown';
+try {
+  gitCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT_DIR, encoding: 'utf8' }).trim();
+} catch (e) {}
+
 const env = {
   ...process.env,
   MSYS_NO_PATHCONV: '1'
@@ -49,22 +68,29 @@ const testFiles = fs.readdirSync(distTestsDir)
 
 console.log(`Found ${testFiles.length} test suites in dist/tests/`);
 
-const args = [
+const dockerArgs = [
   'run', '--rm',
   '-e', 'TILEO_INTEGRATION=1',
-  '-e', 'NODE_ENV=test',
-  '-v', `${distPathPosix}:/app/dist:ro`,
+  '-e', 'NODE_ENV=test'
+];
+
+if (mountDist) {
+  const distPathPosix = ROOT_DIR.replace(/\\/g, '/') + '/dist';
+  dockerArgs.push('-v', `${distPathPosix}:/app/dist:ro`);
+}
+
+dockerArgs.push(
   IMAGE_TAG,
   'node', '--test',
   ...testFiles
-];
+);
 
 const start = Date.now();
 let testOutput = '';
 let exitCode = 0;
 
 try {
-  testOutput = execFileSync('docker', args, { env, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+  testOutput = execFileSync('docker', dockerArgs, { env, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
 } catch (err) {
   exitCode = err.status || 1;
   testOutput = (err.stdout || '') + (err.stderr || '');
@@ -110,18 +136,24 @@ if (skipMatch) skipped = parseInt(skipMatch[1], 10);
 const summary = {
   timestamp: new Date().toISOString(),
   target_image: IMAGE_TAG,
+  image_id: imageId,
+  git_commit: gitCommit,
+  command: `docker ${dockerArgs.join(' ')}`,
   total_tests: passed + failed + skipped,
   passed,
   failed,
   skipped,
   duration_ms: durationMs,
-  all_passed: failed === 0 && (passed + failed + skipped) > 0,
-  tests
+  all_passed: failed === 0 && passed > 0,
+  tests_count: tests.length,
+  tests,
+  raw_output_tail: testOutput.slice(-2000)
 };
 
 fs.writeFileSync(OUT_FILE, JSON.stringify(summary, null, 2), 'utf8');
 console.log(`Results written to ${OUT_FILE}: ${passed} passed, ${failed} failed, ${skipped} skipped (total ${tests.length}) in ${durationMs}ms`);
 
-if (failed > 0 || tests.length === 0) {
+if (failed > 0 || passed === 0 || exitCode !== 0) {
+  console.error(`Integration tests FAILED or produced 0 passing tests. Exit code: ${exitCode}`);
   process.exit(1);
 }

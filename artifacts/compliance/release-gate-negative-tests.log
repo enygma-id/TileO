@@ -1,10 +1,10 @@
-TileO Release Gate Negative Controls Test Runner
-Date: 2026-10-26T11:11:41.275Z
-Target: Permissive dependency enforcement and compliance gates
+TileO Release Gate Negative Controls Test Runner (End-to-End Gate Verification)
+Date: 2026-10-27T02:21:35.084Z
+Target: Release gate and compliance enforcement scripts
 
 ======================================================
-TEST [NEG-01]: Banned package (sharp) rejection
-Description: Injects "sharp" into package-lock and runs release gate dependency check
+TEST [NEG-01]: Banned package (sharp) rejection in release-gate.js
+Description: Injects "sharp" into package-lock and invokes real release-gate.js
 Expected rejection: Forbidden package "sharp" found in package-lock
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
@@ -12,71 +12,71 @@ Diagnostic output snippet: FAIL: Forbidden package "sharp" found in package-lock
 TEST [NEG-01] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-02]: Copyleft GPL license rejection
-Description: Injects a GPL-3.0 package into production dependencies and evaluates license policy
-Expected rejection: Non-permissive license
+TEST [NEG-02]: Copyleft GPL license rejection in release-gate.js
+Description: Injects a GPL-3.0 package into package-lock and invokes real release-gate.js
+Expected rejection: Non-permissive license "GPL-3.0-only"
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL: Non-permissive license "GPL-3.0-only": undefined
+Diagnostic output snippet: FAIL: Non-permissive license "GPL-3.0-only" in node_modules/gpl-test-tool
 TEST [NEG-02] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-03]: Tampered native component hash rejection
-Description: Alters sha256 hash of a native component in components.json and runs verify-native-licenses
-Expected rejection: Hash mismatch for native license file
+TEST [NEG-03]: Tampered native component hash rejection in verify-native-licenses.js
+Description: Alters sha256 hash in components.json and invokes real verify-native-licenses.js
+Expected rejection: sha256 mismatch
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL: Hash mismatch for native license file COPYING.txt expected 0000000000000000000000000000000000000000000000000000000000000000 got f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af
+Diagnostic output snippet: FAIL musl/COPYING.txt: sha256 mismatch
 TEST [NEG-03] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-04]: Missing native component license file rejection
-Description: Sets a non-existent license file path in components.json and validates detection
-Expected rejection: License file does not exist
+TEST [NEG-04]: Missing native component license file rejection in verify-native-licenses.js
+Description: Injects non-existent license file into components.json and invokes real verify-native-licenses.js
+Expected rejection: missing
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL: License file does not exist: D:\Kerja\enygma-id\TileO\third-party\licenses\native\non-existent\LICENSE.txt
+Diagnostic output snippet: FAIL musl: missing third-party\licenses\native\musl\NON_EXISTENT_LICENSE.txt
 TEST [NEG-04] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-05]: Notice parity failure on missing package entry
-Description: Verifies parity checker fails when a required package notice is omitted from THIRD-PARTY-NOTICES.md
-Expected rejection: Parity check failed: missing 1 required packages in notices
+TEST [NEG-05]: Failed integration test suite rejection in certify-release-gate.js
+Description: Creates test results with 2 failures and invokes certify-release-gate.js
+Expected rejection: Gate 4 Failed: Integration tests did not pass
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: Parity check failed: missing 1 required packages in notices: missing-package@2.0.0
+Diagnostic output snippet: ✖ Gate 4 Failed: Integration tests did not pass (passed=127, failed=2).
 TEST [NEG-05] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-06]: Forbidden dynamic ELF linkage rejection (libidn2)
-Description: Verifies image audit ELF closure checker rejects copyleft libraries
-Expected rejection: Forbidden dynamic linkage detected: libidn2.so.0
+TEST [NEG-06]: Banned binary (PVRTexToolCLI) rejection in certify-release-gate.js
+Description: Injects PVRTexToolCLI into SPDX SBOM and invokes certify-release-gate.js
+Expected rejection: Gate 3 Failed: Banned binary or component "PVRTexToolCLI" detected in SPDX SBOM
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL: Forbidden dynamic linkage detected: libidn2.so.0 in /usr/local/lib/libcurl.so
+Diagnostic output snippet: ✖ Gate 3 Failed: Banned binary or component "PVRTexToolCLI" detected in SPDX SBOM.
 TEST [NEG-06] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-07]: Missing required GDAL driver rejection (GTiff)
-Description: Verifies image audit rejects when a critical GDAL driver is missing
-Expected rejection: Missing mandatory GDAL driver: GTiff
+TEST [NEG-07]: Forbidden dynamic ELF linkage (libidn2) rejection in certify-release-gate.js
+Description: Injects libidn2 linkage into binary-linkage.csv and invokes certify-release-gate.js
+Expected rejection: Gate 3 Failed: Copyleft library detected in binary linkage
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL: Missing mandatory GDAL driver: GTiff, COG, JPEG, JP2OpenJPEG, WEBP, MBTiles, GPKG
+Diagnostic output snippet: ✖ Gate 3 Failed: Copyleft library detected in binary linkage: /usr/local/lib/libcurl.so,libidn2.so.0,NON_ALLOW
 TEST [NEG-07] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-08]: Missing or corrupted SBOM artifact rejection
-Description: Verifies image audit fails if Syft SBOM is empty or missing required fields
-Expected rejection: Invalid SBOM: missing packages or artifacts
+TEST [NEG-08]: Unapproved release governance signoff rejection in certify-release-gate.js
+Description: Invokes certify-release-gate.js with --enforce-human-approval against unfinalized approval doc
+Expected rejection: Gate 6 Failed: Human approval in release-approval.md has PENDING
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL: Invalid SBOM: missing packages or artifacts in SBOM
+Diagnostic output snippet: ✖ Gate 6 Failed: Human approval in release-approval.md has PENDING reviewer signatures or unchecked items.
 TEST [NEG-08] STATUS: PASSED (Negative control verified)
 
 ======================================================
 SUMMARY: All 8/8 negative control tests passed cleanly.
-Confirmed: Release gate and compliance tooling reject all tested non-permissive configurations.
+Confirmed: Release certification gate and compliance scripts reject all tested non-permissive configurations.
 Execution log written to: D:\Kerja\enygma-id\TileO\artifacts\compliance\release-gate-negative-tests.log
 ======================================================
 

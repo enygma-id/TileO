@@ -2,8 +2,8 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "5d73fad94a8a28054ca30da1ac7bf5a4a9edf7a4f7f6449762d8b762895059ec",
-  "package_count": 291,
+  "reference_lockfile_sha256": "043f86e4589e4c704f09d017cd6ae64ffe9126c7837f52954af8176719a47697",
+  "package_count": 285,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
   "generated_from": "Committed package-lock.json and exact-version upstream npm tarballs",
@@ -2556,39 +2556,6 @@
       }
     },
     {
-      "package_path": "node_modules/@luma.gl/gltf/node_modules/@loaders.gl/textures",
-      "name": "@luma.gl/gltf/node_modules/@loaders.gl/textures",
-      "version": "4.4.5",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "092a0a3ad1bc93e3667f666257cadb82b9a2acac483d6c798df3aed156c876e3",
-      "notice_file": "third-party/licenses/npm/@luma.gl/gltf/node_modules/@loaders.gl/textures/4.4.5/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-zB9xMIKiU3tQN6q5/A6yaXw/DbodA+bqMDTVu7pzk4lw4zcBwWiGtD5LV0QjgtlTj2ZnwV8cCd1rYk9bwiX2Bw==",
-      "resolved": "https://registry.npmjs.org/@loaders.gl/textures/-/textures-4.4.5.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-10-26",
-        "tarball_sha256": "9c28678e57d255a5f5e2e6f47402ad70f6257d19c331c19c1dd80d95690a4855",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "092a0a3ad1bc93e3667f666257cadb82b9a2acac483d6c798df3aed156c876e3",
-            "bytes": 1889
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/@luma.gl/gltf/node_modules/@loaders.gl/worker-utils",
       "name": "@luma.gl/gltf/node_modules/@loaders.gl/worker-utils",
       "version": "4.4.5",
@@ -2616,39 +2583,6 @@
             "stored": "LICENSE.txt",
             "sha256": "092a0a3ad1bc93e3667f666257cadb82b9a2acac483d6c798df3aed156c876e3",
             "bytes": 1889
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/@luma.gl/gltf/node_modules/ktx-parse",
-      "name": "@luma.gl/gltf/node_modules/ktx-parse",
-      "version": "0.7.1",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "79847431f9ecef9cf399085cb863452e71a6dab99738f4f0c1ea06c6484b5692",
-      "notice_file": "third-party/licenses/npm/@luma.gl/gltf/node_modules/ktx-parse/0.7.1/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-FeA3g56ksdFNwjXJJsc1CCc7co+AJYDp6ipIp878zZ2bU8kWROatLYf39TQEd4/XRSUvBXovQ8gaVKWPXsCLEQ==",
-      "resolved": "https://registry.npmjs.org/ktx-parse/-/ktx-parse-0.7.1.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-10-26",
-        "tarball_sha256": "9c189a0c97a63edc39e8e37613e7916bc8cbde315c6ea9e06ef7d31168236ed7",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "79847431f9ecef9cf399085cb863452e71a6dab99738f4f0c1ea06c6484b5692",
-            "bytes": 1078
           }
         ],
         "note": "corpus matches upstream tarball"
@@ -4476,39 +4410,6 @@
       }
     },
     {
-      "package_path": "node_modules/argparse",
-      "name": "argparse",
-      "version": "1.0.10",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "c8442419dc614089ea022b3da6bfc089b41a58fb7b9030d1e651f2f36189dce2",
-      "notice_file": "third-party/licenses/npm/argparse/1.0.10/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==",
-      "resolved": "https://registry.npmjs.org/argparse/-/argparse-1.0.10.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-10-26",
-        "tarball_sha256": "7faa149cd7811b7e11fc8353dc6e4e9c4de68a02f8221aa8f7dc22108315ac0d",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "c8442419dc614089ea022b3da6bfc089b41a58fb7b9030d1e651f2f36189dce2",
-            "bytes": 1079
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/atomic-sleep",
       "name": "atomic-sleep",
       "version": "1.0.0",
@@ -4910,9 +4811,9 @@
       "version": "0.0.2",
       "declared_license": "BSD-3-Clause",
       "notice_license": "BSD-3-Clause",
-      "notice_source": "package/package.json",
-      "notice_sha256": "c7d1cdd93aabca9fd7ac1c27445a633435fd18ff6666e94645358f08ed22363c",
-      "notice_file": "third-party/licenses/npm/charenc/0.0.2/package.json",
+      "notice_source": "package/LICENSE.mkd",
+      "notice_sha256": "74e116190bb682ea35c0632159c71801815c5554df4e01a9c9ba08662f61949f",
+      "notice_file": "third-party/licenses/npm/charenc/0.0.2/LICENSE.txt",
       "dev": false,
       "optional": false,
       "integrity": "sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==",
@@ -4921,20 +4822,20 @@
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
-        "status": "metadata_only_no_license_file",
+        "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
         "verified_at": "2026-10-26",
         "tarball_sha256": "e36769a5316880df93e88212368f8987c8ef3f0f65b5de67d3fdf2ceefe1e89a",
         "package_json_license": "BSD-3-Clause",
         "files": [
           {
-            "upstream": "package/package.json",
-            "stored": "package.json",
-            "sha256": "c7d1cdd93aabca9fd7ac1c27445a633435fd18ff6666e94645358f08ed22363c",
-            "bytes": 482
+            "upstream": "package/LICENSE.mkd",
+            "stored": "LICENSE.txt",
+            "sha256": "74e116190bb682ea35c0632159c71801815c5554df4e01a9c9ba08662f61949f",
+            "bytes": 1547
           }
         ],
-        "note": "tarball has no LICENSE/COPYING/NOTICE file; package.json metadata retained"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -5075,9 +4976,9 @@
       "version": "0.0.2",
       "declared_license": "BSD-3-Clause",
       "notice_license": "BSD-3-Clause",
-      "notice_source": "package/package.json",
-      "notice_sha256": "c9f1d099aac008e1fa481ce494b28333e1dfbc90c76a77e75b75b2c25fc8f605",
-      "notice_file": "third-party/licenses/npm/crypt/0.0.2/package.json",
+      "notice_source": "package/LICENSE.mkd",
+      "notice_sha256": "74e116190bb682ea35c0632159c71801815c5554df4e01a9c9ba08662f61949f",
+      "notice_file": "third-party/licenses/npm/crypt/0.0.2/LICENSE.txt",
       "dev": false,
       "optional": false,
       "integrity": "sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==",
@@ -5086,20 +4987,20 @@
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
-        "status": "metadata_only_no_license_file",
+        "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
         "verified_at": "2026-10-26",
         "tarball_sha256": "011d343351e9ac1de36a622a3e678f0f393f188f1cffb5988b7387834a519099",
         "package_json_license": "BSD-3-Clause",
         "files": [
           {
-            "upstream": "package/package.json",
-            "stored": "package.json",
-            "sha256": "c9f1d099aac008e1fa481ce494b28333e1dfbc90c76a77e75b75b2c25fc8f605",
-            "bytes": 458
+            "upstream": "package/LICENSE.mkd",
+            "stored": "LICENSE.txt",
+            "sha256": "74e116190bb682ea35c0632159c71801815c5554df4e01a9c9ba08662f61949f",
+            "bytes": 1547
           }
         ],
-        "note": "tarball has no LICENSE/COPYING/NOTICE file; package.json metadata retained"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -6124,39 +6025,6 @@
             "stored": "LICENSE.txt",
             "sha256": "18d45466ba3253deae04667e267a91ea8de8548f18c1125264d1c9db28194cc1",
             "bytes": 1465
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/image-size",
-      "name": "image-size",
-      "version": "0.7.5",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "54d0b82d1e7d0bc60a4b48b6172f1a9fa7385cfa8a448d14ad3a638930ef417c",
-      "notice_file": "third-party/licenses/npm/image-size/0.7.5/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-Hiyv+mXHfFEP7LzUL/llg9RwFxxY+o9N3JVLIeG5E7iFIFAalxvRU9UZthBdYDEVnzHMgjnKJPPpay5BWf1g9g==",
-      "resolved": "https://registry.npmjs.org/image-size/-/image-size-0.7.5.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-10-26",
-        "tarball_sha256": "881e71322c963e472c37e71a87627e4a485419170221f4a67f7912bfb6f21943",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "54d0b82d1e7d0bc60a4b48b6172f1a9fa7385cfa8a448d14ad3a638930ef417c",
-            "bytes": 1104
           }
         ],
         "note": "corpus matches upstream tarball"
@@ -8061,9 +7929,9 @@
       "version": "1.2.8",
       "declared_license": "(BSD-2-Clause OR MIT OR Apache-2.0)",
       "notice_license": "(BSD-2-Clause OR MIT OR Apache-2.0)",
-      "notice_source": "package/package.json",
-      "notice_sha256": "96f035349a8e6034d380348ec3d454ed8ea3a602c7a5700eb36ff48310bdbe9f",
-      "notice_file": "third-party/licenses/npm/rc/1.2.8/package.json",
+      "notice_source": "package/LICENSE.APACHE2",
+      "notice_sha256": "e8734448285a2dd773d40136ed5d5e8163a70701dd540cdc796cfca232f67d55",
+      "notice_file": "third-party/licenses/npm/rc/1.2.8/LICENSE.txt",
       "dev": false,
       "optional": false,
       "integrity": "sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==",
@@ -8072,20 +7940,32 @@
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
-        "status": "metadata_only_no_license_file",
+        "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
         "verified_at": "2026-10-26",
         "tarball_sha256": "03a5fae485203eb424dd3e9b1c4cf9ce3d04c03b154cb4fb6604497815cae93b",
         "package_json_license": "(BSD-2-Clause OR MIT OR Apache-2.0)",
         "files": [
           {
-            "upstream": "package/package.json",
-            "stored": "package.json",
-            "sha256": "96f035349a8e6034d380348ec3d454ed8ea3a602c7a5700eb36ff48310bdbe9f",
-            "bytes": 695
+            "upstream": "package/LICENSE.APACHE2",
+            "stored": "LICENSE.txt",
+            "sha256": "e8734448285a2dd773d40136ed5d5e8163a70701dd540cdc796cfca232f67d55",
+            "bytes": 586
+          },
+          {
+            "upstream": "package/LICENSE.BSD",
+            "stored": "LICENSE.BSD.txt",
+            "sha256": "65e7e4d223688c601f42959defde380f8c4aa677fa4706da3b4a53f129bd78a3",
+            "bytes": 1516
+          },
+          {
+            "upstream": "package/LICENSE.MIT",
+            "stored": "LICENSE.MIT.txt",
+            "sha256": "d72dea1a8cdf3f4dfa2f594253d0c5b37baefc76e806f5ecb0e426393edcd505",
+            "bytes": 1088
           }
         ],
-        "note": "tarball has no LICENSE/COPYING/NOTICE file; package.json metadata retained"
+        "note": "corpus updated (3 mismatch)"
       }
     },
     {
@@ -8716,39 +8596,6 @@
       }
     },
     {
-      "package_path": "node_modules/sprintf-js",
-      "name": "sprintf-js",
-      "version": "1.0.3",
-      "declared_license": "BSD-3-Clause",
-      "notice_license": "BSD-3-Clause",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "a4cdda44b5adea4731d53dcae78fb5124f8fd853e994f01e25d8c33a7daf818b",
-      "notice_file": "third-party/licenses/npm/sprintf-js/1.0.3/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==",
-      "resolved": "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-10-26",
-        "tarball_sha256": "3afb26bcc328dc90f516515acf2783ad35b08dbfe9e0ada18264c3c4ddaa1a83",
-        "package_json_license": "BSD-3-Clause",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "a4cdda44b5adea4731d53dcae78fb5124f8fd853e994f01e25d8c33a7daf818b",
-            "bytes": 1518
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/string_decoder",
       "name": "string_decoder",
       "version": "1.1.1",
@@ -8941,57 +8788,6 @@
             "stored": "LICENSE.txt",
             "sha256": "ec62dc96da0099b87f4511736c87309335527fb7031639493e06c95728dc8c54",
             "bytes": 2337
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/texture-compressor",
-      "name": "texture-compressor",
-      "version": "1.0.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "0969fa65680b694452c2c65981df14af5c192da24f2b1f87bdd51d8ed24efcfa",
-      "notice_file": "third-party/licenses/npm/texture-compressor/1.0.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-dStVgoaQ11mA5htJ+RzZ51ZxIZqNOgWKAIvtjLrW1AliQQLCmrDqNzQZ8Jh91YealQ95DXt4MEduLzJmbs6lig==",
-      "resolved": "https://registry.npmjs.org/texture-compressor/-/texture-compressor-1.0.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-10-26",
-        "tarball_sha256": "9c871e064f568442c7f4cc54d9e583ceff3e409e990fc2c8fedb15ad8ca0e72f",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "0969fa65680b694452c2c65981df14af5c192da24f2b1f87bdd51d8ed24efcfa",
-            "bytes": 1077
-          },
-          {
-            "upstream": "package/bin/darwin/LICENSE-astcenc.txt",
-            "stored": "LICENSE-astcenc.txt",
-            "sha256": "565412eb7838fcad0da201a4b4b7b823791dd8ba6bd66ebb3a3d9fc78139f986",
-            "bytes": 6945
-          },
-          {
-            "upstream": "package/bin/darwin/LICENSE-crunch.txt",
-            "stored": "LICENSE-crunch.txt",
-            "sha256": "ad55612d70772c3b01b62add44d8a39af3d0914ea3246667a88df1de99c08b87",
-            "bytes": 1160
-          },
-          {
-            "upstream": "package/bin/darwin/LICENSE-PVRTexToolCLI.txt",
-            "stored": "LICENSE-PVRTexToolCLI.txt",
-            "sha256": "a428a4a9b6c73387c6d4c22b5abeba44c45351c058182092ad01499c2a315013",
-            "bytes": 5943
           }
         ],
         "note": "corpus matches upstream tarball"
@@ -9656,9 +9452,9 @@
     "verifier": "scripts/verify-npm-notices.js@1",
     "verified_at": "2026-10-26",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
-    "package_count": 291,
-    "verified_upstream_tarball": 252,
-    "metadata_only_no_license_file": 39,
+    "package_count": 285,
+    "verified_upstream_tarball": 249,
+    "metadata_only_no_license_file": 36,
     "verification_failed": 0,
     "output": "third-party/npm-upstream-verification.csv",
     "offline_check": "Run `node scripts/verify-npm-notices.js` (no network) to compare the committed corpus with MANIFEST.json."

@@ -3,7 +3,7 @@
 **Date:** 26 October 2026  
 **Audited Artifact:** Container Image `tileo-ts:local` (`FROM scratch`)  
 **Image Digest:** `sha256:df649e03300d1a6dec065111a069ecd25505c2113801771d8e112b072a5b35dd`  
-**Target Policy:** Strict Permissive Distribution (MIT, BSD-2/3-Clause, Apache-2.0, ISC, 0BSD, Zlib, Public Domain, GCC Exception 3.1, MPL-2.0 Scope E Data)
+**Target Policy:** Enterprise Proprietary-Compatible Distribution with Disclosed Exceptions (MIT, BSD-2/3-Clause, Apache-2.0, ISC, 0BSD, Zlib, Public Domain; with disclosed exceptions: GCC Exception 3.1 for libstdc++/libgcc and MPL-2.0 Scope E Data for ca-certificates)
 
 ---
 
