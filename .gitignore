@@ -14,5 +14,6 @@ TileO-*-Protocol*.md
 TileO-v1.0.0-RC9-Engineering-Closure-Protocol.md
 TileO-v1.0.0-Release-Closure/
 release-evidence/
+/artifacts/
 .DS_Store
 Thumbs.db
