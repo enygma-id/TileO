@@ -221,8 +221,10 @@ jobs:
       # Push the EXACT audited candidate image without rebuilding.
       - name: Publish verified image to GHCR
         shell: bash
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
         run: |
-          for tag in ${{ steps.meta.outputs.tags }}; do
+          for tag in $TAGS; do
             echo "Tagging and pushing: $tag"
             docker tag tileo-release:candidate "$tag"
             docker push "$tag"
