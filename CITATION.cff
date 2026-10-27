@@ -1,0 +1,35 @@
+
+cff-version: 1.2.0
+message: "If you use TileO in research, publications, or software development, please cite this software."
+
+type: software
+title: "TileO"
+
+authors:
+  - family-names: "Karya"
+    given-names: "Erick"
+    orcid: "https://orcid.org/0009-0003-0386-8948"
+
+  - family-names: "Ariefianto"
+    given-names: "Dony"
+    orcid: "https://orcid.org/0009-0005-1285-0250"
+
+repository-code: "https://github.com/enygma-id/TileO"
+url: "https://tileo.org"
+
+keywords:
+  - "3d-tiles"
+  - "cloud-optimized-geotiff"
+  - "gdal"
+  - "geojson"
+  - "geospatial"
+  - "geospatial-processing"
+  - "geotiff"
+  - "gis"
+  - "gltf"
+  - "mbtiles"
+  - "pmtiles"
+  - "raster-tiles"
+  - "vector-tiles"
+
+license: "AGPL-3.0-only"
