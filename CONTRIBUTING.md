@@ -62,7 +62,7 @@ A new dependency must be reviewed for:
 - compatibility with AGPL distribution; and
 - compatibility with any separate Enterprise distribution.
 
-Update [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) when a merged change affects the dependency inventory.
+Update [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) when a merged change affects the dependency inventory. Newly introduced non-permissive or unknown-license components are not automatically covered by the three [narrowly scoped exceptions](third-party/ENTERPRISE_EXCEPTIONS.md); propose an explicit review before merge.
 
 ## Security
 

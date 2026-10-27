@@ -165,6 +165,8 @@ TileO provides source inspection, job management, artifact delivery, status endp
 
 **TileO Enterprise Edition:** Enygma offers a **separate commercial licensing path**, subject to a signed agreement and demonstrable rights over the code concerned. Enterprise is not an exception embedded into the AGPL, nor does it diminish AGPL rights already granted. No proprietary Enterprise source code is implicitly included in this Community repository. See [ENTERPRISE.md](ENTERPRISE.md) and [CLA.md](CLA.md).
 
+**Third-party licensing:** Enterprise distribution is designed to be proprietary-compatible using predominantly permissively licensed components with narrowly scoped, release-reviewed exceptions. See [third-party exceptions](third-party/ENTERPRISE_EXCEPTIONS.md). Commercial TileO terms do not replace upstream licenses.
+
 ## Project stewardship and founding contributors
 
 | Founding role | Contributor | Historic responsibility |

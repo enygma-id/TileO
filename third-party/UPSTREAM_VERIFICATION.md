@@ -1,15 +1,17 @@
-# License verification protocol
+# Upstream License and Binary Provenance Verification
 
-Use this checklist whenever importing source or publishing a distributable TileO build.
+This is a release-time procedure, not evidence that a particular build has passed.
 
-1. Match the candidate `package-lock.json` checksum to [`MANIFEST.json`](MANIFEST.json). If it changed, regenerate the package table and license evidence from the **new** dependency closure.
-2. Run `npm ci` in the approved source tree. Record `npm ls --all --json` and inspect every installed `package.json` license expression and any bundled source assets.
-3. For each packaged dependency, copy **the exact upstream license and NOTICE/COPYRIGHT files from that package's pinned tarball**; do not copy the latest upstream `main` license to represent an old version.
-4. Prioritize all entries marked `generated_notice_only` in `MANIFEST.json`. Replace or supplement standard fallback texts with the upstream copyright notice required for redistribution.
-5. Record license elections only where the upstream license explicitly offers alternatives. `AND` conditions impose cumulative requirements.
-6. Generate a binary/container SBOM from the actual release image, including Node executable, native addons (`better-sqlite3`), GDAL drivers, Tippecanoe, PROJ data and linked ELF libraries. Compare the machine-reported package list with direct filesystem `ldd`/`readelf` checks and the image build definition.
-7. Audit any license-linked/copyleft native dependencies, e.g. `libidn2`, `libunistring`, `libpsl`, plus certificate bundle and data licenses. The policy may allow compliance with LGPL but cannot assert strict permissive-only while nonpermissive dependencies remain distributed.
-8. Preserve full upstream notices within the binary/image release, sign or checksum the artifact, generate SPDX and CycloneDX SBOMs, and record a human approval for any remaining policy exception.
-9. Evaluate Enygma's chain of title/contributor grants separately; third-party permissiveness alone does not prove Enterprise relicensing rights.
+1. Freeze `package-lock.json` and confirm its SHA-256 matches [`MANIFEST.json`](MANIFEST.json); regenerate the package-level notice archive after changes.
+2. Resolve package versions and upstream tarballs; verify integrity and archive exact LICENSE/COPYING/NOTICE/COPYRIGHT material. Examine packages with no upstream license file via declared license metadata **and bundled payloads**, not metadata alone.
+3. Use the recorded `npm_verification` summary in the manifest for exact-tarball versus metadata-only counts. The manifest may retain historical collection-status fields; do not mistake them for final artifact-level evidence.
+4. Build the exact candidate image once. Inventory shipped npm files, native tools, shared and statically linked libraries, GDAL drivers, frontend content, embedded binaries, certificate data and relevant third-party assets. Verify actual licenses against those payloads, not only the parent package field.
+5. For GCC runtime **EXC-001/EXC-002**, record actual `libstdc++.so.6*` and `libgcc_s.so.1` filenames and hashes, the compiler/runtime package version and revision, upstream source/patches/build recipe, GPL/GCC exception terms and corresponding-source distribution mechanism.
+6. For CA trust-store **EXC-003**, record actual trust-store file/hash, source origin/revision, certificate extraction/build process, notices and exact applicable Mozilla/packaging licenses. Supply source/access where required by those terms; do not invent a blanket MPL “Scope E” exemption.
+7. Match each exception to a verified immutable artifact, approved release register, correct notices and source-access method. A scoped exception does not authorize unrelated GPL/MPL components.
+8. Generate SPDX and CycloneDX for the final image, check filesystem and ELF linkage closure, preserve the raw tests and fail closed on missing/old/mismatched evidence.
+9. Record authorized release/Legal-IP human decisions, independently of automated checks; verify customer- and public-image recipient obligations before publication.
 
-This document defines the release-time license verification process. The 284 collected npm notices are repository inventory evidence; they do not establish that each upstream package tarball and its exact-version LICENSE/NOTICE files have been independently verified.
+At the **RC9 source snapshot**, the manifest reports **285 packages**, including **249 verified exact-tarball notices** and **36 metadata-only entries**. This is not a later release guarantee.
+
+See [Exception Disclosure](ENTERPRISE_EXCEPTIONS.md), [Source Access](SOURCE_ACCESS.md), [License Coverage](LICENSE_COVERAGE.md) and [Release Gate](RELEASE_GATE.md).

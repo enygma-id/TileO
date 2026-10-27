@@ -31,7 +31,9 @@ For vector batching specifically, compare `off/file`, `on/file` and `on/stream` 
 
 For a distributable release, inspect the **actual final artifact**. Inventory npm packages, native executables and dynamically/statically linked dependencies, base-image packages, frontend assets and any included notices. Collect licenses and upstream provenance for the exact versions. Tie SBOM, license evidence and release authorization to the exact immutable artifact digest. An npm-only scan does not certify the complete runtime.
 
-See [Dependency Policy](DEPENDENCY_POLICY.md), [Release Process](RELEASE_PROCESS.md) and [Native Components](../third-party/NATIVE_COMPONENTS.md). Do not equate completion of documentation with engineering remediation.
+Classify each shipped component as **PERMISSIVE**, **EXCEPTION CANDIDATE**, **APPROVED EXCEPTION**, or **BLOCKED**. `libstdc++`, `libgcc` and Mozilla-derived CA material are **not** permissive simply because they may be proprietary-compatible. A release-specific human decision requires exact file hashes, corresponding source/access where applicable, the original license/exception texts, notices and an immutable image identity. Automated technical success alone must not be called final legal approval.
+
+See [Dependency Policy](DEPENDENCY_POLICY.md), [Release Process](RELEASE_PROCESS.md), [Native Components](../third-party/NATIVE_COMPONENTS.md), [Exceptions](../third-party/ENTERPRISE_EXCEPTIONS.md), and [Source Access](../third-party/SOURCE_ACCESS.md). Do not equate completion of documentation with engineering remediation.
 
 ## Required evidence per release candidate
 

@@ -13,9 +13,21 @@ TileO uses native geospatial tools and a Node.js runtime. **Their licensing and 
 | libcurl and related libraries | Transfer and URL access | libcurl core license does not establish licensing of transitively linked `libpsl`, `libidn2`, `libunistring`, etc. | Inspect runtime closure and preserve or remove dependencies according to policy |
 | Certificate trust bundle | TLS validation | Data and redistribution terms are separate from npm code | Record source, revision and applicable notice obligations |
 
+## Narrowly scoped third-party exception candidates
+
+The current source register lists **28 native components**. The following three components require exact-artifact review; they are **not permissively licensed** merely because their use may be compatible with proprietary TileO code.
+
+| ID | Candidate | Terms to verify | Required proof |
+| --- | --- | --- | --- |
+| EXC-001 | `libstdc++.so.6*` (GCC runtime) | Applicable GPL and GCC Runtime Library Exception 3.1 | Exact file hashes, GCC source/patches/build recipe, notices, source access, authorization |
+| EXC-002 | `libgcc_s.so.1` (GCC runtime) | Applicable GPL and GCC Runtime Library Exception 3.1 | Same; matched GCC source may cover both binaries if verified |
+| EXC-003 | Mozilla-derived CA trust-store material | Actual NSS/certificate and packaging licenses, potentially MPL-related | Source revision, generation procedure, exact trust-store hash, notices, source access and authorization |
+
+See [public exception disclosure](ENTERPRISE_EXCEPTIONS.md) and [source access](SOURCE_ACCESS.md). Actual inclusion and licensing must be proven from the distributed image, not inferred solely from this register.
+
 ## Actual build versus historical alternatives
 
-The repository's current [`Dockerfile`](../Dockerfile) and [`compose.yaml`](../compose.yaml) determine what the default build attempts to create. Do not substitute a separately tested scratch/musl candidate or historical image report for the actual release artifact. Tool versions must be derived from the final image, not merely copied from earlier engineering reports.
+The repository's current [`Dockerfile`](../Dockerfile) and [`compose.yaml`](../compose.yaml) determine what the default build attempts to create. The RC9 Dockerfile uses a multi-stage build with final `FROM scratch`; do not treat this architectural choice or a historical image report as proof of the next distributed artifact. Tool versions must be derived from the final image, not merely copied from earlier engineering reports.
 
 The checked [CI workflows](../.github/workflows/) use **Node.js 24**. Runtime licensing is not established by this Node version setting.
 

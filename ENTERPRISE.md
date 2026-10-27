@@ -44,6 +44,8 @@ Enterprise distributions must independently comply with all applicable third-par
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
+**Disclosed third-party exceptions.** A distributable TileO build may include the GCC runtime libraries (`libstdc++`, `libgcc`) and Mozilla-derived CA trust-store material under their own applicable licenses. These are not permissive-license components. Inclusion is conditional on exact-file verification, required notices, source access where applicable, and authorization for the specific release; see [third-party exceptions](third-party/ENTERPRISE_EXCEPTIONS.md) and [source-access policy](third-party/SOURCE_ACCESS.md). An Enterprise agreement does not extinguish recipients' third-party license rights.
+
 ## 7. Trademarks and branding
 
 Neither the Community license nor a generic reference to Enterprise Edition grants trademark rights. Rights to use Enygma or TileO branding in a commercial relationship must be addressed separately where required.

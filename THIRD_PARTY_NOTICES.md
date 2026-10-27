@@ -1,20 +1,22 @@
 # Third-party licenses and attribution
 
-TileO's Community source is AGPL-3.0-only where identified. Third-party packages, icons, native binaries and datasets are governed by their own licenses and must retain required notices.
+TileO's first-party Community source is AGPL-3.0-only where identified. Independently licensed third-party packages, native binaries, certificates, icons and datasets retain their own licenses and redistribution rights.
 
-## License records
+## Public compliance records
 
-- [Combined collected notices and license texts](THIRD-PARTY-NOTICES.md)
-- [Dependency inventory](third-party/DEPENDENCIES.md) and [manifest](third-party/MANIFEST.json)
-- [Per-package npm licenses](third-party/licenses/npm/)
-- [Native components](third-party/native/components.json), [inventory](third-party/NATIVE_COMPONENTS.md) and [license corpus](third-party/licenses/native/)
-- [Assets, icons and data licenses](third-party/ASSET_LICENSES.md)
-- [Release compliance checklist](third-party/RELEASE_GATE.md)
+- [Combined license and notice corpus](THIRD-PARTY-NOTICES.md) — generated from committed source evidence; not an artifact-level certification.
+- [Dependency inventory](third-party/DEPENDENCIES.md) and [machine-readable manifest](third-party/MANIFEST.json).
+- [Per-package npm notices](third-party/licenses/npm/) and [native license corpus](third-party/licenses/native/).
+- [Native component register](third-party/native/components.json) and [native review guidance](third-party/NATIVE_COMPONENTS.md).
+- [Assets and data notices](third-party/ASSET_LICENSES.md).
+- [Enterprise-compatible third-party exceptions](third-party/ENTERPRISE_EXCEPTIONS.md).
+- [Source availability and redistribution information](third-party/SOURCE_ACCESS.md).
+- [Release compliance gate](third-party/RELEASE_GATE.md).
 
-## Current coverage
+## Recorded source inventory (RC9, not a release certification)
 
-- **291** locked npm entries: 252 notices verified from the exact upstream tarball (sha512 integrity, extracted LICENSE/COPYING/NOTICE, SHA-256 recorded); 39 entries have no license file in the tarball and are explicitly marked **metadata-only** (13 runtime/optional, 26 development-only).
-- **28** native runtime components with a pinned upstream corpus; **3** are documented exceptions: `libstdc++` and `libgcc` under the GCC Runtime Library Exception, and the CA certificate bundle as MPL-2.0 data.
-- The checked-in evidence is **source-level**. A strict permissive-only claim for a distributed image additionally requires a final-image SBOM, an ELF linkage closure audit and human approval of the documented exceptions.
+The candidate `package-lock.json` and `third-party/MANIFEST.json` each record **285 non-root npm packages**. The manifest records **249 exact-tarball license/notice verifications** and **36 metadata-only cases**, with **0 verification failures** in that recorded check. These figures are snapshot data and must be regenerated if the dependency graph changes. A metadata-only record is not proof of a bundled binary's terms or completed notice obligations.
 
-Do not represent this record as blanket permissive-only certification. Verify offline with `node scripts/verify-npm-notices.js` and `node scripts/verify-native-licenses.js`; check document parity with `node scripts/check-notice-parity.js`.
+The native register records **28 components**, including two GCC runtime components and Mozilla-derived CA trust-store material proposed for narrowly reviewed exceptions. Their presence is **not** a claim of 100% permissive licensing. Final distribution depends on the exact release artifact, accompanying licenses and corresponding-source fulfillment, test evidence, and authorized human signoff.
+
+Verification commands: `node scripts/verify-npm-notices.js`, `node scripts/verify-native-licenses.js`, and `node scripts/check-notice-parity.js`.

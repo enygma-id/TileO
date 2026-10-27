@@ -1,7 +1,7 @@
 # Checklist Tindak Lanjut Audit Vector Batching
 
 Tanggal pemeriksaan: 26 Oktober 2026.  
-Sumber: [Engineering Audit, 15 Oktober 2026](BATCH_SYSTEM_AUDIT.md).  
+Sumber historis: Engineering Audit, 15 Oktober 2026 (arsip audit terpisah; tidak tersedia pada pohon dokumentasi publik saat ini).  
 Baseline kode yang diperiksa: `0a79ba9c3b26301054cdee753b475dce663c60e6`.
 
 Dokumen ini berdiri sendiri dan tidak digabungkan dengan `TileO-v1.0.0-Engineering-First-Permissive-Only-Runbook.md`. Cakupannya adalah verifikasi dan tindak lanjut audit vector batching, bukan pelaksanaan runbook rilis atau audit lisensi.

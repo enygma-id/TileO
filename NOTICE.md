@@ -10,7 +10,7 @@ TileO is a geospatial conversion, tiling, and interoperable distribution project
 
 **Founding recognition:** Erick Karya (founder and founding vision), Hanafi (first prototype) and Dony (initial official implementation) are historically credited in [FOUNDING_TEAM.md](FOUNDING_TEAM.md), separately from Git authorship and actual copyright ownership.
 
-**Third-party rights:** Refer to [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [third-party/](third-party/README.md), and [docs/SAMPLE_DATA_POLICY.md](docs/SAMPLE_DATA_POLICY.md). Names and trademarks of upstream projects are retained only to identify their components.
+**Third-party rights:** Refer to [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [third-party/](third-party/README.md), [disclosed third-party exceptions](third-party/ENTERPRISE_EXCEPTIONS.md), [source access](third-party/SOURCE_ACCESS.md), and [docs/SAMPLE_DATA_POLICY.md](docs/SAMPLE_DATA_POLICY.md). Names and trademarks of upstream projects are retained only to identify their components.
 
 An upstream license or attribution must not be removed merely because TileO is released under AGPL or offered as an Enterprise product.
 

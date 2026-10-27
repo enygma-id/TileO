@@ -30,7 +30,7 @@ This index provides navigation to the public documentation maintained in the [Ti
 | --- | --- |
 | Sample datasets | [Samples](../samples/README.md), [ATAP Cross-Project Sample](../samples/TileO-Samples-01/ATAP_SAMPLE.md), [RGB GeoTIFF](../samples/TileO-Samples-01/RGB_GEOTIFF_SAMPLE.md) |
 | Sample licensing and provenance | [Sample Data Policy](SAMPLE_DATA_POLICY.md) and [Sample Attribution](../samples/TileO-Samples-01/ATTRIBUTION.md) |
-| Third-party components | [Third-Party Notices](../THIRD_PARTY_NOTICES.md), [Dependency Inventory](../third-party/DEPENDENCIES.md) and [Native Components](../third-party/NATIVE_COMPONENTS.md) |
+| Third-party components | [Third-Party Notices](../THIRD_PARTY_NOTICES.md), [Dependency Inventory](../third-party/DEPENDENCIES.md), [Native Components](../third-party/NATIVE_COMPONENTS.md), [Enterprise Exceptions](../third-party/ENTERPRISE_EXCEPTIONS.md) and [Source Access](../third-party/SOURCE_ACCESS.md) |
 | Distribution requirements | [Dependency Policy](DEPENDENCY_POLICY.md), [Release Policy](RELEASE_POLICY.md), [Release Process](RELEASE_PROCESS.md) |
 
 ## Project and community
