@@ -31,6 +31,7 @@ const args = process.argv.slice(2);
 let IMAGE_TAG = 'tileo-rc:' + pkgVersion;
 let OUT_DIR = path.resolve(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'gate');
 let EVIDENCE_DIR = null;
+let APPROVAL_DOC_FILE = null;
 let ENFORCE_HUMAN_APPROVAL = false;
 let ENFORCE_CLEAN = false;
 
@@ -42,6 +43,8 @@ for (let i = 0; i < args.length; i++) {
     OUT_DIR = path.resolve(ROOT_DIR, args[++i]);
   } else if (arg === '--evidence-dir' && i + 1 < args.length) {
     EVIDENCE_DIR = path.resolve(ROOT_DIR, args[++i]);
+  } else if (arg === '--approval-doc' && i + 1 < args.length) {
+    APPROVAL_DOC_FILE = path.resolve(ROOT_DIR, args[++i]);
   } else if (arg === '--enforce-human-approval') {
     ENFORCE_HUMAN_APPROVAL = true;
   } else if (arg === '--enforce-clean') {
@@ -468,7 +471,11 @@ if (!failures.some((f) => f.startsWith('Gate 6'))) {
 
 // Gate 7: Human Approval Governance Signoff
 console.log('\n[Gate 7/7] Verifying human release approval signoff...');
-const approvalDocFile = path.join(ROOT_DIR, 'release-approval.md');
+const approvalDocFile =
+  APPROVAL_DOC_FILE ||
+  (fs.existsSync(path.join(EVIDENCE_DIR, 'release-approval.md'))
+    ? path.join(EVIDENCE_DIR, 'release-approval.md')
+    : path.join(ROOT_DIR, 'release-approval.md'));
 let humanApproved = false;
 
 if (!fs.existsSync(approvalDocFile)) {

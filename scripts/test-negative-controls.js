@@ -555,9 +555,22 @@ runNegativeTest({
   description: 'Gate 7 must block certification when --enforce-human-approval is active and signoff is pending.',
   execute: () => {
     const tmpDir = createTmpEvidenceDir();
+    const pendingApprovalPath = path.join(tmpDir, 'release-approval.md');
+    fs.writeFileSync(
+      pendingApprovalPath,
+      '# Release Approval\n\nDecision: NOT APPROVED\nReviewers: **PENDING**\n- [ ] Pending approval\n',
+      'utf8'
+    );
     return execFileSync(
       'node',
-      ['scripts/certify-release-gate.js', '--enforce-human-approval', '--out-dir', tmpDir],
+      [
+        'scripts/certify-release-gate.js',
+        '--enforce-human-approval',
+        '--approval-doc',
+        pendingApprovalPath,
+        '--out-dir',
+        tmpDir,
+      ],
       { cwd: ROOT_DIR, encoding: 'utf8', stdio: 'pipe' }
     );
   },
