@@ -104,10 +104,10 @@ jobs:
         run: node scripts/audit-image.js --image tileo-release:candidate
 
       - name: Run container integration tests on candidate image
-        run: node scripts/record-test-results.js tileo-release:candidate
+        run: node scripts/record-test-results.js --image tileo-release:candidate
 
       - name: Generate image notice file path inventory
-        run: node scripts/generate-image-notice-paths.js tileo-release:candidate
+        run: node scripts/generate-image-notice-paths.js --image tileo-release:candidate
 
       - name: Certify release gate compliance (Fail-Closed)
         run: |
@@ -123,6 +123,7 @@ jobs:
           name: tileo-release-compliance-evidence
           path: |
             artifacts/compliance/**
+            release-evidence/**
             third-party/native-components.csv
             THIRD-PARTY-NOTICES.md
             native-license-review.md

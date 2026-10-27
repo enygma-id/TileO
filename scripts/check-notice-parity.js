@@ -69,7 +69,7 @@ for (const [lockPath] of lockEntries) {
 }
 
 for (const component of native.components) {
-  const evaluation = evaluateExpression(component.license_expression);
+  const evaluation = evaluateExpression(component.license_expression, component.id);
   if (!evaluation.allowed) problems.push(`${component.id}: non-permissive expression ${component.license_expression}`);
   if (evaluation.exceptions.length > 0 && !component.review) problems.push(`${component.id}: unreviewed exception`);
   for (const file of component.license_files) {

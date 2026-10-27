@@ -1,4 +1,5 @@
 BinaryOrLibrary,Type,Architecture,DirectDependencies,Licenses,ComplianceVerdict
+/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node,ET_DYN,x86_64,"libstdc++.so.6; libc.musl-x86_64.so.1","libstdc++.so.6(GPL-3.0-only WITH GCC-exception-3.1); libc.musl-x86_64.so.1(MIT)",ALLOW
 /usr/local/bin/tippecanoe-overzoom,ET_DYN,x86_64,"libz.so.1; libstdc++.so.6; libgcc_s.so.1; libc.musl-x86_64.so.1","libz.so.1(Zlib); libstdc++.so.6(GPL-3.0-only WITH GCC-exception-3.1); libgcc_s.so.1(GPL-3.0-only WITH GCC-exception-3.1); libc.musl-x86_64.so.1(MIT)",ALLOW
 /usr/local/bin/tippecanoe-decode,ET_DYN,x86_64,"libz.so.1; libsqlite3.so.0; libstdc++.so.6; libgcc_s.so.1; libc.musl-x86_64.so.1","libz.so.1(Zlib); libsqlite3.so.0(Public-Domain); libstdc++.so.6(GPL-3.0-only WITH GCC-exception-3.1); libgcc_s.so.1(GPL-3.0-only WITH GCC-exception-3.1); libc.musl-x86_64.so.1(MIT)",ALLOW
 /usr/local/bin/ogrinfo,ET_DYN,x86_64,"libgdal.so.37; libstdc++.so.6; libgcc_s.so.1; libc.musl-x86_64.so.1","libgdal.so.37(MIT AND X11); libstdc++.so.6(GPL-3.0-only WITH GCC-exception-3.1); libgcc_s.so.1(GPL-3.0-only WITH GCC-exception-3.1); libc.musl-x86_64.so.1(MIT)",ALLOW
@@ -35,4 +36,3 @@ BinaryOrLibrary,Type,Architecture,DirectDependencies,Licenses,ComplianceVerdict
 /usr/lib/libwebp.so.7.1.9,ET_DYN,x86_64,"libsharpyuv.so.0; libc.musl-x86_64.so.1","libsharpyuv.so.0(BSD-3-Clause); libc.musl-x86_64.so.1(MIT)",ALLOW
 /usr/lib/libsqlite3.so.0.8.6,ET_DYN,x86_64,"libc.musl-x86_64.so.1","libc.musl-x86_64.so.1(MIT)",ALLOW
 /usr/lib/libnghttp2.so.14.29.4,ET_DYN,x86_64,"libc.musl-x86_64.so.1","libc.musl-x86_64.so.1(MIT)",ALLOW
-/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node,ET_DYN,x86_64,"libstdc++.so.6; libc.musl-x86_64.so.1","libstdc++.so.6(GPL-3.0-only WITH GCC-exception-3.1); libc.musl-x86_64.so.1(MIT)",ALLOW

@@ -1,0 +1,134 @@
+[
+  {
+    "control_id": "NC-01",
+    "name": "Tampered Source Baseline Hash",
+    "scenario": "Tamper with recorded Dockerfile hash in source-baseline.json",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 2 must verify that all 6 source baseline hashes match disk exactly.",
+    "expected_rejection_pattern": "Gate 2 Failed: Source baseline mismatch for Dockerfile",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-FVlmrE\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-FVlmrE\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:49.856Z"
+  },
+  {
+    "control_id": "NC-02",
+    "name": "Tampered SBOM Byte / Missing Artifact",
+    "scenario": "Truncate sbom-image.spdx.json in evidence directory",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 2 must reject when an SBOM artifact is corrupted or zero bytes.",
+    "expected_rejection_pattern": "Gate 2 Failed: Required audit artifact missing or empty: sbom-image.spdx.json",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-WBdGVu\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-WBdGVu\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:50.140Z"
+  },
+  {
+    "control_id": "NC-03",
+    "name": "Mismatched Image ID / Digest",
+    "scenario": "Provide test execution record generated from a different image ID",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 4 must fail if test execution image ID does not match audited release image ID.",
+    "expected_rejection_pattern": "Gate 4 Failed: Test execution image ID (sha256:baaaaa",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-TqemmM\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-TqemmM\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:50.415Z"
+  },
+  {
+    "control_id": "NC-04",
+    "name": "Truncated TAP / 0-Test Output",
+    "scenario": "Truncate integration-tests.tap stream to zero bytes",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 4 must fail if TAP stream is missing, truncated, or lacks TAP version header.",
+    "expected_rejection_pattern": "Gate 4 Failed: integration-tests.tap is truncated or missing TAP version header.",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-WjddYt\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-WjddYt\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:50.716Z"
+  },
+  {
+    "control_id": "NC-05",
+    "name": "Failing Integration Test",
+    "scenario": "Inject failed test count into test results record",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 4 must fail closed when integration tests have failures.",
+    "expected_rejection_pattern": "Gate 4 Failed: Integration tests failed or recorded 0 passing tests",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-xUSQbc\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-xUSQbc\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:50.996Z"
+  },
+  {
+    "control_id": "NC-06",
+    "name": "Corrupted / Missing GCC Corresponding Source Archive",
+    "scenario": "Replace GCC runtime corresponding source archive with invalid non-gzip bytes",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 5 must fail if gcc-runtime-corresponding-source.tar.gz is not a valid gzip archive.",
+    "expected_rejection_pattern": "Gate 5 Failed: GCC corresponding source archive (gcc-runtime-corresponding-source.tar.gz) is not a valid gzip archive",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-sj2Mlk\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-sj2Mlk\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:51.298Z"
+  },
+  {
+    "control_id": "NC-07",
+    "name": "Missing Mozilla CA Bundle Source Package",
+    "scenario": "Delete mozilla-ca-bundle-source.tar.gz from compliance source directory",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 5 must fail if Mozilla CA certificate source package is missing.",
+    "expected_rejection_pattern": "Gate 5 Failed: Mozilla CA bundle source archive (mozilla-ca-bundle-source.tar.gz) is missing or empty",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-4UnFOB\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-4UnFOB\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:51.576Z"
+  },
+  {
+    "control_id": "NC-08",
+    "name": "Enforced Human Approval Signoff Missing",
+    "scenario": "Run certify-release-gate with --enforce-human-approval when release-approval.md has pending status",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 7 must block certification when --enforce-human-approval is active and signoff is pending.",
+    "expected_rejection_pattern": "Gate 7 Failed: Human approval in release-approval.md has PENDING reviewer signatures",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-ITbm2q\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-ITbm2q\n Enforce Human Approval: true\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n[",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:51.856Z"
+  },
+  {
+    "control_id": "NC-09",
+    "name": "Unapproved MPL-2.0 Component Injection",
+    "scenario": "Inject unapproved component with MPL-2.0 into native components manifest",
+    "tool": "scripts/verify-native-licenses.js",
+    "description": "verify-native-licenses must reject non-permissive MPL-2.0 without approved exception status.",
+    "expected_rejection_pattern": "unauthorized-mpl-component: license expression MPL-2.0 is not allowed",
+    "observed_output": "Checked 1 native components (1 documented exceptions).\nFAIL unauthorized-mpl-component: license expression MPL-2.0 is not allowed\nFAIL unauthorized-mpl-component: exception MPL-2.0 has no review classification\nFAIL unauthorized-mpl-component: missing third-party\\licenses\\native\\unauthorized-mpl-component\\LICENSE.txt\nCommand failed: node scripts/verify-native-licenses.js --manifest C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-lic-lrV9AE\\components.json\nFAIL unauthorized-mpl-component: license expre",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:52.149Z"
+  },
+  {
+    "control_id": "NC-10",
+    "name": "Banned Proprietary Binary in SPDX SBOM",
+    "scenario": "Inject PVRTexToolCLI into SPDX SBOM document",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 3 must fail if banned proprietary binary (PVRTexToolCLI) is found in SBOM.",
+    "expected_rejection_pattern": "Gate 3 Failed: Banned binary or component \"PVRTexToolCLI\" detected in SPDX SBOM.",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-1DGIyJ\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-1DGIyJ\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:52.196Z"
+  },
+  {
+    "control_id": "NC-11",
+    "name": "Candidate Image Digest Tampering / Swap",
+    "scenario": "Tamper with IMAGE_ID in release-image-digest.txt",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 4 must detect when test results image ID does not match swapped image digest.",
+    "expected_rejection_pattern": "Gate 4 Failed: Test execution image ID",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-5NMD7Z\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-5NMD7Z\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:52.478Z"
+  },
+  {
+    "control_id": "NC-12",
+    "name": "Commit Baseline Replay / Stale Commit Hash",
+    "scenario": "Provide source-baseline.json with stale git commit SHA",
+    "tool": "scripts/certify-release-gate.js",
+    "description": "Gate 6 must reject replay attacks where source baseline commit does not match current HEAD.",
+    "expected_rejection_pattern": "Gate 6 Failed: Current commit",
+    "observed_output": "===========================================================\n TileO Dedicated Release Gate Certification\n Target Image: tileo-rc:1.0.0\n Gate Output Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-gDPHPE\n Evidence Directory: C:\\Users\\PROGRA~1\\AppData\\Local\\Temp\\tileo-nc-gDPHPE\n Enforce Human Approval: false\n Enforce Clean Git Tree: false\n===========================================================\n\n[Gate 1/7] Verifying notice parity and dependency inventories...\n  ✓ Notice parity passed.\n\n",
+    "result": "PASS",
+    "timestamp": "2026-10-27T04:45:52.795Z"
+  }
+]

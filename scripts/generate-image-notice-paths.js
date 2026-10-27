@@ -21,7 +21,7 @@ function getArg(name, defaultValue) {
   return defaultValue;
 }
 
-const IMAGE_TAG = args.find(a => !a.startsWith('--')) || 'tileo-ts:local';
+const IMAGE_TAG = getArg('image', args.find(a => !a.startsWith('--')) || 'tileo-ts:local');
 const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', 'artifacts/compliance'));
 if (!fs.existsSync(OUT_DIR)) {
   fs.mkdirSync(OUT_DIR, { recursive: true });

@@ -1,0 +1,59 @@
+{
+  "Id": "sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f",
+  "RepoTags": [
+    "tileo-rc:1.0.0",
+    "tileo-ts:local"
+  ],
+  "RepoDigests": [
+    "tileo-rc@sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f",
+    "tileo-ts@sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f"
+  ],
+  "Comment": "buildkit.dockerfile.v0",
+  "Created": "2026-10-27T04:42:21.690188219Z",
+  "Config": {
+    "User": "1000:1000",
+    "ExposedPorts": {
+      "8090/tcp": {}
+    },
+    "Env": [
+      "PATH=/usr/local/bin:/usr/bin:/bin",
+      "LD_LIBRARY_PATH=/usr/local/lib:/usr/lib:/lib",
+      "PROJ_DATA=/usr/local/share/proj",
+      "GDAL_DATA=/usr/local/share/gdal",
+      "TILEO_DATA_DIR=/data",
+      "NODE_ENV=production"
+    ],
+    "Cmd": [
+      "node",
+      "dist/api.js"
+    ],
+    "WorkingDir": "/app",
+    "ArgsEscaped": true
+  },
+  "Architecture": "amd64",
+  "Os": "linux",
+  "Size": 162629291,
+  "RootFS": {
+    "Type": "layers",
+    "Layers": [
+      "sha256:88edd6e26092c9090236eeddafaf9b6b3f9d0209f7392271ff75032fe39506bd",
+      "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+    ]
+  },
+  "Metadata": {
+    "LastTagTime": "2026-10-27T04:42:37.023298969Z"
+  },
+  "Descriptor": {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "digest": "sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f",
+    "size": 855
+  },
+  "Identity": {
+    "Build": [
+      {
+        "Ref": "t24005koszuootekd107lsakt",
+        "CreatedAt": "2026-10-27T04:42:37.057145976Z"
+      }
+    ]
+  }
+}

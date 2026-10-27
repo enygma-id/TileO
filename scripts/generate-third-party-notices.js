@@ -102,7 +102,7 @@ function main() {
   const verifiedCount = packages.filter((pkg) => pkg.status === 'VERIFIED_UPSTREAM').length;
   const metadataOnly = packages.filter((pkg) => pkg.status !== 'VERIFIED_UPSTREAM');
   const runtimeMetadataOnly = metadataOnly.filter((pkg) => pkg.scope !== 'development');
-  const nativeExceptions = native.components.filter((component) => evaluateExpression(component.license_expression).exceptions.length > 0);
+  const nativeExceptions = native.components.filter((component) => evaluateExpression(component.license_expression, component.id).status === 'approved_exception');
   const nativePermissive = native.components.length - nativeExceptions.length;
 
   const lines = [];
@@ -158,7 +158,7 @@ function main() {
   lines.push('| Component | Version | License expression | Linkage | Evidence |');
   lines.push('| --- | --- | --- | --- | --- |');
   for (const component of native.components) {
-    const evaluation = evaluateExpression(component.license_expression);
+    const evaluation = evaluateExpression(component.license_expression, component.id);
     const review = evaluation.exceptions.length > 0 ? ` **(${component.review || 'REVIEW REQUIRED'})**` : '';
     const files = component.license_files.map((file) => `\`${path.relative(ROOT, path.join(ROOT, 'third-party', 'licenses', 'native', component.id, file.file)).replaceAll('\\', '/')}\``).join('<br>');
     lines.push(`| ${component.name} | ${component.version} | \`${component.license_expression}\`${review} | ${component.linkage} | ${files} |`);

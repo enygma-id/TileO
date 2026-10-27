@@ -1,17 +1,17 @@
 {
   "schema": "tileo-source-baseline@1",
-  "timestamp": "2026-10-26T08:55:01.635Z",
+  "timestamp": "2026-10-27T04:44:44.872Z",
   "git": {
-    "commit": "96537e6e772fd43107c508195c698e44ca399ccd",
+    "commit": "a4ff1aaba869c15ff4220d06d688d704f176c1c4",
     "branch": "main",
     "dirty": true
   },
   "source_files": {
     "Dockerfile": "7392e0d5069cefc4ac4268aa29007b4449b5337bb7fa3480901e861eb1128d54",
-    "package.json": "8bf83b39db19d6fc0169ade68c0b620b922250e72924cf2066ab78a7904866c1",
-    "package-lock.json": "d7a17b3fa9ec1d16131d2319805b52873245b31c4c508119e278d3d570128683",
-    "THIRD-PARTY-NOTICES.md": "d3336aae184f48c7e475f01559c12482ff797727d64cd457d5197c0bd3fefeb1",
-    "third-party/MANIFEST.json": "63ada4fc117bc0fb8ccf76946607278bc76f2b49a9de43533c19317e0857c473",
+    "package.json": "46c4fc0c2c8d1f4f4a70e8ef4591200d2473bd1af0c50b7689e226d3f6b6850e",
+    "package-lock.json": "8753763502679aa8acdfd894dc2da663821f99f324aaaf15c64d20029348d5e5",
+    "THIRD-PARTY-NOTICES.md": "9c4151ba88d287248b0af24b1756dd4b422e176168a4132a5f9857918f5b6431",
+    "third-party/MANIFEST.json": "3b2c39d216efe58606db514701bc73e82ff1ce07e741579def5e53fbd338d362",
     "third-party/native/components.json": "ae71afdc659d6fceaa1d8cc022e3205e0000876cd8182cc7b527613672642b3f"
   }
 }

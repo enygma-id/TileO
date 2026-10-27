@@ -108,7 +108,7 @@ async function main() {
 
   for (const component of manifest.components) {
     const dir = path.join(CORPUS_DIR, component.id);
-    const evaluation = evaluateExpression(component.license_expression);
+    const evaluation = evaluateExpression(component.license_expression, component.id);
     const isException = evaluation.exceptions.length > 0;
     if (isException) exceptions += 1;
     if (!evaluation.allowed) problems.push(`${component.id}: license expression ${component.license_expression} is not allowed`);

@@ -10,5 +10,9 @@ dist/
 test-results/
 TileO-main*-Audit*.md
 TileO-*-Audit*.md
+TileO-*-Protocol*.md
+TileO-v1.0.0-RC9-Engineering-Closure-Protocol.md
+TileO-v1.0.0-Release-Closure/
+release-evidence/
 .DS_Store
 Thumbs.db

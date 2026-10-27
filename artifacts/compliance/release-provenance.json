@@ -1,49 +1,55 @@
 {
   "schema": "tileo-release-provenance@1",
-  "audit_timestamp": "2026-10-26T08:55:01.637Z",
+  "audit_timestamp": "2026-10-27T04:44:44.875Z",
+  "compliance_policy": "Enterprise Proprietary-Compatible with Disclosed Permissive Exceptions",
   "image": {
-    "tag": "tileo-ts:local",
-    "id": "sha256:df649e03300d1a6dec065111a069ecd25505c2113801771d8e112b072a5b35dd",
+    "tag": "tileo-rc:1.0.0",
+    "id": "sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f",
     "repo_digests": [
-      "tileo-ts@sha256:df649e03300d1a6dec065111a069ecd25505c2113801771d8e112b072a5b35dd"
+      "tileo-rc@sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f",
+      "tileo-ts@sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f"
     ],
-    "created": "2026-10-26T08:27:03.007151047Z",
+    "created": "2026-10-27T04:42:21.690188219Z",
     "os": "linux",
     "arch": "amd64",
-    "size_bytes": 180829962
+    "size_bytes": 162629291
   },
   "source_baseline": {
     "schema": "tileo-source-baseline@1",
-    "timestamp": "2026-10-26T08:55:01.635Z",
+    "timestamp": "2026-10-27T04:44:44.872Z",
     "git": {
-      "commit": "96537e6e772fd43107c508195c698e44ca399ccd",
+      "commit": "a4ff1aaba869c15ff4220d06d688d704f176c1c4",
       "branch": "main",
       "dirty": true
     },
     "source_files": {
       "Dockerfile": "7392e0d5069cefc4ac4268aa29007b4449b5337bb7fa3480901e861eb1128d54",
-      "package.json": "8bf83b39db19d6fc0169ade68c0b620b922250e72924cf2066ab78a7904866c1",
-      "package-lock.json": "d7a17b3fa9ec1d16131d2319805b52873245b31c4c508119e278d3d570128683",
-      "THIRD-PARTY-NOTICES.md": "d3336aae184f48c7e475f01559c12482ff797727d64cd457d5197c0bd3fefeb1",
-      "third-party/MANIFEST.json": "63ada4fc117bc0fb8ccf76946607278bc76f2b49a9de43533c19317e0857c473",
+      "package.json": "46c4fc0c2c8d1f4f4a70e8ef4591200d2473bd1af0c50b7689e226d3f6b6850e",
+      "package-lock.json": "8753763502679aa8acdfd894dc2da663821f99f324aaaf15c64d20029348d5e5",
+      "THIRD-PARTY-NOTICES.md": "9c4151ba88d287248b0af24b1756dd4b422e176168a4132a5f9857918f5b6431",
+      "third-party/MANIFEST.json": "3b2c39d216efe58606db514701bc73e82ff1ce07e741579def5e53fbd338d362",
       "third-party/native/components.json": "ae71afdc659d6fceaa1d8cc022e3205e0000876cd8182cc7b527613672642b3f"
     }
   },
   "audit_artifacts": {
-    "release-image-digest.txt": "543f887c6cbd6a40a3eeeda1cbe2a818d99db7abeb930f8ff1b7b17ea7326888",
+    "release-image-digest.txt": "420d7254fd33ed978d2ca5cb36793f81cd0df4e6d8570233a2195d00f88bc670",
     "gdal-drivers.txt": "6c1c5d67574183be6ba1297565b8e5fa4b57cc928b4b948a155a453bcb0d1a9d",
-    "os-packages.csv": "ada51d8d7afff08519d700f2d199fc12984fbe8e3c7344b663e28b2ba458429f",
-    "binary-linkage.csv": "ceb421eae60c407ccbd38fa5f8400f267412f49e14152e5de325a35f8d6e5a24",
-    "license-decisions.csv": "2d67ef7786e0ea68d36a9867f4cb027f8f0ff005937e19c2d40c2a2b4b12fe43",
-    "sbom-image.spdx.json": "8152109a201846a4223586512aab905ea7687a89c54ff9c622ae657fa5438ff2",
-    "sbom-image.cdx.json": "cb28729c5b40fa96ed8ea019d1faae97a72c248c0543af1c81285c925b3ee2ac"
+    "os-packages.csv": "69d19f980b99ba849ded012e11e09fba22cdd97135a212ad754ef46d1d179c8b",
+    "binary-linkage.csv": "697e92f9b873029e19146e5ba92592082b33742f862b7458c1bd97597ff6bdfd",
+    "license-decisions.csv": "a4ed1b24234099ac4d544e09af3f94ae01d105a7cef0c0f02ed34f72dd49930c",
+    "sbom-image.spdx.json": "6ecbf1e72f9c791a160f073072909b7822b9f9bbff908f9595fccdb36b88730d",
+    "sbom-image.cdx.json": "4372446e9bd4789c1ff734073d007d017381c19ddeb8fa0826c4783ea972e80f"
   },
   "verification_verdict": {
-    "overall": "PASSED",
-    "strict_permissive_compliance": true,
-    "scratch_zero_os_packages": true,
+    "overall": "INSPECTION_PASSED",
+    "compliance_policy": "Enterprise Proprietary-Compatible with Disclosed Permissive Exceptions",
+    "scratch_zero_os_package_managers": true,
     "elf_linkage_zero_copyleft": true,
     "gdal_drivers_verified": true,
-    "test_suite_status": "129_passed_0_failed"
+    "drivers_audited": 10,
+    "binaries_scanned": 37,
+    "npm_packages_allowed": 285,
+    "native_components_allowed": 28,
+    "disclosed_exceptions_count": 3
   }
 }

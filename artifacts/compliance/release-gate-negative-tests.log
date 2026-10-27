@@ -1,82 +1,145 @@
-TileO Release Gate Negative Controls Test Runner (End-to-End Gate Verification)
-Date: 2026-10-27T02:21:35.084Z
-Target: Release gate and compliance enforcement scripts
+TileO Release Gate Negative Controls Test Suite (NC-01 through NC-12)
+Date: 2026-10-27T04:58:41.633Z
+Target: Release certification gate and license verifiers
 
 ======================================================
-TEST [NEG-01]: Banned package (sharp) rejection in release-gate.js
-Description: Injects "sharp" into package-lock and invokes real release-gate.js
-Expected rejection: Forbidden package "sharp" found in package-lock
+TEST [NC-01]: Tampered Source Baseline Hash
+Scenario: Tamper with recorded Dockerfile hash in source-baseline.json
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 2 must verify that all 6 source baseline hashes match disk exactly.
+Expected rejection: Gate 2 Failed: Source baseline mismatch for Dockerfile
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL: Forbidden package "sharp" found in package-lock: node_modules/sharp
-TEST [NEG-01] STATUS: PASSED (Negative control verified)
+Diagnostic output snippet: ✖ Gate 2 Failed: Source baseline mismatch for Dockerfile (disk: 7392e0d5069c, recorded: 000000000000)
+TEST [NC-01] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-02]: Copyleft GPL license rejection in release-gate.js
-Description: Injects a GPL-3.0 package into package-lock and invokes real release-gate.js
-Expected rejection: Non-permissive license "GPL-3.0-only"
+TEST [NC-02]: Tampered SBOM Byte / Missing Artifact
+Scenario: Truncate sbom-image.spdx.json in evidence directory
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 2 must reject when an SBOM artifact is corrupted or zero bytes.
+Expected rejection: Gate 2 Failed: Required audit artifact missing or empty: sbom-image.spdx.json
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL: Non-permissive license "GPL-3.0-only" in node_modules/gpl-test-tool
-TEST [NEG-02] STATUS: PASSED (Negative control verified)
+Diagnostic output snippet: ✖ Gate 2 Failed: Required audit artifact missing or empty: sbom-image.spdx.json
+TEST [NC-02] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-03]: Tampered native component hash rejection in verify-native-licenses.js
-Description: Alters sha256 hash in components.json and invokes real verify-native-licenses.js
-Expected rejection: sha256 mismatch
+TEST [NC-03]: Mismatched Image ID / Digest
+Scenario: Provide test execution record generated from a different image ID
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 4 must fail if test execution image ID does not match audited release image ID.
+Expected rejection: Gate 4 Failed: Test execution image ID (sha256:baaaaa
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL musl/COPYING.txt: sha256 mismatch
-TEST [NEG-03] STATUS: PASSED (Negative control verified)
+Diagnostic output snippet: ✖ Gate 4 Failed: Test execution image ID (sha256:baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa) does not match audited image ID (sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f).
+TEST [NC-03] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-04]: Missing native component license file rejection in verify-native-licenses.js
-Description: Injects non-existent license file into components.json and invokes real verify-native-licenses.js
-Expected rejection: missing
+TEST [NC-04]: Truncated TAP / 0-Test Output
+Scenario: Truncate integration-tests.tap stream to zero bytes
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 4 must fail if TAP stream is missing, truncated, or lacks TAP version header.
+Expected rejection: Gate 4 Failed: integration-tests.tap is truncated or missing TAP version header.
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: FAIL musl: missing third-party\licenses\native\musl\NON_EXISTENT_LICENSE.txt
-TEST [NEG-04] STATUS: PASSED (Negative control verified)
+Diagnostic output snippet: ✖ Gate 4 Failed: integration-tests.tap is truncated or missing TAP version header.
+TEST [NC-04] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-05]: Failed integration test suite rejection in certify-release-gate.js
-Description: Creates test results with 2 failures and invokes certify-release-gate.js
-Expected rejection: Gate 4 Failed: Integration tests did not pass
+TEST [NC-05]: Failing Integration Test
+Scenario: Inject failed test count into test results record
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 4 must fail closed when integration tests have failures.
+Expected rejection: Gate 4 Failed: Integration tests failed or recorded 0 passing tests
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: ✖ Gate 4 Failed: Integration tests did not pass (passed=127, failed=2).
-TEST [NEG-05] STATUS: PASSED (Negative control verified)
+Diagnostic output snippet: ✖ Gate 4 Failed: Integration tests failed or recorded 0 passing tests (passed=130, failed=2).
+TEST [NC-05] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-06]: Banned binary (PVRTexToolCLI) rejection in certify-release-gate.js
-Description: Injects PVRTexToolCLI into SPDX SBOM and invokes certify-release-gate.js
-Expected rejection: Gate 3 Failed: Banned binary or component "PVRTexToolCLI" detected in SPDX SBOM
+TEST [NC-06]: Corrupted / Missing GCC Corresponding Source Archive
+Scenario: Replace GCC runtime corresponding source archive with invalid non-gzip bytes
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 5 must fail if gcc-runtime-corresponding-source.tar.gz is not a valid gzip archive.
+Expected rejection: Gate 5 Failed: GCC corresponding source archive (gcc-runtime-corresponding-source.tar.gz) is not a valid gzip archive
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: ✖ Gate 5 Failed: GCC corresponding source archive (gcc-runtime-corresponding-source.tar.gz) is not a valid gzip archive (magic header mismatch).
+TEST [NC-06] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NC-07]: Missing Mozilla CA Bundle Source Package
+Scenario: Delete mozilla-ca-bundle-source.tar.gz from compliance source directory
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 5 must fail if Mozilla CA certificate source package is missing.
+Expected rejection: Gate 5 Failed: Mozilla CA bundle source archive (mozilla-ca-bundle-source.tar.gz) is missing or empty
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: ✖ Gate 5 Failed: Mozilla CA bundle source archive (mozilla-ca-bundle-source.tar.gz) is missing or empty (C:\Users\PROGRA~1\AppData\Local\Temp\tileo-nc-YJX9wn\source\mozilla-ca-bundle-source.tar.gz).
+TEST [NC-07] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NC-08]: Enforced Human Approval Signoff Missing
+Scenario: Run certify-release-gate with --enforce-human-approval when release-approval.md has pending status
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 7 must block certification when --enforce-human-approval is active and signoff is pending.
+Expected rejection: Gate 7 Failed: Human approval in release-approval.md has PENDING reviewer signatures
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: ✖ Gate 7 Failed: Human approval in release-approval.md has PENDING reviewer signatures or unchecked items.
+TEST [NC-08] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NC-09]: Unapproved MPL-2.0 Component Injection
+Scenario: Inject unapproved component with MPL-2.0 into native components manifest
+Tool Invoked: scripts/verify-native-licenses.js
+Description: verify-native-licenses must reject non-permissive MPL-2.0 without approved exception status.
+Expected rejection: unauthorized-mpl-component: license expression MPL-2.0 is not allowed
+------------------------------------------------------
+REJECTION DETECTED: Correctly rejected with expected diagnostic.
+Diagnostic output snippet: FAIL unauthorized-mpl-component: license expression MPL-2.0 is not allowed
+TEST [NC-09] STATUS: PASSED (Negative control verified)
+
+======================================================
+TEST [NC-10]: Banned Proprietary Binary in SPDX SBOM
+Scenario: Inject PVRTexToolCLI into SPDX SBOM document
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 3 must fail if banned proprietary binary (PVRTexToolCLI) is found in SBOM.
+Expected rejection: Gate 3 Failed: Banned binary or component "PVRTexToolCLI" detected in SPDX SBOM.
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
 Diagnostic output snippet: ✖ Gate 3 Failed: Banned binary or component "PVRTexToolCLI" detected in SPDX SBOM.
-TEST [NEG-06] STATUS: PASSED (Negative control verified)
+TEST [NC-10] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-07]: Forbidden dynamic ELF linkage (libidn2) rejection in certify-release-gate.js
-Description: Injects libidn2 linkage into binary-linkage.csv and invokes certify-release-gate.js
-Expected rejection: Gate 3 Failed: Copyleft library detected in binary linkage
+TEST [NC-11]: Candidate Image Digest Tampering / Swap
+Scenario: Tamper with IMAGE_ID in release-image-digest.txt
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 4 must detect when test results image ID does not match swapped image digest.
+Expected rejection: Gate 4 Failed: Test execution image ID
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: ✖ Gate 3 Failed: Copyleft library detected in binary linkage: /usr/local/lib/libcurl.so,libidn2.so.0,NON_ALLOW
-TEST [NEG-07] STATUS: PASSED (Negative control verified)
+Diagnostic output snippet: ✖ Gate 4 Failed: Test execution image ID (sha256:e83389296365ed7b50680f5103fe79a8e22cabe4f82a966d8980e8a98f65546f) does not match audited image ID (sha256:swapped_image_digest_000000000000000000000000000000000000000).
+TEST [NC-11] STATUS: PASSED (Negative control verified)
 
 ======================================================
-TEST [NEG-08]: Unapproved release governance signoff rejection in certify-release-gate.js
-Description: Invokes certify-release-gate.js with --enforce-human-approval against unfinalized approval doc
-Expected rejection: Gate 6 Failed: Human approval in release-approval.md has PENDING
+TEST [NC-12]: Commit Baseline Replay / Stale Commit Hash
+Scenario: Provide source-baseline.json with stale git commit SHA
+Tool Invoked: scripts/certify-release-gate.js
+Description: Gate 6 must reject replay attacks where source baseline commit does not match current HEAD.
+Expected rejection: Gate 6 Failed: Current commit
 ------------------------------------------------------
 REJECTION DETECTED: Correctly rejected with expected diagnostic.
-Diagnostic output snippet: ✖ Gate 6 Failed: Human approval in release-approval.md has PENDING reviewer signatures or unchecked items.
-TEST [NEG-08] STATUS: PASSED (Negative control verified)
+Diagnostic output snippet: ✖ Gate 6 Failed: Current commit (a4ff1aaba869c15ff4220d06d688d704f176c1c4) does not match source-baseline.json (0123456789abcdef0123456789abcdef01234567).
+TEST [NC-12] STATUS: PASSED (Negative control verified)
 
 ======================================================
-SUMMARY: All 8/8 negative control tests passed cleanly.
-Confirmed: Release certification gate and compliance scripts reject all tested non-permissive configurations.
-Execution log written to: D:\Kerja\enygma-id\TileO\artifacts\compliance\release-gate-negative-tests.log
+Negative Controls Test Run Summary:
+  Total Scenarios Tested: 12
+  Total Rejections Verified (PASS): 12
+  Failed Controls: 0
+Detailed execution log written to: D:\Kerja\enygma-id\TileO\artifacts\compliance\release-gate-negative-tests.log
+Structured negative controls results written to: D:\Kerja\enygma-id\TileO\release-evidence\v1.0.0\gate\negative-controls.json
 ======================================================
 

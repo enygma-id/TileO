@@ -90,6 +90,10 @@ const architecture = inspectData.Architecture;
 const os = inspectData.Os;
 const sizeBytes = inspectData.Size;
 
+// Write raw image-inspect.json
+const inspectPath = path.join(OUT_DIR, 'image-inspect.json');
+fs.writeFileSync(inspectPath, JSON.stringify(inspectData, null, 2) + '\n', 'utf8');
+
 const digestRecord = [
   `IMAGE_TAG=${IMAGE_TAG}`,
   `IMAGE_ID=${imageId}`,
@@ -178,7 +182,7 @@ const RUNTIME_PACKAGED_SOFTWARE = [
   { package: 'libjpeg-turbo', version: '3.0.4', license: 'IJG AND BSD-3-Clause', origin: 'Alpine Linux 3.21', files: '/usr/lib/libjpeg.so.8', evidence: 'third-party/licenses/native/libjpeg-turbo/LICENSE.txt' },
   { package: 'libstdc++', version: '14.2.0', license: 'GPL-3.0-only WITH GCC-exception-3.1', origin: 'Alpine Linux 3.21', files: '/usr/lib/libstdc++.so.6', evidence: 'third-party/licenses/native/libstdc++/COPYING3.txt' },
   { package: 'libgcc', version: '14.2.0', license: 'GPL-3.0-only WITH GCC-exception-3.1', origin: 'Alpine Linux 3.21', files: '/usr/lib/libgcc_s.so.1', evidence: 'third-party/licenses/native/libgcc/COPYING3.txt' },
-  { package: 'ca-certificates-bundle', version: '20241121', license: 'MPL-2.0 (Scope E Data)', origin: 'Alpine Linux 3.21', files: '/etc/ssl/certs/ca-certificates.crt', evidence: 'third-party/licenses/native/ca-certificates/LICENSE.txt' },
+  { package: 'ca-certificates-bundle', version: '20241121', license: 'MPL-2.0 AND MIT', origin: 'Alpine Linux 3.21', files: '/etc/ssl/certs/ca-certificates.crt', evidence: 'third-party/licenses/native/ca-certificates/LICENSE.txt' },
   { package: 'curl', version: '8.14.1', license: 'curl (MIT/X11)', origin: 'Custom musl source build', files: '/usr/local/lib/libcurl.so.4', evidence: 'third-party/licenses/native/curl/COPYING.txt' },
   { package: 'proj', version: '9.6.2', license: 'MIT', origin: 'Custom musl source build', files: '/usr/local/lib/libproj.so.25;/usr/local/share/proj', evidence: 'third-party/licenses/native/proj/COPYING.txt' },
   { package: 'gdal', version: '3.11.4', license: 'MIT AND X11', origin: 'Custom musl source build', files: '/usr/local/lib/libgdal.so.37;/usr/local/bin/gdal*;/usr/local/share/gdal', evidence: 'third-party/licenses/native/gdal/LICENSE.TXT' },
@@ -209,15 +213,28 @@ console.log(`  ✓ Written: ${path.relative(ROOT_DIR, osPackagesPath)}`);
 console.log('\n[5/8] Scanning ELF binaries, closures, and binary files via scanelf & filesystem audit...');
 const tmpContainer = `tileo-audit-${Date.now()}`;
 let scanelfOutput = '';
+let rootfsFileList = '';
 
 try {
   runCmd('docker', ['create', '--name', tmpContainer, IMAGE_TAG]);
-  const scanCmd = `docker export ${tmpContainer} | docker run -i --rm alpine:3.21 sh -c "apk add --no-cache scanelf >/dev/null && mkdir /extracted && tar -xf - -C /extracted && scanelf -Rn /extracted && find /extracted -type f \\( -name '*.exe' -o -name '*.dll' -o -name '*.dylib' \\) -exec echo 'PROHIBITED_BINARY: {}' \\;"`;
-  scanelfOutput = execSync(scanCmd, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+  const scanCmd = `docker export ${tmpContainer} | docker run -i --rm alpine:3.21 sh -c "apk add --no-cache scanelf >/dev/null && mkdir /extracted && tar -xf - -C /extracted && find /extracted -type f | sed 's|^/extracted||' > /tmp/rootfs.txt && scanelf -Rn /extracted && find /extracted -type f \\( -name '*.exe' -o -name '*.dll' -o -name '*.dylib' -o -name '*PVRTexToolCLI*' -o -name '*astcenc*' -o -name 'crunch' -o -name 'crunch.exe' -o -name '*texture-compressor*' \\) ! -name '*.d.ts' ! -name '*.ts' ! -name '*.js' ! -name '*.map' ! -name '*.json' ! -name '*.md' ! -name '*.txt' ! -name '*.wasm' -exec echo 'PROHIBITED_BINARY: {}' \\; && echo '===ROOTFS_LIST_START===' && cat /tmp/rootfs.txt"`;
+  const rawOutput = execSync(scanCmd, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+  const splitIndex = rawOutput.indexOf('===ROOTFS_LIST_START===');
+  if (splitIndex !== -1) {
+    scanelfOutput = rawOutput.slice(0, splitIndex);
+    rootfsFileList = rawOutput.slice(splitIndex + '===ROOTFS_LIST_START===\n'.length);
+  } else {
+    scanelfOutput = rawOutput;
+  }
 } finally {
   try {
     runCmd('docker', ['rm', '-f', tmpContainer]);
   } catch {}
+}
+
+if (rootfsFileList) {
+  const rootfsPath = path.join(OUT_DIR, 'rootfs-file-list.txt');
+  fs.writeFileSync(rootfsPath, rootfsFileList, 'utf8');
 }
 
 const FORBIDDEN_LIBRARIES = [
@@ -387,9 +404,9 @@ for (const pkg of npmManifest.packages) {
 
   let evalResult;
   try {
-    evalResult = evaluateExpression(expr);
+    evalResult = evaluateExpression(expr, pkg.name);
   } catch (e) {
-    evalResult = { allowed: false, exceptions: new Set() };
+    evalResult = { allowed: false, isPermissive: false, status: 'prohibited', exceptions: [] };
   }
 
   if (!evalResult.allowed) {
@@ -399,6 +416,7 @@ for (const pkg of npmManifest.packages) {
 
   npmAllowCount++;
   const verifStatus = (pkg.upstream_verification && pkg.upstream_verification.status) || pkg.verification_status;
+  const verdict = evalResult.isPermissive ? 'ALLOW (Permissive)' : 'ALLOW (Disclosed Exception)';
   decisionsRows.push([
     `"${pkg.name}"`,
     'npm',
@@ -406,7 +424,7 @@ for (const pkg of npmManifest.packages) {
     `"${expr}"`,
     `"${pkg.notice_file || ''}"`,
     `"${pkg.notice_sha256 || ''}"`,
-    'ALLOW',
+    `"${verdict}"`,
     `"${verifStatus || 'verified_permissive'}"`
   ]);
 }
@@ -420,9 +438,9 @@ if (fs.existsSync(nativeJsonPath)) {
   for (const comp of nativeData.components) {
     let evalResult;
     try {
-      evalResult = evaluateExpression(comp.license_expression);
+      evalResult = evaluateExpression(comp.license_expression, comp.id);
     } catch (e) {
-      evalResult = { allowed: false, exceptions: new Set() };
+      evalResult = { allowed: false, isPermissive: false, status: 'prohibited', exceptions: [] };
     }
 
     if (!evalResult.allowed) {
@@ -432,10 +450,10 @@ if (fs.existsSync(nativeJsonPath)) {
 
     nativeAllowCount++;
     const firstLic = (comp.license_files && comp.license_files[0]) || {};
-    const isException = comp.id === 'libstdc++' || comp.id === 'libgcc' || comp.id === 'ca-certificates' || evalResult.exceptions.size > 0;
-    const verdict = isException ? 'ALLOW (Disclosed Exception)' : 'ALLOW';
+    const isException = evalResult.status === 'approved_exception';
+    const verdict = isException ? 'ALLOW (Disclosed Exception)' : 'ALLOW (Permissive)';
     const decisionReason = isException
-      ? `Approved Legal Exception: ${Array.from(evalResult.exceptions).join(', ') || comp.name}`
+      ? `Approved Legal Exception: ${evalResult.exceptions.join(', ') || comp.name}`
       : (comp.distribution || comp.name);
 
     decisionsRows.push([
