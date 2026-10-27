@@ -13,8 +13,9 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
+const pkgVersion = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8')).version;
 
-const OUT_DIR = path.resolve(ROOT_DIR, 'release-evidence/v1.0.0/compliance');
+const OUT_DIR = path.resolve(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'compliance');
 const NOTICES_DIR = path.join(OUT_DIR, 'notices');
 const SOURCE_DIR = path.join(OUT_DIR, 'source');
 const CUSTOMER_DIR = path.join(OUT_DIR, 'customer');
@@ -149,7 +150,7 @@ console.log('  ✓ Written: exceptions-register.csv');
 // 4. reviewed-license-decision.md
 const reviewedDecisionContent = `# TileO Legal & Technical Decision on Disclosed Exceptions
 
-**Release Target:** TileO v1.0.0  
+**Release Target:** TileO v${pkgVersion}  
 **Compliance Policy:** Enterprise Proprietary-Compatible Distribution with Disclosed Exceptions  
 **Effective Date:** 27 October 2026  
 
@@ -255,7 +256,7 @@ fs.writeFileSync(
   path.join(CUSTOMER_DIR, 'THIRD-PARTY-EXCEPTIONS.md'),
   `# TileO Third-Party Runtime Exceptions Disclosure
 
-This document discloses all non-permissive third-party runtime components distributed in the TileO v1.0.0 container image.
+This document discloses all non-permissive third-party runtime components distributed in the TileO v${pkgVersion} container image.
 
 | Component | Shipped File | License | Exception / Legal Qualification | Source Archive |
 |---|---|---|---|---|
@@ -296,7 +297,7 @@ const deliveryManifest = {
   schema: 'tileo-customer-delivery@1',
   timestamp: new Date().toISOString(),
   product: 'TileO Enterprise',
-  version: '1.0.0',
+  version: pkgVersion,
   files: [
     'THIRD-PARTY-NOTICES.md',
     'THIRD-PARTY-EXCEPTIONS.md',

@@ -31,6 +31,7 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
+const pkgVersion = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8')).version;
 
 const args = process.argv.slice(2);
 function getArg(name, defaultValue) {
@@ -42,7 +43,7 @@ function getArg(name, defaultValue) {
 }
 
 const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', 'artifacts/compliance'));
-const GATE_DIR = path.resolve(ROOT_DIR, 'release-evidence/v1.0.0/gate');
+const GATE_DIR = path.resolve(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'gate');
 fs.mkdirSync(OUT_DIR, { recursive: true });
 fs.mkdirSync(GATE_DIR, { recursive: true });
 
@@ -166,6 +167,11 @@ function sha256File(filePath) {
 function createTmpEvidenceDir() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-nc-'));
   const candidateDirs = [
+    path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'image'),
+    path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'source'),
+    path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'sbom'),
+    path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'tests'),
+    path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'compliance'),
     path.join(ROOT_DIR, 'release-evidence/v1.0.0/image'),
     path.join(ROOT_DIR, 'release-evidence/v1.0.0/source'),
     path.join(ROOT_DIR, 'release-evidence/v1.0.0/sbom'),
@@ -205,7 +211,9 @@ function createTmpEvidenceDir() {
   fs.mkdirSync(sourceSubdir, { recursive: true });
   fs.mkdirSync(noticesSubdir, { recursive: true });
 
-  const compDir = path.join(ROOT_DIR, 'release-evidence/v1.0.0/compliance');
+  const compDir = fs.existsSync(path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'compliance'))
+    ? path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'compliance')
+    : path.join(ROOT_DIR, 'release-evidence/v1.0.0/compliance');
   if (fs.existsSync(path.join(compDir, 'source/gcc-runtime-corresponding-source.tar.gz'))) {
     fs.copyFileSync(
       path.join(compDir, 'source/gcc-runtime-corresponding-source.tar.gz'),
@@ -243,7 +251,7 @@ function createTmpEvidenceDir() {
   const digestFile = path.join(tmpDir, 'release-image-digest.txt');
   let currentImageId = DEFAULT_IMAGE_ID;
   if (!fs.existsSync(digestFile)) {
-    fs.writeFileSync(digestFile, `IMAGE_TAG=tileo-rc:1.0.0\nIMAGE_ID=${DEFAULT_IMAGE_ID}\nIMAGE_NAME=tileo-rc:1.0.0\n`, 'utf8');
+    fs.writeFileSync(digestFile, `IMAGE_TAG=tileo-rc:${pkgVersion}\nIMAGE_ID=${DEFAULT_IMAGE_ID}\nIMAGE_NAME=tileo-rc:${pkgVersion}\n`, 'utf8');
   } else {
     const content = fs.readFileSync(digestFile, 'utf8');
     const m = content.match(/IMAGE_ID=(.+)/);
@@ -322,7 +330,7 @@ function createTmpEvidenceDir() {
     fs.writeFileSync(testResultsFile, JSON.stringify({
       schema: 'tileo-integration-tests@2',
       timestamp: new Date().toISOString(),
-      image: 'tileo-rc:1.0.0',
+      image: `tileo-rc:${pkgVersion}`,
       image_id: currentImageId,
       git_commit: currentCommit,
       total_tests: 130,
@@ -624,7 +632,7 @@ runNegativeTest({
     if (fs.existsSync(digestPath)) {
       fs.writeFileSync(
         digestPath,
-        'IMAGE_TAG=tileo-rc:1.0.0\nIMAGE_ID=sha256:swapped_image_digest_000000000000000000000000000000000000000\n'
+        `IMAGE_TAG=tileo-rc:${pkgVersion}\nIMAGE_ID=sha256:swapped_image_digest_000000000000000000000000000000000000000\n`
       );
     }
     return execFileSync('node', ['scripts/certify-release-gate.js', '--out-dir', tmpDir], {

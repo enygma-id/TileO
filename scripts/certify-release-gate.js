@@ -24,11 +24,12 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
+const pkgVersion = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8')).version;
 
 const args = process.argv.slice(2);
 
-let IMAGE_TAG = 'tileo-rc:1.0.0';
-let OUT_DIR = path.resolve(ROOT_DIR, 'release-evidence/v1.0.0/gate');
+let IMAGE_TAG = 'tileo-rc:' + pkgVersion;
+let OUT_DIR = path.resolve(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'gate');
 let EVIDENCE_DIR = null;
 let ENFORCE_HUMAN_APPROVAL = false;
 let ENFORCE_CLEAN = false;
@@ -85,7 +86,7 @@ const reportPath = path.join(OUT_DIR, 'eligibility-report.json');
 const failures = [];
 const passedChecks = [];
 
-const DEFAULT_GATE_DIR = path.resolve(ROOT_DIR, 'release-evidence/v1.0.0/gate');
+const DEFAULT_GATE_DIR = path.resolve(ROOT_DIR, 'release-evidence', `v${pkgVersion}`, 'gate');
 const IS_CUSTOM_EVIDENCE = EVIDENCE_DIR && EVIDENCE_DIR !== DEFAULT_GATE_DIR;
 
 // Determine artifact paths with evidence directory priority
@@ -113,47 +114,59 @@ function findArtifact(filename, subpathList = []) {
 }
 
 const digestFile = findArtifact('release-image-digest.txt', [
+  `release-evidence/v${pkgVersion}/image/release-image-digest.txt`,
   'release-evidence/v1.0.0/image/release-image-digest.txt',
   'artifacts/compliance/release-image-digest.txt',
 ]);
 const driversFile = findArtifact('gdal-drivers.txt', [
+  `release-evidence/v${pkgVersion}/image/gdal-drivers.txt`,
   'release-evidence/v1.0.0/image/gdal-drivers.txt',
   'artifacts/compliance/gdal-drivers.txt',
 ]);
 const osPackagesFile = findArtifact('os-packages.csv', [
+  `release-evidence/v${pkgVersion}/image/os-packages.csv`,
   'release-evidence/v1.0.0/image/os-packages.csv',
   'artifacts/compliance/os-packages.csv',
 ]);
 const binaryLinkageFile = findArtifact('binary-linkage.csv', [
+  `release-evidence/v${pkgVersion}/image/binary-linkage.csv`,
   'release-evidence/v1.0.0/image/binary-linkage.csv',
   'artifacts/compliance/binary-linkage.csv',
 ]);
 const licenseDecisionsFile = findArtifact('license-decisions.csv', [
+  `release-evidence/v${pkgVersion}/image/license-decisions.csv`,
+  `release-evidence/v${pkgVersion}/compliance/license-decisions.csv`,
   'release-evidence/v1.0.0/image/license-decisions.csv',
   'release-evidence/v1.0.0/compliance/license-decisions.csv',
   'artifacts/compliance/license-decisions.csv',
 ]);
 const spdxFile = findArtifact('sbom-image.spdx.json', [
+  `release-evidence/v${pkgVersion}/sbom/sbom-image.spdx.json`,
   'release-evidence/v1.0.0/sbom/sbom-image.spdx.json',
   'artifacts/compliance/sbom-image.spdx.json',
 ]);
 const cdxFile = findArtifact('sbom-image.cdx.json', [
+  `release-evidence/v${pkgVersion}/sbom/sbom-image.cdx.json`,
   'release-evidence/v1.0.0/sbom/sbom-image.cdx.json',
   'artifacts/compliance/sbom-image.cdx.json',
 ]);
 const sourceBaselineFile = findArtifact('source-baseline.json', [
+  `release-evidence/v${pkgVersion}/source/source-baseline.json`,
   'release-evidence/v1.0.0/source/source-baseline.json',
   'artifacts/compliance/source-baseline.json',
 ]);
 const releaseProvenanceFile = findArtifact('release-provenance.json', [
+  `release-evidence/v${pkgVersion}/image/release-provenance.json`,
   'release-evidence/v1.0.0/image/release-provenance.json',
   'artifacts/compliance/release-provenance.json',
 ]);
 const testResultsFile = findArtifact('integration-test-results.json', [
+  `release-evidence/v${pkgVersion}/tests/integration-test-results.json`,
   'release-evidence/v1.0.0/tests/integration-test-results.json',
   'artifacts/compliance/integration-test-results.json',
 ]);
 const tapLogFile = findArtifact('integration-tests.tap', [
+  `release-evidence/v${pkgVersion}/tests/integration-tests.tap`,
   'release-evidence/v1.0.0/tests/integration-tests.tap',
   'artifacts/compliance/integration-tests.tap',
 ]);
@@ -333,27 +346,60 @@ if (!fs.existsSync(testResultsFile)) {
 
 // Gate 5: Verify Disclosed Exceptions & Source Fulfillment
 console.log('\n[Gate 5/7] Verifying disclosed exceptions & corresponding source fulfillment...');
-const exceptionsRegisterFile = findArtifact('exceptions-register.csv', [
+
+let exceptionsRegisterFile = findArtifact('exceptions-register.csv', [
+  `release-evidence/v${pkgVersion}/compliance/exceptions-register.csv`,
   'release-evidence/v1.0.0/compliance/exceptions-register.csv',
   'artifacts/compliance/exceptions-register.csv',
 ]);
-const gccSourceArchive = findArtifact('source/gcc-runtime-corresponding-source.tar.gz', [
+let gccSourceArchive = findArtifact('source/gcc-runtime-corresponding-source.tar.gz', [
+  `release-evidence/v${pkgVersion}/compliance/source/gcc-runtime-corresponding-source.tar.gz`,
   'release-evidence/v1.0.0/compliance/source/gcc-runtime-corresponding-source.tar.gz',
   'artifacts/compliance/source/gcc-runtime-corresponding-source.tar.gz',
 ]);
-const caSourceArchive = findArtifact('source/mozilla-ca-bundle-source.tar.gz', [
+let caSourceArchive = findArtifact('source/mozilla-ca-bundle-source.tar.gz', [
+  `release-evidence/v${pkgVersion}/compliance/source/mozilla-ca-bundle-source.tar.gz`,
   'release-evidence/v1.0.0/compliance/source/mozilla-ca-bundle-source.tar.gz',
   'artifacts/compliance/source/mozilla-ca-bundle-source.tar.gz',
 ]);
+
+// Auto-prepare compliance packages in non-custom evidence environments if absent
+if (!IS_CUSTOM_EVIDENCE && (!fs.existsSync(exceptionsRegisterFile) || !fs.existsSync(gccSourceArchive) || !fs.existsSync(caSourceArchive))) {
+  try {
+    console.log('  Preparing compliance packages (disclosed exceptions & source fulfillment)...');
+    execSync('node scripts/prepare-compliance-packages.js', { cwd: ROOT_DIR, stdio: 'inherit' });
+    exceptionsRegisterFile = findArtifact('exceptions-register.csv', [
+      `release-evidence/v${pkgVersion}/compliance/exceptions-register.csv`,
+      'release-evidence/v1.0.0/compliance/exceptions-register.csv',
+      'artifacts/compliance/exceptions-register.csv',
+    ]);
+    gccSourceArchive = findArtifact('source/gcc-runtime-corresponding-source.tar.gz', [
+      `release-evidence/v${pkgVersion}/compliance/source/gcc-runtime-corresponding-source.tar.gz`,
+      'release-evidence/v1.0.0/compliance/source/gcc-runtime-corresponding-source.tar.gz',
+      'artifacts/compliance/source/gcc-runtime-corresponding-source.tar.gz',
+    ]);
+    caSourceArchive = findArtifact('source/mozilla-ca-bundle-source.tar.gz', [
+      `release-evidence/v${pkgVersion}/compliance/source/mozilla-ca-bundle-source.tar.gz`,
+      'release-evidence/v1.0.0/compliance/source/mozilla-ca-bundle-source.tar.gz',
+      'artifacts/compliance/source/mozilla-ca-bundle-source.tar.gz',
+    ]);
+  } catch (err) {
+    console.warn(`  ⚠ Could not auto-prepare compliance packages: ${err.message}`);
+  }
+}
+
 const gplNotice = findArtifact('notices/GPL-3.0.txt', [
+  `release-evidence/v${pkgVersion}/compliance/notices/GPL-3.0.txt`,
   'release-evidence/v1.0.0/compliance/notices/GPL-3.0.txt',
   'third-party/licenses/native/libstdc++/COPYING3.txt',
 ]);
 const gccNotice = findArtifact('notices/GCC-Runtime-Library-Exception-3.1.txt', [
+  `release-evidence/v${pkgVersion}/compliance/notices/GCC-Runtime-Library-Exception-3.1.txt`,
   'release-evidence/v1.0.0/compliance/notices/GCC-Runtime-Library-Exception-3.1.txt',
   'third-party/licenses/native/libstdc++/COPYING-RUNTIME.txt',
 ]);
 const mplNotice = findArtifact('notices/MPL-2.0.txt', [
+  `release-evidence/v${pkgVersion}/compliance/notices/MPL-2.0.txt`,
   'release-evidence/v1.0.0/compliance/notices/MPL-2.0.txt',
   'third-party/licenses/native/ca-certificates/MPL-2.0.txt',
 ]);

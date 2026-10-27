@@ -109,6 +109,9 @@ jobs:
       - name: Generate image notice file path inventory
         run: node scripts/generate-image-notice-paths.js --image tileo-release:candidate
 
+      - name: Prepare compliance packages (Disclosed Exceptions & Source Archives)
+        run: node scripts/prepare-compliance-packages.js
+
       - name: Certify release gate compliance (Fail-Closed)
         run: |
           if [ "${{ startsWith(github.ref, 'refs/tags/v') }}" = "true" ]; then
@@ -187,9 +190,11 @@ jobs:
         shell: bash
         run: |
           gunzip -c /tmp/image-export/candidate-image.tar.gz | docker load
-          test -f evidence/artifacts/compliance/release-gate-pass.json || { echo "release-gate-pass.json missing from evidence!"; exit 1; }
-          test -f evidence/artifacts/compliance/release-image-digest.txt || { echo "release-image-digest.txt missing!"; exit 1; }
-          expected_id=$(grep -oE 'IMAGE_ID=[^ ]+' evidence/artifacts/compliance/release-image-digest.txt | cut -d= -f2)
+          pass_file=$(find evidence -name "release-gate-pass.json" | head -n 1)
+          test -n "$pass_file" || { echo "release-gate-pass.json missing from evidence!"; exit 1; }
+          digest_file=$(find evidence -name "release-image-digest.txt" | head -n 1)
+          test -n "$digest_file" || { echo "release-image-digest.txt missing!"; exit 1; }
+          expected_id=$(grep -oE 'IMAGE_ID=[^ ]+' "$digest_file" | cut -d= -f2)
           actual_id=$(docker inspect --format='{{.Id}}' tileo-release:candidate)
           echo "Comparing Image IDs: expected=$expected_id, actual=$actual_id"
           test "$expected_id" = "$actual_id" || {

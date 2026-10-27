@@ -12,8 +12,9 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
+const pkgVersion = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8')).version;
 
-const CLOSURE_DIR = path.resolve(ROOT_DIR, 'TileO-v1.0.0-Release-Closure');
+const CLOSURE_DIR = path.resolve(ROOT_DIR, `TileO-v${pkgVersion}-Release-Closure`);
 fs.rmSync(CLOSURE_DIR, { recursive: true, force: true });
 fs.mkdirSync(CLOSURE_DIR, { recursive: true });
 
@@ -33,17 +34,17 @@ const commitInfo = [
   `BRANCH=${gitBranch}`,
   `TIMESTAMP=${new Date().toISOString()}`,
   `WORKING_TREE_DIRTY=${gitDirty}`,
-  `TARGET_VERSION=1.0.0`,
-  `TARGET_IMAGE=tileo-rc:1.0.0`
+  `TARGET_VERSION=${pkgVersion}`,
+  `TARGET_IMAGE=tileo-rc:${pkgVersion}`
 ].join('\n') + '\n';
 
 fs.writeFileSync(path.join(CLOSURE_DIR, 'SOURCE_REPOSITORY_COMMIT.txt'), commitInfo, 'utf8');
 
 // 2. ENGINEERING_CHANGELOG.md
-const changelogContent = `# TileO Enterprise v1.0.0 — Engineering Release Closure Changelog
+const changelogContent = `# TileO Enterprise v${pkgVersion} — Engineering Release Closure Changelog
 
 ## Executive Summary
-This document records the definitive technical resolution of all P0 and P1 audit findings identified in the Independent Permissive Release Readiness Audit for TileO Enterprise v1.0.0.
+This document records the definitive technical resolution of all P0 and P1 audit findings identified in the Independent Permissive Release Readiness Audit for TileO Enterprise v${pkgVersion}.
 
 - **Baseline:** \`TileO-main(9).zip\` (27 October 2026)
 - **Target Policy:** Enterprise Proprietary-Compatible with Disclosed Exceptions (Community \`AGPL-3.0-only\`, strictly permissive third-party runtime components, with three disclosed, vetted exceptions: GCC Runtime Library Exception 3.1 for \`libstdc++\` and \`libgcc\`, and Mozilla CA trust store data terms \`MPL-2.0 AND MIT\` for \`ca-certificates\`).
@@ -117,8 +118,10 @@ function copyDirSync(src, dest) {
   }
 }
 
-const evidenceSrc = path.join(ROOT_DIR, 'release-evidence', 'v1.0.0');
-const evidenceDest = path.join(CLOSURE_DIR, 'release-evidence', 'v1.0.0');
+const evidenceSrc = fs.existsSync(path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`))
+  ? path.join(ROOT_DIR, 'release-evidence', `v${pkgVersion}`)
+  : path.join(ROOT_DIR, 'release-evidence', 'v1.0.0');
+const evidenceDest = path.join(CLOSURE_DIR, 'release-evidence', `v${pkgVersion}`);
 copyDirSync(evidenceSrc, evidenceDest);
 
 // 4. Compute evidence-sha256.txt across all files in TileO-v1.0.0-Release-Closure
@@ -149,7 +152,7 @@ shaLines.sort((a, b) => a.slice(66).localeCompare(b.slice(66)));
 fs.writeFileSync(path.join(CLOSURE_DIR, 'evidence-sha256.txt'), shaLines.join('\n') + '\n', 'utf8');
 
 console.log('===========================================================');
-console.log(' TileO-v1.0.0-Release-Closure Package Created Successfully');
+console.log(` TileO-v${pkgVersion}-Release-Closure Package Created Successfully`);
 console.log(` Output Directory: ${CLOSURE_DIR}`);
 console.log(` Total Evidence Files: ${shaLines.length}`);
 console.log(' Evidence SHA-256 Manifest: evidence-sha256.txt');

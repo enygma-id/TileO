@@ -12,10 +12,11 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
+const pkgVersion = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8')).version;
 
 const args = process.argv.slice(2);
 let imageTag = null;
-let outDir = 'release-evidence/v1.0.0/tests';
+let outDir = path.join('release-evidence', `v${pkgVersion}`, 'tests');
 let mountDist = false;
 
 for (let i = 0; i < args.length; i++) {
@@ -42,7 +43,7 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 
-const IMAGE_TAG = imageTag || 'tileo-rc:1.0.0';
+const IMAGE_TAG = imageTag || ('tileo-rc:' + pkgVersion);
 const OUT_DIR = path.resolve(ROOT_DIR, outDir);
 fs.mkdirSync(OUT_DIR, { recursive: true });
 

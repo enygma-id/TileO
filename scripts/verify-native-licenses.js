@@ -164,7 +164,9 @@ async function main() {
 
   const header = ['id', 'name', 'version', 'license_expression', 'scope', 'linkage', 'exception', 'review', 'files', 'status'];
   const csv = [header.join(','), ...rows.map((row) => header.map((key) => `"${String(row[key] ?? '').replaceAll('"', '""')}"`).join(','))].join('\n');
-  fs.writeFileSync(CSV_FILE, `${csv}\n`);
+  if (manifestArgIdx === -1) {
+    fs.writeFileSync(CSV_FILE, `${csv}\n`);
+  }
 
   console.log(`${update ? 'Updated' : 'Checked'} ${rows.length} native components (${exceptions} documented exceptions).`);
   if (problems.length > 0) {

@@ -1,4 +1,4 @@
-# TileO v1.0.0 — Release Readiness and Human Signoff Record
+# TileO v0.2.0 — Release Readiness and Human Signoff Record
 
 **Edition policy:** Community original source AGPL-3.0-only; Enterprise commercial first-party licensing subject to Enygma rights. Distributed third-party components must be **predominantly permissive with only exact-file, reviewed GCC/CA exceptions**; neither edition alters upstream license rights.
 
@@ -26,4 +26,4 @@ Previous candidate artifacts may be found under `artifacts/compliance/`, but the
 
 Actual signed approval should be maintained in the controlled release evidence system; this public Markdown reports only the current decision state and must not expose private reviewer identities, contracts or customer information.
 
-**Release rule:** Do not create `v1.0.0`, publish a container image or announce a compliant Enterprise distribution while any required evidence or signoff is pending. See [release process](docs/RELEASE_PROCESS.md), [third-party release gate](third-party/RELEASE_GATE.md), [exceptions](third-party/ENTERPRISE_EXCEPTIONS.md), and [source access](third-party/SOURCE_ACCESS.md).
+**Release rule:** Do not create `v0.2.0`, publish a container image or announce a compliant Enterprise distribution while any required evidence or signoff is pending. See [release process](docs/RELEASE_PROCESS.md), [third-party release gate](third-party/RELEASE_GATE.md), [exceptions](third-party/ENTERPRISE_EXCEPTIONS.md), and [source access](third-party/SOURCE_ACCESS.md).
