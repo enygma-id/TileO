@@ -20,7 +20,7 @@ npm test
 npm run release:gate
 ```
 
-These commands are **development checks**, not a full image-compliance certificate. Before `v1.0.0`, the release owner must additionally archive raw integration-test output and machine-readable results, validate all file/hash baselines and final-image SPDX/CycloneDX SBOMs, confirm upstream source packages and notices for the eligible GCC/CA exceptions, and demonstrate that approval is required for publishing. Do not run a version-and-tag helper before signoff. See [source availability](../third-party/SOURCE_ACCESS.md) and [exceptions](../third-party/ENTERPRISE_EXCEPTIONS.md).
+These commands are **development checks**, not a full image-compliance certificate. Before any release (such as `v0.2.0`), the release owner must additionally archive raw integration-test output and machine-readable results, validate all file/hash baselines and final-image SPDX/CycloneDX SBOMs, confirm upstream source packages and notices for the eligible GCC/CA exceptions, and demonstrate that approval is required for publishing. Do not run a version-and-tag helper before signoff. See [source availability](../third-party/SOURCE_ACCESS.md) and [exceptions](../third-party/ENTERPRISE_EXCEPTIONS.md).
 
 Some real-tool integration and browser tests require dedicated fixtures, installed executables or explicit environment configuration. Do not treat skipped tests as successful end-to-end validation. See [Testing](TESTING.md), [Verification](VERIFICATION.md) and [Tools & Prerequisites](TOOLS.md).
 

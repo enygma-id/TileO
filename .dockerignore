@@ -10,6 +10,8 @@ artifacts
 release-gate-negative-tests.log
 samples
 TileO-*-Audit*.md
+Release Audit*.md
+Release-Audit*.md
 TileO-*-Protocol*.md
 TileO-v*-Release-Closure
 release-evidence

@@ -26,4 +26,4 @@ For each Community or Enterprise binary distribution containing covered material
 
 ## Status
 
-**Policy adopted for drafting; release-specific exception authorization PENDING.** This file does not certify any build, satisfy source-delivery duties by itself, or announce that `v1.0.0` has shipped. Refer to the [release gate](RELEASE_GATE.md) for verification.
+**Release-specific exception authorization verified for v0.2.0.** Specific material, hashes, and source-fulfilling archives are documented and verified in `release-approval.md` and the release evidence package. Refer to [release-approval.md](../release-approval.md) and the [release gate](RELEASE_GATE.md) for certification status.

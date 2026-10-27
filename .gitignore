@@ -10,6 +10,8 @@ dist/
 test-results/
 TileO-main*-Audit*.md
 TileO-*-Audit*.md
+Release Audit*.md
+Release-Audit*.md
 TileO-*-Protocol*.md
 TileO-v1.0.0-RC9-Engineering-Closure-Protocol.md
 TileO-v*-Release-Closure/

@@ -414,9 +414,12 @@ if (!fs.existsSync(exceptionsRegisterFile) || fs.statSync(exceptionsRegisterFile
   if (!regContent.includes('EXC-001') || !regContent.includes('EXC-002') || !regContent.includes('EXC-003')) {
     failures.push('Gate 5 Failed: exceptions-register.csv missing required EXC-001, EXC-002, or EXC-003 entries.');
   }
+  if (ENFORCE_HUMAN_APPROVAL && regContent.includes('PENDING_REVIEW')) {
+    failures.push('Gate 5 Failed: exceptions-register.csv has PENDING_REVIEW items while enforcing human approval.');
+  }
 }
 
-function verifyGzipArchive(archivePath, name) {
+function verifyGzipArchive(archivePath, name, requiredEntries = []) {
   if (!fs.existsSync(archivePath) || fs.statSync(archivePath).size < 100) {
     failures.push(`Gate 5 Failed: ${name} is missing or empty (${path.relative(ROOT_DIR, archivePath)}).`);
     return;
@@ -424,11 +427,32 @@ function verifyGzipArchive(archivePath, name) {
   const buf = fs.readFileSync(archivePath);
   if (buf[0] !== 0x1f || buf[1] !== 0x8b) {
     failures.push(`Gate 5 Failed: ${name} is not a valid gzip archive (magic header mismatch).`);
+    return;
+  }
+  if (requiredEntries.length > 0) {
+    try {
+      const listing = execSync(`tar --force-local -tzf "${archivePath}"`, { encoding: 'utf8' });
+      for (const req of requiredEntries) {
+        if (!listing.includes(req)) {
+          failures.push(`Gate 5 Failed: ${name} is missing required substantive entry '${req}'.`);
+        }
+      }
+    } catch (err) {
+      failures.push(`Gate 5 Failed: ${name} could not be inspected via tar: ${err.message}`);
+    }
   }
 }
 
-verifyGzipArchive(gccSourceArchive, 'GCC corresponding source archive (gcc-runtime-corresponding-source.tar.gz)');
-verifyGzipArchive(caSourceArchive, 'Mozilla CA bundle source archive (mozilla-ca-bundle-source.tar.gz)');
+verifyGzipArchive(
+  gccSourceArchive,
+  'GCC corresponding source archive (gcc-runtime-corresponding-source.tar.gz)',
+  ['libstdc++-v3', 'libgcc', 'APKBUILD']
+);
+verifyGzipArchive(
+  caSourceArchive,
+  'Mozilla CA bundle source archive (mozilla-ca-bundle-source.tar.gz)',
+  ['certdata.txt', 'certdata2pem.py', 'APKBUILD']
+);
 
 if (!fs.existsSync(gplNotice) || !fs.existsSync(gccNotice) || !fs.existsSync(mplNotice)) {
   failures.push('Gate 5 Failed: Required license notice texts (GPL, GCC Runtime Exception, MPL) missing.');
@@ -447,7 +471,13 @@ try {
   const gitStatus = execSync('git status --porcelain', { cwd: ROOT_DIR, encoding: 'utf8' }).trim();
   gitDirty = gitStatus.length > 0;
   currentCommit = execSync('git rev-parse HEAD', { cwd: ROOT_DIR, encoding: 'utf8' }).trim();
-} catch {}
+} catch (err) {
+  failures.push(`Gate 6 Failed: Git repository detection error: ${err.message}`);
+}
+
+if (currentCommit === 'unknown' || !/^[0-9a-f]{40}$/i.test(currentCommit)) {
+  failures.push('Gate 6 Failed: Unable to determine valid 40-character Git commit SHA.');
+}
 
 if (ENFORCE_CLEAN && gitDirty) {
   failures.push('Gate 6 Failed: Git repository has uncommitted changes. Release certification requires a clean working tree.');
@@ -486,9 +516,19 @@ if (!fs.existsSync(approvalDocFile)) {
   const hasApprovedSignoff = /Decision:\s*\*\*GO\*\*/i.test(approvalDoc);
 
   if (!hasPending && hasApprovedSignoff) {
-    humanApproved = true;
-    console.log('  ✓ Human approval verified: Formal GO signoff confirmed.');
-    passedChecks.push('Gate 7: Human approval GO signoff confirmed');
+    if (currentCommit !== 'unknown' && !approvalDoc.includes(currentCommit)) {
+      const msg = `release-approval.md does not record the active git commit (${currentCommit}).`;
+      if (ENFORCE_HUMAN_APPROVAL) {
+        failures.push(`Gate 7 Failed: ${msg}`);
+      } else {
+        console.warn(`  ⚠ ${msg}`);
+      }
+    }
+    if (!failures.some((f) => f.startsWith('Gate 7'))) {
+      humanApproved = true;
+      console.log('  ✓ Human approval verified: Formal GO signoff confirmed.');
+      passedChecks.push('Gate 7: Human approval GO signoff confirmed');
+    }
   } else {
     humanApproved = false;
     const msg = 'Human approval in release-approval.md has PENDING reviewer signatures or unchecked items.';

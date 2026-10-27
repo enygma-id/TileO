@@ -60,6 +60,8 @@ function log(msg) {
 
 function flushLog() {
   fs.writeFileSync(LOG_FILE, logEntries.join('\n') + '\n', 'utf8');
+  const gateLog = path.join(GATE_DIR, 'release-gate-negative-tests.log');
+  fs.writeFileSync(gateLog, logEntries.join('\n') + '\n', 'utf8');
   fs.writeFileSync(JSON_FILE, JSON.stringify(controlResults, null, 2) + '\n', 'utf8');
 }
 
@@ -367,12 +369,22 @@ function createTmpEvidenceDir() {
 
   const gccTar = path.join(sourceSubdir, 'gcc-runtime-corresponding-source.tar.gz');
   if (!fs.existsSync(gccTar)) {
-    fs.writeFileSync(gccTar, zlib.gzipSync(crypto.randomBytes(300)));
+    const tmpGcc = fs.mkdtempSync(path.join(os.tmpdir(), 'mock-gcc-'));
+    fs.mkdirSync(path.join(tmpGcc, 'libstdc++-v3'), { recursive: true });
+    fs.mkdirSync(path.join(tmpGcc, 'libgcc'), { recursive: true });
+    fs.writeFileSync(path.join(tmpGcc, 'APKBUILD'), 'mock');
+    execFileSync('tar', ['--force-local', '-czf', gccTar, '-C', tmpGcc, '.']);
+    fs.rmSync(tmpGcc, { recursive: true, force: true });
   }
 
   const caTar = path.join(sourceSubdir, 'mozilla-ca-bundle-source.tar.gz');
   if (!fs.existsSync(caTar)) {
-    fs.writeFileSync(caTar, zlib.gzipSync(crypto.randomBytes(300)));
+    const tmpCa = fs.mkdtempSync(path.join(os.tmpdir(), 'mock-ca-'));
+    fs.writeFileSync(path.join(tmpCa, 'certdata.txt'), 'mock certdata');
+    fs.writeFileSync(path.join(tmpCa, 'certdata2pem.py'), 'mock python');
+    fs.writeFileSync(path.join(tmpCa, 'APKBUILD'), 'mock');
+    execFileSync('tar', ['--force-local', '-czf', caTar, '-C', tmpCa, '.']);
+    fs.rmSync(tmpCa, { recursive: true, force: true });
   }
 
   const gplNotice = path.join(noticesSubdir, 'GPL-3.0.txt');
