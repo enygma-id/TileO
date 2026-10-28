@@ -10,7 +10,7 @@
  *  5. Audits ELF closures and dynamic linkages (scanelf) -> binary-linkage.csv
  *  6. Generates full SPDX and CycloneDX image SBOMs using Syft -> sbom-image.spdx.json, sbom-image.cdx.json
  *  7. Audits license decisions across all npm and native components -> license-decisions.csv
- *  8. Generates source baseline and release provenance -> source-baseline.json, release-provenance.json, release-gate-pass.json
+ *  8. Generates source baseline and release provenance; never emits release authorization
  */
 
 import fs from 'node:fs';
@@ -18,28 +18,26 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync, execSync } from 'node:child_process';
 import { evaluateExpression, PERMISSIVE_LICENSES, EXCEPTIONS, ELECTIONS } from './lib/license-policy.js';
+import { parseArgs } from './lib/release-evidence.js';
 
 const ROOT_DIR = process.cwd();
 
-// Parse command line arguments
-const args = process.argv.slice(2);
-function getArg(name, defaultValue) {
-  const idx = args.indexOf(`--${name}`);
-  if (idx !== -1 && idx + 1 < args.length) {
-    return args[idx + 1];
-  }
-  return defaultValue;
-}
+const pkgVersion = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8')).version;
+let options;
+try { options = parseArgs(process.argv.slice(2), { '--image': 'required', '--out-dir': 'optional' }); }
+catch (error) { console.error(error.message); process.exit(2); }
+const IMAGE_TAG = options.image;
+if (!/^[A-Za-z0-9][A-Za-z0-9._/@:+-]*$/.test(IMAGE_TAG)) throw new Error('--image contains unsafe characters');
+const OUT_DIR = path.resolve(ROOT_DIR, options['out-dir'] ?? `release-evidence/v${pkgVersion}/image`);
+if (path.basename(OUT_DIR) !== 'image' || path.basename(path.dirname(OUT_DIR)) !== `v${pkgVersion}`) throw new Error(`--out-dir must be the image directory under release-evidence/v${pkgVersion}`);
+const RELEASE_DIR = path.dirname(OUT_DIR);
+const SBOM_DIR = path.join(RELEASE_DIR, 'sbom');
+const SOURCE_DIR = path.join(RELEASE_DIR, 'source');
 
-const IMAGE_TAG = getArg('image', 'tileo-ts:local');
-const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', 'artifacts/compliance'));
-const SKIP_SYFT = args.includes('--skip-syft');
+for (const dir of [OUT_DIR, SBOM_DIR, SOURCE_DIR]) fs.mkdirSync(dir, { recursive: true });
 
-if (!fs.existsSync(OUT_DIR)) {
-  fs.mkdirSync(OUT_DIR, { recursive: true });
-}
-
-const outDirPosix = OUT_DIR.replace(/\\/g, '/');
+const sbomDirPosix = SBOM_DIR.replace(/\\/g, '/');
+const SYFT_IMAGE = 'anchore/syft@sha256:4cc92b64ca74ffca4c94d4c8fcc01f217731375300be14d0b6eeb2e82eaa110a';
 
 console.log('===========================================================');
 console.log(` TileO Container Image Audit: ${IMAGE_TAG}`);
@@ -59,14 +57,7 @@ function runCmd(cmd, cmdArgs, options = {}) {
 function sha256File(filePath) {
   if (!fs.existsSync(filePath)) return null;
   const hash = crypto.createHash('sha256');
-  const buf = fs.readFileSync(filePath);
-  const isText = /\.(md|json|txt|csv|js|ts|ya?ml)$/i.test(filePath) || path.basename(filePath) === 'Dockerfile';
-  if (isText) {
-    const text = buf.toString('utf8').replace(/\r\n/g, '\n');
-    hash.update(Buffer.from(text, 'utf8'));
-  } else {
-    hash.update(buf);
-  }
+  hash.update(fs.readFileSync(filePath));
   return hash.digest('hex');
 }
 
@@ -169,26 +160,28 @@ try {
 
 // 4. Audit OS Packages & Packaged Software (os-packages.csv)
 console.log('\n[4/8] Auditing packaged runtime software components...');
+const apkPackages = runCmd('docker', ['run', '--rm', '--entrypoint', 'node', IMAGE_TAG, '-e', "process.stdout.write(require('fs').readFileSync('/usr/local/share/tileo-build/apk-packages.txt','utf8'))"]);
+const apkVersion = (name) => apkPackages.match(new RegExp(`^${name.replace(/[+]/g, '\\+')}-(\\S+)\\s`, 'm'))?.[1] ?? (() => { throw new Error(`Missing image package metadata for ${name}`); })();
 const RUNTIME_PACKAGED_SOFTWARE = [
-  { package: 'musl', version: '1.2.5', license: 'MIT', origin: 'Alpine Linux 3.21', files: '/lib/ld-musl-x86_64.so.1', evidence: 'third-party/licenses/native/musl/COPYING.txt' },
-  { package: 'sqlite-libs', version: '3.47.2', license: 'Blessing (Public Domain)', origin: 'Alpine Linux 3.21', files: '/usr/lib/libsqlite3.so.0', evidence: 'third-party/licenses/native/sqlite/LICENSE.txt' },
-  { package: 'zlib', version: '1.3.1', license: 'Zlib', origin: 'Alpine Linux 3.21', files: '/usr/lib/libz.so.1', evidence: 'third-party/licenses/native/zlib/LICENSE.txt' },
-  { package: 'openssl', version: '3.3.3', license: 'Apache-2.0', origin: 'Alpine Linux 3.21', files: '/usr/lib/libssl.so.3;/usr/lib/libcrypto.so.3', evidence: 'third-party/licenses/native/openssl/LICENSE.txt' },
-  { package: 'nghttp2-libs', version: '1.64.0', license: 'MIT', origin: 'Alpine Linux 3.21', files: '/usr/lib/libnghttp2.so.14', evidence: 'third-party/licenses/native/nghttp2/COPYING.txt' },
-  { package: 'expat', version: '2.6.4', license: 'MIT', origin: 'Alpine Linux 3.21', files: '/usr/lib/libexpat.so.1', evidence: 'third-party/licenses/native/expat/COPYING.txt' },
-  { package: 'openjpeg', version: '2.5.3', license: 'BSD-2-Clause', origin: 'Alpine Linux 3.21', files: '/usr/lib/libopenjp2.so.7', evidence: 'third-party/licenses/native/openjpeg/LICENSE.txt' },
-  { package: 'libwebp', version: '1.4.0', license: 'BSD-3-Clause', origin: 'Alpine Linux 3.21', files: '/usr/lib/libwebp.so.7;/usr/lib/libsharpyuv.so.0', evidence: 'third-party/licenses/native/libwebp/COPYING.txt' },
-  { package: 'libpng', version: '1.6.44', license: 'libpng-2.0', origin: 'Alpine Linux 3.21', files: '/usr/lib/libpng16.so.16', evidence: 'third-party/licenses/native/libpng/LICENSE.txt' },
-  { package: 'libjpeg-turbo', version: '3.0.4', license: 'IJG AND BSD-3-Clause', origin: 'Alpine Linux 3.21', files: '/usr/lib/libjpeg.so.8', evidence: 'third-party/licenses/native/libjpeg-turbo/LICENSE.txt' },
-  { package: 'libstdc++', version: '14.2.0', license: 'GPL-3.0-only WITH GCC-exception-3.1', origin: 'Alpine Linux 3.21', files: '/usr/lib/libstdc++.so.6', evidence: 'third-party/licenses/native/libstdc++/COPYING3.txt' },
-  { package: 'libgcc', version: '14.2.0', license: 'GPL-3.0-only WITH GCC-exception-3.1', origin: 'Alpine Linux 3.21', files: '/usr/lib/libgcc_s.so.1', evidence: 'third-party/licenses/native/libgcc/COPYING3.txt' },
-  { package: 'ca-certificates-bundle', version: '20241121', license: 'MPL-2.0 AND MIT', origin: 'Alpine Linux 3.21', files: '/etc/ssl/certs/ca-certificates.crt', evidence: 'third-party/licenses/native/ca-certificates/LICENSE.txt' },
+  { package: 'musl', version: apkVersion('musl'), license: 'MIT', origin: 'Alpine Linux 3.21', files: '/lib/ld-musl-x86_64.so.1', evidence: 'third-party/licenses/native/musl/COPYING.txt' },
+  { package: 'sqlite-libs', version: apkVersion('sqlite-libs'), license: 'Blessing (Public Domain)', origin: 'Alpine Linux 3.21', files: '/usr/lib/libsqlite3.so.0', evidence: 'third-party/licenses/native/sqlite/LICENSE.txt' },
+  { package: 'zlib', version: apkVersion('zlib'), license: 'Zlib', origin: 'Alpine Linux 3.21', files: '/usr/lib/libz.so.1', evidence: 'third-party/licenses/native/zlib/LICENSE.txt' },
+  { package: 'openssl', version: apkVersion('openssl'), license: 'Apache-2.0', origin: 'Alpine Linux 3.21', files: '/usr/lib/libssl.so.3;/usr/lib/libcrypto.so.3', evidence: 'third-party/licenses/native/openssl/LICENSE.txt' },
+  { package: 'nghttp2-libs', version: apkVersion('nghttp2-libs'), license: 'MIT', origin: 'Alpine Linux 3.21', files: '/usr/lib/libnghttp2.so.14', evidence: 'third-party/licenses/native/nghttp2/COPYING.txt' },
+  { package: 'expat', version: apkVersion('expat'), license: 'MIT', origin: 'Alpine Linux 3.21', files: '/usr/lib/libexpat.so.1', evidence: 'third-party/licenses/native/expat/COPYING.txt' },
+  { package: 'openjpeg', version: apkVersion('openjpeg'), license: 'BSD-2-Clause', origin: 'Alpine Linux 3.21', files: '/usr/lib/libopenjp2.so.7', evidence: 'third-party/licenses/native/openjpeg/LICENSE.txt' },
+  { package: 'libwebp', version: apkVersion('libwebp'), license: 'BSD-3-Clause', origin: 'Alpine Linux 3.21', files: '/usr/lib/libwebp.so.7;/usr/lib/libsharpyuv.so.0', evidence: 'third-party/licenses/native/libwebp/COPYING.txt' },
+  { package: 'libpng', version: apkVersion('libpng'), license: 'libpng-2.0', origin: 'Alpine Linux 3.21', files: '/usr/lib/libpng16.so.16', evidence: 'third-party/licenses/native/libpng/LICENSE.txt' },
+  { package: 'libjpeg-turbo', version: apkVersion('libjpeg-turbo'), license: 'IJG AND BSD-3-Clause', origin: 'Alpine Linux 3.21', files: '/usr/lib/libjpeg.so.8', evidence: 'third-party/licenses/native/libjpeg-turbo/LICENSE.txt' },
+  { package: 'libstdc++', version: apkVersion('libstdc++'), license: 'GPL-3.0-only WITH GCC-exception-3.1', origin: 'Alpine Linux 3.21', files: '/usr/lib/libstdc++.so.6', evidence: 'third-party/licenses/native/libstdc++/COPYING3.txt' },
+  { package: 'libgcc', version: apkVersion('libgcc'), license: 'GPL-3.0-only WITH GCC-exception-3.1', origin: 'Alpine Linux 3.21', files: '/usr/lib/libgcc_s.so.1', evidence: 'third-party/licenses/native/libgcc/COPYING3.txt' },
+  { package: 'ca-certificates-bundle', version: apkVersion('ca-certificates-bundle'), license: 'MPL-2.0 AND MIT', origin: 'Alpine Linux 3.21', files: '/etc/ssl/certs/ca-certificates.crt', evidence: 'third-party/licenses/native/ca-certificates/LICENSE.txt' },
   { package: 'curl', version: '8.14.1', license: 'curl (MIT/X11)', origin: 'Custom musl source build', files: '/usr/local/lib/libcurl.so.4', evidence: 'third-party/licenses/native/curl/COPYING.txt' },
   { package: 'proj', version: '9.6.2', license: 'MIT', origin: 'Custom musl source build', files: '/usr/local/lib/libproj.so.25;/usr/local/share/proj', evidence: 'third-party/licenses/native/proj/COPYING.txt' },
   { package: 'gdal', version: '3.11.4', license: 'MIT AND X11', origin: 'Custom musl source build', files: '/usr/local/lib/libgdal.so.37;/usr/local/bin/gdal*;/usr/local/share/gdal', evidence: 'third-party/licenses/native/gdal/LICENSE.TXT' },
   { package: 'tippecanoe', version: '2.79.0', license: 'BSD-2-Clause AND BSL-1.0', origin: 'Custom musl source build', files: '/usr/local/bin/tippecanoe', evidence: 'third-party/licenses/native/tippecanoe-2.79.0/LICENSE.md' },
   { package: 'nodejs', version: '24.13.1', license: 'MIT AND others', origin: 'Official musl binary release', files: '/usr/local/bin/node', evidence: 'third-party/licenses/native/node/LICENSE.txt' },
-  { package: 'better-sqlite3', version: '12.6.2', license: 'MIT', origin: 'Native addon musl build', files: '/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node', evidence: 'third-party/licenses/native/better-sqlite3/LICENSE.txt' }
+  { package: 'better-sqlite3', version: JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8')).dependencies['better-sqlite3'], license: 'MIT', origin: 'Native addon musl build', files: '/app/node_modules/better-sqlite3/build/Release/better_sqlite3.node', evidence: 'third-party/licenses/native/better-sqlite3/LICENSE.txt' }
 ];
 
 const osPackagesRows = [
@@ -205,6 +198,13 @@ const osPackagesRows = [
 
 const osPackagesPath = path.join(OUT_DIR, 'os-packages.csv');
 fs.writeFileSync(osPackagesPath, osPackagesRows.map(r => r.join(',')).join('\n') + '\n', 'utf8');
+fs.writeFileSync(path.join(OUT_DIR, 'native-package-provenance.json'), JSON.stringify({
+  schema: 'tileo-native-package-provenance@1',
+  image_id: imageId,
+  alpine_image: runCmd('docker', ['run', '--rm', '--entrypoint', 'node', IMAGE_TAG, '-e', "process.stdout.write(require('fs').readFileSync('/usr/local/share/tileo-build/alpine-image.txt','utf8'))"]).trim(),
+  resolved_apk_packages: apkPackages.trim().split(/\r?\n/),
+  packaged_software: RUNTIME_PACKAGED_SOFTWARE,
+}, null, 2) + '\n');
 console.log(`  ✓ Verified scratch runtime: 0 OS package managers installed (dpkg/apt/apk: 0).`);
 console.log(`  ✓ Mapped ${RUNTIME_PACKAGED_SOFTWARE.length} packaged runtime software components with provenance.`);
 console.log(`  ✓ Written: ${path.relative(ROOT_DIR, osPackagesPath)}`);
@@ -217,7 +217,7 @@ let rootfsFileList = '';
 
 try {
   runCmd('docker', ['create', '--name', tmpContainer, IMAGE_TAG]);
-  const scanCmd = `docker export ${tmpContainer} | docker run -i --rm alpine:3.21 sh -c "apk add --no-cache scanelf >/dev/null && mkdir /extracted && tar -xf - -C /extracted && find /extracted -type f | sed 's|^/extracted||' > /tmp/rootfs.txt && scanelf -Rn /extracted && find /extracted -type f \\( -name '*.exe' -o -name '*.dll' -o -name '*.dylib' -o -name '*PVRTexToolCLI*' -o -name '*astcenc*' -o -name 'crunch' -o -name 'crunch.exe' -o -name '*texture-compressor*' \\) ! -name '*.d.ts' ! -name '*.ts' ! -name '*.js' ! -name '*.map' ! -name '*.json' ! -name '*.md' ! -name '*.txt' ! -name '*.wasm' -exec echo 'PROHIBITED_BINARY: {}' \\; && echo '===ROOTFS_LIST_START===' && cat /tmp/rootfs.txt"`;
+  const scanCmd = `docker export ${tmpContainer} | docker run -i --rm alpine:3.21@sha256:ee16d92f96db08d9d2d07da48555a27f3a69d8f0759021dbc601195ed0d2b5bd sh -c "apk add --no-cache scanelf >/dev/null && mkdir /extracted && tar -xf - -C /extracted && find /extracted -type f | sed 's|^/extracted||' > /tmp/rootfs.txt && scanelf -Rn /extracted && find /extracted -type f \\( -name '*.exe' -o -name '*.dll' -o -name '*.dylib' -o -name '*PVRTexToolCLI*' -o -name '*astcenc*' -o -name 'crunch' -o -name 'crunch.exe' -o -name '*texture-compressor*' \\) ! -name '*.d.ts' ! -name '*.ts' ! -name '*.js' ! -name '*.map' ! -name '*.json' ! -name '*.md' ! -name '*.txt' ! -name '*.wasm' -exec echo 'PROHIBITED_BINARY: {}' \\; && echo '===ROOTFS_LIST_START===' && cat /tmp/rootfs.txt"`;
   const rawOutput = execSync(scanCmd, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
   const splitIndex = rawOutput.indexOf('===ROOTFS_LIST_START===');
   if (splitIndex !== -1) {
@@ -236,6 +236,11 @@ if (rootfsFileList) {
   const rootfsPath = path.join(OUT_DIR, 'rootfs-file-list.txt');
   fs.writeFileSync(rootfsPath, rootfsFileList, 'utf8');
 }
+
+const rootfsInventoryScript = `const fs=require('fs'),crypto=require('crypto'),path=require('path');const out=[],virtual=new Set(['/dev','/proc','/sys']);function walk(p){for(const n of fs.readdirSync(p).sort()){const f=path.join(p,n);if(virtual.has(f))continue;const s=fs.lstatSync(f);if(s.isSymbolicLink())out.push({path:f,type:'symlink',target:fs.readlinkSync(f)});else if(s.isDirectory())walk(f);else if(s.isFile()){const b=fs.readFileSync(f),magic=b.subarray(0,4).toString('hex');out.push({path:f,type:'file',bytes:s.size,sha256:crypto.createHash('sha256').update(b).digest('hex'),magic,classification:magic==='7f454c46'?'ELF':f.endsWith('.wasm')?'WASM':f.endsWith('.js')?'JavaScript':'data'});}}}walk('/');process.stdout.write(JSON.stringify(out));`;
+const rootfsInventory = JSON.parse(runCmd('docker', ['run', '--rm', '--entrypoint', 'node', IMAGE_TAG, '-e', rootfsInventoryScript], { maxBuffer: 128 * 1024 * 1024 }));
+if (!rootfsInventory.length || rootfsInventory.some((entry) => entry.type === 'file' && (!entry.sha256 || !entry.classification))) throw new Error('Full rootfs inventory is incomplete');
+fs.writeFileSync(path.join(OUT_DIR, 'rootfs-files.json'), JSON.stringify({ schema: 'tileo-rootfs-inventory@1', image_id: imageId, files: rootfsInventory }, null, 2) + '\n');
 
 const FORBIDDEN_LIBRARIES = [
   { name: 'libidn2', pattern: /libidn2/i },
@@ -337,19 +342,16 @@ console.log(`  ✓ Written: ${path.relative(ROOT_DIR, binaryLinkagePath)}`);
 
 // 6. Generate Image SBOMs (SPDX and CycloneDX) via Syft
 console.log('\n[6/8] Generating container image SBOMs via Syft...');
-const spdxPath = path.join(OUT_DIR, 'sbom-image.spdx.json');
-const cdxPath = path.join(OUT_DIR, 'sbom-image.cdx.json');
+const spdxPath = path.join(SBOM_DIR, 'sbom-image.spdx.json');
+const cdxPath = path.join(SBOM_DIR, 'sbom-image.cdx.json');
 
-if (SKIP_SYFT) {
-  console.log('  Notice: --skip-syft specified; skipping Syft SBOM execution.');
-} else {
-  try {
+try {
     console.log('  - Generating SPDX 2.3 SBOM (sbom-image.spdx.json)...');
     runCmd('docker', [
       'run', '--rm',
       '-v', '//var/run/docker.sock:/var/run/docker.sock',
-      '-v', `${outDirPosix}:/out`,
-      'anchore/syft:latest',
+      '-v', `${sbomDirPosix}:/out`,
+      SYFT_IMAGE,
       IMAGE_TAG,
       '-o', 'spdx-json=/out/sbom-image.spdx.json',
       '-q'
@@ -359,8 +361,8 @@ if (SKIP_SYFT) {
     runCmd('docker', [
       'run', '--rm',
       '-v', '//var/run/docker.sock:/var/run/docker.sock',
-      '-v', `${outDirPosix}:/out`,
-      'anchore/syft:latest',
+      '-v', `${sbomDirPosix}:/out`,
+      SYFT_IMAGE,
       IMAGE_TAG,
       '-o', 'cyclonedx-json=/out/sbom-image.cdx.json',
       '-q'
@@ -374,11 +376,11 @@ if (SKIP_SYFT) {
     }
     console.log(`  ✓ Generated: ${path.relative(ROOT_DIR, spdxPath)} (${(fs.statSync(spdxPath).size / 1024).toFixed(1)} KB)`);
     console.log(`  ✓ Generated: ${path.relative(ROOT_DIR, cdxPath)} (${(fs.statSync(cdxPath).size / 1024).toFixed(1)} KB)`);
-  } catch (err) {
-    console.error('FATAL: Syft SBOM generation failed:', err.message);
-    process.exit(1);
-  }
+} catch (err) {
+  console.error('FATAL: Syft SBOM generation failed:', err.message);
+  process.exit(1);
 }
+fs.writeFileSync(path.join(SBOM_DIR, 'scanner-invocation.json'), JSON.stringify({ schema: 'tileo-scanner-invocation@1', scanner: 'syft', scanner_image: SYFT_IMAGE, scanner_version: '1.55.0', image_id: imageId, outputs: { spdx: sha256File(spdxPath), cyclonedx: sha256File(cdxPath) } }, null, 2) + '\n');
 
 // 7. Full License Decisions Audit (license-decisions.csv)
 console.log('\n[7/8] Auditing license decisions across all npm and native components...');
@@ -498,22 +500,22 @@ const baseline = {
     dirty: gitDirty
   },
   source_files: {
-    'Dockerfile': sha256File(path.join(ROOT_DIR, 'Dockerfile')),
-    'package.json': sha256File(path.join(ROOT_DIR, 'package.json')),
-    'package-lock.json': sha256File(path.join(ROOT_DIR, 'package-lock.json')),
-    'THIRD-PARTY-NOTICES.md': sha256File(path.join(ROOT_DIR, 'THIRD-PARTY-NOTICES.md')),
-    'third-party/MANIFEST.json': sha256File(npmManifestPath),
-    'third-party/native/components.json': sha256File(nativeJsonPath)
+    'Dockerfile': crypto.createHash('sha256').update(execFileSync('git', ['show', `${gitCommit}:Dockerfile`], { cwd: ROOT_DIR })).digest('hex'),
+    'package.json': crypto.createHash('sha256').update(execFileSync('git', ['show', `${gitCommit}:package.json`], { cwd: ROOT_DIR })).digest('hex'),
+    'package-lock.json': crypto.createHash('sha256').update(execFileSync('git', ['show', `${gitCommit}:package-lock.json`], { cwd: ROOT_DIR })).digest('hex'),
+    'THIRD-PARTY-NOTICES.md': crypto.createHash('sha256').update(execFileSync('git', ['show', `${gitCommit}:THIRD-PARTY-NOTICES.md`], { cwd: ROOT_DIR })).digest('hex'),
+    'third-party/MANIFEST.json': crypto.createHash('sha256').update(execFileSync('git', ['show', `${gitCommit}:third-party/MANIFEST.json`], { cwd: ROOT_DIR })).digest('hex'),
+    'third-party/native/components.json': crypto.createHash('sha256').update(execFileSync('git', ['show', `${gitCommit}:third-party/native/components.json`], { cwd: ROOT_DIR })).digest('hex')
   }
 };
 
-const sourceBaselinePath = path.join(OUT_DIR, 'source-baseline.json');
+const sourceBaselinePath = path.join(SOURCE_DIR, 'source-baseline.json');
 fs.writeFileSync(sourceBaselinePath, JSON.stringify(baseline, null, 2) + '\n', 'utf8');
 
 const provenance = {
   schema: 'tileo-release-provenance@1',
   audit_timestamp: new Date().toISOString(),
-  compliance_policy: 'Enterprise Proprietary-Compatible with Disclosed Permissive Exceptions',
+  compliance_policy: 'Predominantly permissive with three disclosed non-permissive exceptions',
   image: {
     tag: IMAGE_TAG,
     id: imageId,
@@ -535,7 +537,7 @@ const provenance = {
   },
   verification_verdict: {
     overall: 'INSPECTION_PASSED',
-    compliance_policy: 'Enterprise Proprietary-Compatible with Disclosed Permissive Exceptions',
+    compliance_policy: 'Predominantly permissive with three disclosed non-permissive exceptions',
     scratch_zero_os_package_managers: true,
     elf_linkage_zero_copyleft: true,
     gdal_drivers_verified: true,
@@ -555,6 +557,6 @@ console.log(`  ✓ Written: ${path.relative(ROOT_DIR, releaseProvenancePath)}`);
 
 console.log('\n===========================================================');
 console.log('SUCCESS: Candidate Image Inspection & Evidence Collection Complete!');
-console.log('Audit artifacts generated in artifacts/compliance.');
+console.log(`Audit artifacts generated in ${path.relative(ROOT_DIR, RELEASE_DIR)}.`);
 console.log('Next step: Run integration tests and execute scripts/certify-release-gate.js.');
 console.log('===========================================================\n');

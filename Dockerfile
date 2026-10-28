@@ -1,4 +1,5 @@
-FROM alpine:3.21 AS gdal
+ARG ALPINE_IMAGE=alpine:3.21@sha256:ee16d92f96db08d9d2d07da48555a27f3a69d8f0759021dbc601195ed0d2b5bd
+FROM ${ALPINE_IMAGE} AS gdal
 # Minimal, reproducible GDAL/PROJ profile on musl/Alpine.
 # Custom libcurl built from source with -DCURL_USE_LIBPSL=OFF -DUSE_LIBIDN2=OFF
 # to eliminate copyleft closure (libidn2, libunistring, libpsl).
@@ -98,7 +99,7 @@ RUN curl -fsSL "https://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERS
     && cmake --build /tmp/gdal/build --target install \
     && rm -rf /tmp/gdal /tmp/gdal.tar.gz
 
-FROM alpine:3.21 AS build
+FROM ${ALPINE_IMAGE} AS build
 ARG TIPPECANOE_VERSION=2.79.0
 ARG NODE_VERSION=24.13.1
 RUN apk add --no-cache build-base python3 make g++ git bash sqlite-dev zlib-dev ca-certificates curl
@@ -121,7 +122,8 @@ COPY src ./src
 COPY scripts ./scripts
 RUN npm run build && npm prune --omit=dev
 
-FROM alpine:3.21 AS assemble-rootfs
+FROM ${ALPINE_IMAGE} AS assemble-rootfs
+ARG ALPINE_IMAGE
 RUN apk add --no-cache \
       libstdc++ libgcc sqlite-libs zlib openssl nghttp2-libs \
       expat openjpeg libwebp libsharpyuv libpng libjpeg-turbo ca-certificates
@@ -134,7 +136,11 @@ RUN mkdir -p /rootfs/lib \
              /rootfs/etc/ssl/certs \
              /rootfs/tmp \
              /rootfs/data \
-             /rootfs/app
+             /rootfs/app \
+             /rootfs/usr/local/share/tileo-build
+
+RUN apk list --installed | sort > /rootfs/usr/local/share/tileo-build/apk-packages.txt \
+    && printf '%s\n' "${ALPINE_IMAGE}" > /rootfs/usr/local/share/tileo-build/alpine-image.txt
 
 # Dynamic linker and library search path
 RUN cp -P /lib/ld-musl-x86_64.so.1 /rootfs/lib/ \

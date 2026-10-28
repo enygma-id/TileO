@@ -1,0 +1,201 @@
+name: Protected 0.1.0 Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish exact approved candidate after all protected reviews
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tileo-0.1.0-release
+  cancel-in-progress: false
+
+env:
+  TILEO_IMAGE: tileo-release:0.1.0-candidate
+  TILEO_EVIDENCE: release-evidence/v0.1.0
+
+jobs:
+  candidate:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.13.1
+          cache: npm
+      - name: Preflight and actual tests
+        run: node scripts/run-release-preflight.js --evidence-dir "$TILEO_EVIDENCE"
+      - name: Install browser and GDAL fixture tooling
+        run: |
+          npx playwright install --with-deps chromium
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gdal-bin
+      - name: Build one candidate from committed source
+        shell: bash
+        run: |
+          mkdir -p /tmp/tileo-context /tmp/tileo-build /tmp/tileo-export
+          git archive HEAD | tar -x -C /tmp/tileo-context
+          set +e
+          docker build --platform linux/amd64 --provenance=false --label "org.opencontainers.image.revision=$GITHUB_SHA" --tag "$TILEO_IMAGE" /tmp/tileo-context >/tmp/tileo-build/stdout.log 2>/tmp/tileo-build/stderr.log
+          status=$?
+          set -e
+          cat /tmp/tileo-build/stdout.log
+          cat /tmp/tileo-build/stderr.log >&2
+          test "$status" -eq 0
+          docker save "$TILEO_IMAGE" | gzip -n > /tmp/tileo-export/tileo-0.1.0-image.tar.gz
+      - name: Bind candidate metadata
+        run: node scripts/prepare-candidate-metadata.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --image-export /tmp/tileo-export/tileo-0.1.0-image.tar.gz --build-stdout /tmp/tileo-build/stdout.log --build-stderr /tmp/tileo-build/stderr.log
+      - name: Regenerate final-image inventory and SBOM
+        run: node scripts/audit-image.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/image"
+      - name: Build and verify corresponding source against image bytes
+        run: |
+          node scripts/prepare-compliance-packages.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
+          node scripts/verify-source-fulfillment.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
+      - name: Execute tests against exact candidate
+        run: |
+          node scripts/record-test-results.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/tests"
+          node scripts/record-browser-results.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
+          node scripts/generate-image-notice-paths.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/image"
+      - name: Execute fail-closed negative controls
+        run: node scripts/test-negative-controls.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
+      - name: Finalize candidate provenance after all collectors
+        run: node scripts/finalize-release-provenance.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
+      - name: Technical certification
+        run: |
+          mkdir -p /tmp/tileo-authorization
+          node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-authorization
+          cp /tmp/tileo-authorization/technical-eligibility.json "$TILEO_EVIDENCE/gate/technical-eligibility.json"
+          node scripts/create-release-closure-report.js --evidence-dir "$TILEO_EVIDENCE"
+          node scripts/create-release-manifest.js --evidence-dir "$TILEO_EVIDENCE" --output "$TILEO_EVIDENCE/core-evidence-manifest.json"
+          node scripts/verify-release-evidence.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json"
+          node scripts/build-release-closure-package.js --evidence-dir "$TILEO_EVIDENCE" --authorization-dir /tmp/tileo-authorization --out-dir /tmp/tileo-closure
+          echo "### Candidate review subject" >> "$GITHUB_STEP_SUMMARY"
+          node -e "const fs=require('fs'),c=require('./release-evidence/v0.1.0/candidate.json'),crypto=require('crypto'),m=fs.readFileSync('./release-evidence/v0.1.0/core-evidence-manifest.json'); console.log('- Candidate: '+c.candidate_id+'\n- Commit: '+c.commit+'\n- Image: '+c.image_id+'\n- Core evidence SHA-256: '+crypto.createHash('sha256').update(m).digest('hex'))" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-0.1.0-core-evidence
+          path: release-evidence/v0.1.0
+          retention-days: 30
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-0.1.0-candidate-image
+          path: /tmp/tileo-export/tileo-0.1.0-image.tar.gz
+          retention-days: 30
+          if-no-files-found: error
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-0.1.0-review-closure
+          path: /tmp/tileo-closure
+          retention-days: 30
+          if-no-files-found: error
+
+  engineering:
+    needs: candidate
+    runs-on: ubuntu-latest
+    environment: release-engineering
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { ref: "${{ github.sha }}", persist-credentials: false }
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 24.13.1 }
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with: { name: tileo-0.1.0-core-evidence, path: release-evidence/v0.1.0 }
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with: { name: tileo-0.1.0-candidate-image, path: /tmp/tileo-export }
+      - run: |
+          gunzip -c /tmp/tileo-export/tileo-0.1.0-image.tar.gz | docker load
+          node scripts/verify-release-evidence.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json"
+
+  legal:
+    needs: engineering
+    runs-on: ubuntu-latest
+    environment: release-legal
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { ref: "${{ github.sha }}", persist-credentials: false }
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 24.13.1 }
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with: { name: tileo-0.1.0-core-evidence, path: release-evidence/v0.1.0 }
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with: { name: tileo-0.1.0-candidate-image, path: /tmp/tileo-export }
+      - run: |
+          gunzip -c /tmp/tileo-export/tileo-0.1.0-image.tar.gz | docker load
+          node scripts/verify-release-evidence.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json"
+
+  authorize:
+    needs: legal
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      actions: read
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { ref: "${{ github.sha }}", persist-credentials: true }
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 24.13.1 }
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with: { name: tileo-0.1.0-core-evidence, path: release-evidence/v0.1.0 }
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with: { name: tileo-0.1.0-candidate-image, path: /tmp/tileo-export }
+      - name: Collect authenticated review history and certify
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/tileo-authorization /tmp/tileo-final
+          gunzip -c /tmp/tileo-export/tileo-0.1.0-image.tar.gz | docker load
+          node scripts/collect-human-approvals.js --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT" --candidate "$TILEO_EVIDENCE/candidate.json" --output /tmp/tileo-authorization/authorization.json
+          node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-authorization --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json
+          node scripts/build-release-closure-package.js --evidence-dir "$TILEO_EVIDENCE" --authorization-dir /tmp/tileo-authorization --out-dir /tmp/tileo-final --final
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-0.1.0-authorized-closure
+          path: /tmp/tileo-final
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish exact authorized artifact
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git tag --annotate v0.1.0 "$GITHUB_SHA" --message 'TileO 0.1.0'
+          git push origin refs/tags/v0.1.0
+          mkdir -p /tmp/tileo-release-assets
+          cp /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz /tmp/tileo-release-assets/
+          cp "$TILEO_EVIDENCE/source/TileO-0.1.0-source.tar.gz" /tmp/tileo-release-assets/
+          cp "$TILEO_EVIDENCE/compliance/source/"*.tar.gz /tmp/tileo-release-assets/
+          cp "$TILEO_EVIDENCE/compliance/customer/THIRD-PARTY-NOTICES.md" /tmp/tileo-release-assets/
+          cp "$TILEO_EVIDENCE/compliance/customer/THIRD-PARTY-EXCEPTIONS.md" /tmp/tileo-release-assets/
+          cp "$TILEO_EVIDENCE/compliance/customer/SOURCE-ACCESS.md" /tmp/tileo-release-assets/
+          cp "$TILEO_EVIDENCE/sbom/sbom-image.spdx.json" /tmp/tileo-release-assets/
+          cp "$TILEO_EVIDENCE/sbom/sbom-image.cdx.json" /tmp/tileo-release-assets/
+          (cd /tmp/tileo-release-assets && sha256sum * > SHA256SUMS)
+          gh release create v0.1.0 /tmp/tileo-release-assets/* --verify-tag --title 'TileO 0.1.0' --notes-file "$TILEO_EVIDENCE/release/release-notes.md"
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker tag "$TILEO_IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:0.1.0"
+          docker tag "$TILEO_IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+          docker push "ghcr.io/${GITHUB_REPOSITORY,,}:0.1.0"
+          docker push "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+          node scripts/verify-published-release.js --repo "$GITHUB_REPOSITORY" --tag v0.1.0 --candidate "$TILEO_EVIDENCE/candidate.json" --out-dir /tmp/tileo-publication
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: inputs.publish
+        with:
+          name: tileo-0.1.0-publication-verification
+          path: /tmp/tileo-publication
+          retention-days: 90
+          if-no-files-found: error

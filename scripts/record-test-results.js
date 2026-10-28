@@ -17,34 +17,37 @@ const pkgVersion = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'
 const args = process.argv.slice(2);
 let imageTag = null;
 let outDir = path.join('release-evidence', `v${pkgVersion}`, 'tests');
-let mountDist = false;
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
   if (arg === '--image') {
-    if (i + 1 >= args.length) {
+    if (i + 1 >= args.length || args[i + 1].startsWith('--')) {
       console.error('Error: --image requires an argument');
       process.exit(1);
     }
     imageTag = args[++i];
   } else if (arg === '--out-dir') {
-    if (i + 1 >= args.length) {
+    if (i + 1 >= args.length || args[i + 1].startsWith('--')) {
       console.error('Error: --out-dir requires an argument');
       process.exit(1);
     }
     outDir = args[++i];
-  } else if (arg === '--mount-dist') {
-    mountDist = true;
-  } else if (!arg.startsWith('-') && !imageTag) {
-    imageTag = arg;
   } else {
     console.error(`Error: Unrecognized argument: ${arg}`);
     process.exit(1);
   }
 }
 
-const IMAGE_TAG = imageTag || ('tileo-rc:' + pkgVersion);
+if (!imageTag) {
+  console.error('Error: --image is required');
+  process.exit(2);
+}
+const IMAGE_TAG = imageTag;
 const OUT_DIR = path.resolve(ROOT_DIR, outDir);
+if (path.basename(OUT_DIR) !== 'tests' || path.basename(path.dirname(OUT_DIR)) !== `v${pkgVersion}`) {
+  console.error(`Error: --out-dir must be the tests directory under release-evidence/v${pkgVersion}`);
+  process.exit(2);
+}
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
 console.log(`Running container integration tests on ${IMAGE_TAG}...`);
@@ -64,17 +67,7 @@ try {
   gitCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT_DIR, encoding: 'utf8' }).trim();
 } catch (e) {}
 
-const distTestsDir = path.join(ROOT_DIR, 'dist', 'tests');
-if (!fs.existsSync(distTestsDir)) {
-  console.log('dist/tests not found, building project...');
-  execFileSync('npm', ['run', 'build'], { cwd: ROOT_DIR, stdio: 'inherit', shell: true });
-}
-
-const testFiles = fs
-  .readdirSync(distTestsDir)
-  .filter((f) => f.endsWith('.test.js'))
-  .sort()
-  .map((f) => `dist/tests/${f}`);
+const testFiles = JSON.parse(execFileSync('docker', ['run', '--rm', '--entrypoint', 'node', IMAGE_TAG, '-e', "const fs=require('fs');process.stdout.write(JSON.stringify(fs.readdirSync('dist/tests').filter(f=>f.endsWith('.test.js')).sort().map(f=>'dist/tests/'+f)))"], { cwd: ROOT_DIR, encoding: 'utf8' }));
 
 console.log(`Found ${testFiles.length} test suites in dist/tests/`);
 
@@ -86,11 +79,6 @@ const dockerArgs = [
   '-e',
   'NODE_ENV=test',
 ];
-
-if (mountDist) {
-  const distPathPosix = ROOT_DIR.replace(/\\/g, '/') + '/dist';
-  dockerArgs.push('-v', `${distPathPosix}:/app/dist:ro`);
-}
 
 dockerArgs.push(
   IMAGE_TAG,
@@ -154,6 +142,7 @@ function parseTap(tapText) {
   let inYaml = false;
   let currentTest = null;
   let currentFile = 'unknown';
+  let plan = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -162,6 +151,8 @@ function parseTap(tapText) {
       hasVersion = true;
       continue;
     }
+    const planMatch = line.match(/^1\.\.(\d+)$/);
+    if (planMatch) plan = Number(planMatch[1]);
 
     // Capture file context if present in Subtest
     const subtestMatch = line.match(/^# Subtest:\s+(.+)$/);
@@ -240,7 +231,7 @@ function parseTap(tapText) {
     }
   }
 
-  return { hasVersion, tests, summary };
+  return { hasVersion, plan, tests, summary };
 }
 
 const tapParsed = parseTap(stdout);
@@ -259,9 +250,14 @@ fs.writeFileSync(matrixFilePath, matrixHeader + matrixRows.join('\n') + '\n', 'u
 // Build integration-test-results.json conforming to schema tileo-integration-tests@2
 const allPassed =
   exitCode === 0 &&
+  tapParsed.hasVersion &&
+  tapParsed.plan === tapParsed.summary.total &&
+  tapParsed.tests.length === tapParsed.summary.total &&
   tapParsed.summary.passed > 0 &&
   tapParsed.summary.failed === 0 &&
-  tapParsed.summary.cancelled === 0;
+  tapParsed.summary.cancelled === 0 &&
+  tapParsed.summary.skipped === 0 &&
+  tapParsed.summary.todo === 0;
 
 const resultsJsonData = {
   schema: 'tileo-integration-tests@2',
@@ -269,7 +265,7 @@ const resultsJsonData = {
   image_tag: IMAGE_TAG,
   image_id: imageId,
   git_commit: gitCommit,
-  command: `docker ${dockerArgs.join(' ')}`,
+  command: { executable: 'docker', arguments: dockerArgs },
   tap_summary: tapParsed.summary,
   exit_code: exitCode,
   passed: allPassed,
@@ -309,6 +305,16 @@ if (tapParsed.summary.failed > 0) {
 
 if (tapParsed.summary.passed === 0) {
   console.error('\nFAIL: 0 passing tests recorded.');
+  process.exit(1);
+}
+
+if (tapParsed.plan !== tapParsed.summary.total || tapParsed.tests.length !== tapParsed.summary.total) {
+  console.error(`\nFAIL: TAP plan/test points/summary mismatch (plan=${tapParsed.plan}, points=${tapParsed.tests.length}, summary=${tapParsed.summary.total}).`);
+  process.exit(1);
+}
+
+if (tapParsed.summary.skipped > 0 || tapParsed.summary.todo > 0 || tapParsed.summary.cancelled > 0) {
+  console.error(`\nFAIL: Mandatory tests contain skipped=${tapParsed.summary.skipped}, todo=${tapParsed.summary.todo}, cancelled=${tapParsed.summary.cancelled}.`);
   process.exit(1);
 }
 

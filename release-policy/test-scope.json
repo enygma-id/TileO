@@ -1,0 +1,28 @@
+{
+  "schema": "tileo-test-scope@1",
+  "version": "0.1.0",
+  "platform": "linux/amd64",
+  "node": {
+    "required_pattern": "dist/tests/*.test.js",
+    "mandatory_skip_count": 0,
+    "mandatory_todo_count": 0
+  },
+  "browser": {
+    "required_specs": [
+      "src/browser/console.spec.ts",
+      "src/browser/vector-batch.spec.ts",
+      "src/browser/raster.spec.ts",
+      "src/browser/elevation.spec.ts",
+      "src/browser/model3d.spec.ts",
+      "src/browser/quickopen.spec.ts"
+    ],
+    "excluded_tests_pending_scope_approval": [
+      "raster compare shows source GeoTIFF vs result tiles",
+      "raster result survives landing-page roundtrip and still compares",
+      "raster compare can reopen after closing without duplicate source maps"
+    ]
+  },
+  "required_areas": ["build", "typecheck", "api-auth-storage", "worker", "vector", "raster", "elevation", "3d", "browser", "distribution", "licensing"],
+  "fixture_policy": "Fixtures must be generated deterministically, recorded with SHA-256, and mounted read-only without replacing application bytes.",
+  "scope_approval": "PENDING_ENGINEERING_AND_RELEASE_STEWARD"
+}

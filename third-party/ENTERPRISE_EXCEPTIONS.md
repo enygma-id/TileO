@@ -26,4 +26,4 @@ For each Community or Enterprise binary distribution containing covered material
 
 ## Status
 
-**Release-specific exception authorization verified for v0.2.0.** Specific material, hashes, and source-fulfilling archives are documented and verified in `release-approval.md` and the release evidence package. Refer to [release-approval.md](../release-approval.md) and the [release gate](RELEASE_GATE.md) for certification status.
+**Authorization for v0.1.0 is pending human review.** Engineering evidence may establish exact shipped bytes and authentic corresponding source, but this page is not an approval. The frozen candidate package and authenticated protected-workflow decisions are authoritative. Refer to [release-approval.md](../release-approval.md) and the [release gate](RELEASE_GATE.md).

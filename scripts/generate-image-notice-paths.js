@@ -7,33 +7,26 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { inspectImage, parseArgs } from './lib/release-evidence.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 
-const args = process.argv.slice(2);
-function getArg(name, defaultValue) {
-  const idx = args.indexOf(`--${name}`);
-  if (idx !== -1 && idx + 1 < args.length) {
-    return args[idx + 1];
-  }
-  return defaultValue;
-}
-
-const IMAGE_TAG = getArg('image', args.find(a => !a.startsWith('--')) || 'tileo-ts:local');
-const OUT_DIR = path.resolve(ROOT_DIR, getArg('out-dir', 'artifacts/compliance'));
+const version = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf8')).version;
+let options;
+try { options = parseArgs(process.argv.slice(2), { '--image': 'required', '--out-dir': 'optional' }); }
+catch (error) { console.error(error.message); process.exit(2); }
+const IMAGE_TAG = options.image;
+const OUT_DIR = path.resolve(ROOT_DIR, options['out-dir'] ?? `release-evidence/v${version}/image`);
+if (path.basename(OUT_DIR) !== 'image' || path.basename(path.dirname(OUT_DIR)) !== `v${version}`) throw new Error(`--out-dir must be the image directory under release-evidence/v${version}`);
+const image = inspectImage(IMAGE_TAG);
 if (!fs.existsSync(OUT_DIR)) {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 }
 const OUT_FILE = path.join(OUT_DIR, 'image-notice-paths.csv');
 
 console.log(`Inspecting license and notice paths in image: ${IMAGE_TAG}...`);
-
-// Use an alpine helper container to examine image filesystem tar
-const inspectScript = `
-mkdir -p /tmp/inspect && docker save ${IMAGE_TAG} | tar -xf - -C /tmp/inspect
-`;
 
 // Alternative: Run container directly with node to list paths
 const nodeProbe = `
@@ -92,7 +85,7 @@ const records = JSON.parse(probeResult.trim());
 console.log(`Found ${records.length} notice/license/attribution files in container.`);
 
 const csvLines = [
-  'container_path,file_type,size_bytes,component_scope,description'
+  'image_id,container_path,file_type,size_bytes,component_scope,description'
 ];
 
 for (const r of records) {
@@ -135,7 +128,7 @@ for (const r of records) {
     desc = 'Redistributed license/copying file';
   }
 
-  csvLines.push(`"${p.replace(/"/g, '""')}","${fileType}",${r.size},"${scope}","${desc}"`);
+  csvLines.push(`"${image.id}","${p.replace(/"/g, '""')}","${fileType}",${r.size},"${scope}","${desc}"`);
 }
 
 fs.writeFileSync(OUT_FILE, csvLines.join('\n') + '\n', 'utf8');

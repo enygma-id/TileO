@@ -598,12 +598,12 @@
     {
       "id": "ca-certificates",
       "name": "Mozilla CA Certificate Bundle",
-      "version": "2025-06-19",
+      "version": "2026-10-20",
       "license_expression": "MPL-2.0",
       "scope": "runtime-data",
       "linkage": "data",
       "distribution": "ca-certificates.crt used for TLS validation",
-      "upstream": "https://curl.se/ca/cacert.pem",
+      "upstream": "https://gitlab.alpinelinux.org/alpine/aports/-/tree/660f223b42ca35e7d2a76ce568e15c847b92d33d/main/ca-certificates",
       "notes": "Trust-anchor data redistributed under MPL-2.0. It is not linked code and does not affect the TileO source license; it must be recorded as a data-scope obligation.",
       "review": "DATA_LICENSE_RECORDED",
       "license_files": [

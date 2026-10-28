@@ -1,0 +1,15 @@
+{
+  "schema": "tileo-release-policy@1",
+  "version": "0.1.0",
+  "repository": "enygma-id/TileO",
+  "platforms": ["linux/amd64"],
+  "evidence_root": "release-evidence/v0.1.0",
+  "required_gates": ["G1_SOURCE", "G2_IMAGE", "G3_EVIDENCE", "G4_INVENTORY_SBOM", "G5_TESTS", "G6_EXCEPTIONS", "G7_HUMAN"],
+  "technical_status": "TECHNICALLY_ELIGIBLE_PENDING_APPROVAL",
+  "publication_status": "AUTHORIZED_FOR_PUBLICATION",
+  "required_approval_environments": ["release-engineering", "release-legal", "release"],
+  "required_approval_roles": ["Engineering", "Legal-IP", "Release-Steward"],
+  "allow_local_approval": false,
+  "allow_cross_version_fallback": false,
+  "allow_rebuild_after_approval": false
+}

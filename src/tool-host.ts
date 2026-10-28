@@ -12,6 +12,13 @@ function stop() {
   if (stopping || finished) return;
   stopping = true;
   if (!child?.pid) return;
+  // On Windows, terminate the direct process immediately as well as asking
+  // taskkill to clean its descendants. Relying only on the asynchronous
+  // taskkill helper can leave the guardian waiting forever when taskkill is
+  // unavailable or delayed under a restricted service account.
+  if (process.platform === 'win32') {
+    try { child.kill('SIGKILL'); } catch { /* already exited */ }
+  }
   void killProcessTree(child.pid);
   hardStop = setTimeout(() => { void killProcessTree(child?.pid, 'SIGKILL'); }, 3000);
 }

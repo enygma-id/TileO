@@ -4,6 +4,11 @@ TileO changes are tracked in Git history and in release notes for tagged version
 
 ## Unreleased
 
+### Release engineering
+
+- Prepare the first public 0.1.0 candidate with immutable image-bound evidence, authentic GCC/Mozilla source fulfillment, fail-closed certification, and protected three-role publication approval.
+- Remove 0.2.0 as a public release target; it remains an internal historical label only.
+
 ### Project and documentation
 
 - Publish the TileO project documentation, dark/light branding, founding record, governance, Community and Enterprise licensing policies, and AI acknowledgement.

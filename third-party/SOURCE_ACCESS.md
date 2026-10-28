@@ -17,7 +17,7 @@ For each binary release, the responsible maintainer must publish or deliver a re
 
 ## Publication status
 
-**Release v1.0.0 source-access artifacts are not declared available by this policy page.** A release must not be distributed until the required source files and access method have been checked, documented and approved. Do not substitute placeholders, a generic upstream homepage or a mismatched version for the source required by a particular shipped binary.
+**Release v0.1.0 source-access artifacts are not yet declared publicly available.** The candidate review package must contain the authentic, hash-bound GCC runtime and Mozilla CA source archives, but publication URLs remain pending human authorization and protected publication. Do not substitute placeholders, a generic upstream homepage or a mismatched version.
 
 Community and Enterprise recipients retain all rights their relevant third-party licenses grant, including applicable redistribution rights. Customer-specific delivery packages may be private, but requirements attached to publicly distributed binaries must be honored for their recipients as well.
 

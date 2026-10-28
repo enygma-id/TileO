@@ -1,11 +1,11 @@
 # Third-Party NPM Dependency Inventory
 
-This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **285 non-root entries** (direct, transitive, development and platform-optional packages).
+This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **284 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `fb1cd468a88c70f6dbb105e3a5f4cdf3ce3e30381100dfef450c69ce8219a105`
-- Runtime entries: **247** · runtime-optional: **4** · development: **34**
-- Notice evidence: **249** verified from exact upstream tarballs · **36** metadata-only · **0** failed
-- Verification date: 2026-10-26 (scripts/verify-npm-notices.js@1)
+- `package-lock.json` SHA-256: `b12910b8363da6fbea47aeb7f59273406ccb0906303bc09235e6b0f1c7f923cb`
+- Runtime entries: **246** · runtime-optional: **4** · development: **34**
+- Notice evidence: **248** verified from exact upstream tarballs · **36** metadata-only · **0** failed
+- Verification date: 2026-10-28 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
 
@@ -24,7 +24,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `BSD-3-Clause` | 18 |
 | `CC0-1.0` | 1 |
 | `ISC` | 24 |
-| `MIT` | 217 |
+| `MIT` | 216 |
 | `MIT AND BSD-3-Clause` | 1 |
 
 ## Complete package-level inventory
@@ -160,7 +160,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `abstract-logging` | 2.0.1 | `MIT` | runtime | `metadata_only_no_license_file` | `package.json` |
 | `ajv` | 8.20.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `ajv-formats` | 3.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `ajv/node_modules/fast-uri` | 3.1.8 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `ajv/node_modules/fast-uri` | 3.1.9 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `anynum` | 1.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `apache-arrow` | 21.2.0 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `apache-arrow/node_modules/@types/node` | 25.9.9 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -196,12 +196,12 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `fast-deep-equal` | 3.1.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-json-stringify` | 7.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-querystring` | 1.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `fast-uri` | 4.2.2 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `fast-uri` | 4.2.3 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-xml-builder` | 1.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-xml-parser` | 5.11.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `fastify` | 5.12.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `fastify` | 5.12.7 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fastq` | 1.20.3 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `fflate` | 0.7.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `fflate` | 0.8.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `file-uri-to-path` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `find-my-way` | 9.10.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `flatbuffers` | 25.9.23 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -258,7 +258,6 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `playwright` | 1.64.0 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `playwright-core` | 1.64.0 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `pmtiles` | 4.5.0 | `BSD-3-Clause` | runtime | `metadata_only_no_license_file` | `package.json` |
-| `pmtiles/node_modules/fflate` | 0.8.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `potpack` | 2.1.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `prebuild-install` | 7.1.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `process-nextick-args` | 2.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |

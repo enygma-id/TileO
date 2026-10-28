@@ -4,14 +4,14 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated: 2026-10-27 · Lockfile SHA-256: `fb1cd468a88c70f6dbb105e3a5f4cdf3ce3e30381100dfef450c69ce8219a105`
+Generated: 2026-10-28 · Lockfile SHA-256: `b12910b8363da6fbea47aeb7f59273406ccb0906303bc09235e6b0f1c7f923cb`
 
 ## Verification summary
 
 | Evidence set | Count | Method |
 | --- | ---: | --- |
-| npm entries in `package-lock.json` | 285 | Direct, transitive, development and platform-optional entries |
-| npm notices verified from exact tarball | 249 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
+| npm entries in `package-lock.json` | 284 | Direct, transitive, development and platform-optional entries |
+| npm notices verified from exact tarball | 248 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
 | npm metadata-only entries | 36 | Tarball has no license file; only `package.json` metadata retained |
 | npm runtime entries marked metadata-only | 10 | Review required before strict release |
 | Native runtime components | 28 | Pinned upstream license corpus |
@@ -75,7 +75,7 @@ The release target is a minimal scratch/musl image. The table below is the decla
 | FlatBuffers | 25.2.10 | `Apache-2.0` | static | `third-party/licenses/native/flatbuffers/LICENSE.txt` |
 | GNU Standard C++ Library (libstdc++) | 14.2.0 | `GPL-3.0-only WITH GCC-exception-3.1` **(LEGAL_EXCEPTION_REQUIRED)** | shared-library | `third-party/licenses/native/libstdc++/COPYING3.txt`<br>`third-party/licenses/native/libstdc++/COPYING-RUNTIME.txt` |
 | GNU Compiler Collection runtime (libgcc) | 14.2.0 | `GPL-3.0-only WITH GCC-exception-3.1` **(LEGAL_EXCEPTION_REQUIRED)** | shared-library | `third-party/licenses/native/libgcc/COPYING3.txt`<br>`third-party/licenses/native/libgcc/COPYING-RUNTIME.txt` |
-| Mozilla CA Certificate Bundle | 2025-06-19 | `MPL-2.0` **(DATA_LICENSE_RECORDED)** | data | `third-party/licenses/native/ca-certificates/MPL-2.0.txt` |
+| Mozilla CA Certificate Bundle | 2026-10-20 | `MPL-2.0` **(DATA_LICENSE_RECORDED)** | data | `third-party/licenses/native/ca-certificates/MPL-2.0.txt` |
 
 ### Documented Exceptions
 
@@ -83,7 +83,7 @@ These are **not** permissive licenses and must be approved explicitly before a s
 
 - **GNU Standard C++ Library (libstdc++) 14.2.0** — `GPL-3.0-only WITH GCC-exception-3.1`. This is a documented exception to the permissive-only objective, covered by the GCC Runtime Library Exception 3.1. The exception permits distribution of the runtime library with independent programs.
 - **GNU Compiler Collection runtime (libgcc) 14.2.0** — `GPL-3.0-only WITH GCC-exception-3.1`. Same GCC Runtime Library Exception as libstdc++; recorded as a legal exception, not as a permissive license.
-- **Mozilla CA Certificate Bundle 2025-06-19** — `MPL-2.0`. Trust-anchor data redistributed under MPL-2.0. It is not linked code and does not affect the TileO source license; it must be recorded as a data-scope obligation.
+- **Mozilla CA Certificate Bundle 2026-10-20** — `MPL-2.0`. Trust-anchor data redistributed under MPL-2.0. It is not linked code and does not affect the TileO source license; it must be recorded as a data-scope obligation.
 
 The GCC runtime exception permits distributing `libstdc++`/`libgcc` with independent programs. The CA bundle is data-scope MPL-2.0 and is not linked into TileO code. Both require a recorded human decision; neither is silently counted as permissive.
 
@@ -108,7 +108,7 @@ The GCC runtime exception permits distributing `libstdc++`/`libgcc` with indepen
 
 Each entry names the exact locked version, the recorded license expression, the verification state and the SHA-256 of the stored upstream notice. Development-only entries are not shipped in the runtime image; platform-optional entries are shipped only on matching platforms.
 
-### Runtime and optional entries (251)
+### Runtime and optional entries (250)
 
 #### @deck.gl/core (9.4.0)
 - **Declared License**: `MIT`
@@ -5007,11 +5007,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
-#### ajv/node_modules/fast-uri (3.1.8)
+#### ajv/node_modules/fast-uri (3.1.9)
 - **Declared License**: `BSD-3-Clause`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `86be033b406a7737c0521edc8fe3e15c7ac0cb6b5e509478cc9539a2efaa086c`
-- **Notice**: [`third-party/licenses/npm/ajv/node_modules/fast-uri/3.1.8/LICENSE.txt`](third-party/licenses/npm/ajv/node_modules/fast-uri/3.1.8/LICENSE.txt) · SHA-256 `b010b0dfdfdb23d7396e03b82cd4621fc9bb8f95d6b0aea70b9c24e12074c786`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `4f5a67f7b61110aae7b3ad38e806627f5712f4c150bd38eb804a562e69a9ee5e`
+- **Notice**: [`third-party/licenses/npm/ajv/node_modules/fast-uri/3.1.9/LICENSE.txt`](third-party/licenses/npm/ajv/node_modules/fast-uri/3.1.9/LICENSE.txt) · SHA-256 `b010b0dfdfdb23d7396e03b82cd4621fc9bb8f95d6b0aea70b9c24e12074c786`
 
 ````text
 Copyright (c) 2011-2021, Gary Court until https://github.com/garycourt/uri-js/commit/a1acf730b4bba3f1097c9f52e7d9d3aba8cdcaae
@@ -6463,11 +6463,11 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 ````
 
-#### fast-uri (4.2.2)
+#### fast-uri (4.2.3)
 - **Declared License**: `BSD-3-Clause`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `0297adcac7b08758bc03252dad873ac841589eb92f09830bc0bab834931bbc67`
-- **Notice**: [`third-party/licenses/npm/fast-uri/4.2.2/LICENSE.txt`](third-party/licenses/npm/fast-uri/4.2.2/LICENSE.txt) · SHA-256 `b010b0dfdfdb23d7396e03b82cd4621fc9bb8f95d6b0aea70b9c24e12074c786`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `781233dfc458464975bc5d67392aab75503dee65a5d06a7231f702a8cefe97c5`
+- **Notice**: [`third-party/licenses/npm/fast-uri/4.2.3/LICENSE.txt`](third-party/licenses/npm/fast-uri/4.2.3/LICENSE.txt) · SHA-256 `b010b0dfdfdb23d7396e03b82cd4621fc9bb8f95d6b0aea70b9c24e12074c786`
 
 ````text
 Copyright (c) 2011-2021, Gary Court until https://github.com/garycourt/uri-js/commit/a1acf730b4bba3f1097c9f52e7d9d3aba8cdcaae
@@ -6562,11 +6562,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
-#### fastify (5.12.5)
+#### fastify (5.12.7)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `f088913fd1dd3f42f090c574d068a5b59de233b352cd14f7fb1edc4667f51da5`
-- **Notice**: [`third-party/licenses/npm/fastify/5.12.5/LICENSE.txt`](third-party/licenses/npm/fastify/5.12.5/LICENSE.txt) · SHA-256 `23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `edc1716d83378350b767a4105b690041f8a2a523d930500ba9d1b36c7ca67dfe`
+- **Notice**: [`third-party/licenses/npm/fastify/5.12.7/LICENSE.txt`](third-party/licenses/npm/fastify/5.12.7/LICENSE.txt) · SHA-256 `23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2`
 
 ````text
 MIT License
@@ -6614,16 +6614,16 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ````
 
-#### fflate (0.7.4)
+#### fflate (0.8.3)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `8c0b9a374d498e019b26f1b2d8a7cde58f217cd7077ea4a58786c0ec28af039c`
-- **Notice**: [`third-party/licenses/npm/fflate/0.7.4/LICENSE.txt`](third-party/licenses/npm/fflate/0.7.4/LICENSE.txt) · SHA-256 `62249119bb7df6e54300f37a37145c26a6d4420410aac8881a119c5b427cf751`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `38c2cd824402407b43153c782274aec2ea83ea688e4aa0b743c5f2c305857d92`
+- **Notice**: [`third-party/licenses/npm/fflate/0.8.3/LICENSE.txt`](third-party/licenses/npm/fflate/0.8.3/LICENSE.txt) · SHA-256 `0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551`
 
 ````text
 MIT License
 
-Copyright (c) 2020 Arjun Barrett
+Copyright (c) 2026 Arjun Barrett
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9551,36 +9551,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     "fflate": "^0.8.2"
   }
 }
-````
-
-#### pmtiles/node_modules/fflate (0.8.3)
-- **Declared License**: `MIT`
-- **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `38c2cd824402407b43153c782274aec2ea83ea688e4aa0b743c5f2c305857d92`
-- **Notice**: [`third-party/licenses/npm/pmtiles/node_modules/fflate/0.8.3/LICENSE.txt`](third-party/licenses/npm/pmtiles/node_modules/fflate/0.8.3/LICENSE.txt) · SHA-256 `0a1df3a083d0c010560aa342e87959c8c1070e6fd54545741f083f22d0c8b551`
-
-````text
-MIT License
-
-Copyright (c) 2026 Arjun Barrett
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 ````
 
 #### potpack (2.1.0)
