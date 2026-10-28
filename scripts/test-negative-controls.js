@@ -18,7 +18,7 @@ const gateDir = path.join(evidence, 'gate');
 fs.mkdirSync(gateDir, { recursive: true });
 const jsonOutput = path.join(gateDir, 'negative-controls.json');
 const logOutput = path.join(gateDir, 'release-gate-negative-tests.log');
-const mutableOutputs = new Set([jsonOutput, logOutput].map(path.resolve));
+const mutableOutputs = new Set([jsonOutput, logOutput].map((file) => path.resolve(file)));
 const results = [];
 const logs = [];
 
