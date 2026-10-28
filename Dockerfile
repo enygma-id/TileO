@@ -1,6 +1,7 @@
 ARG ALPINE_IMAGE=alpine:3.21@sha256:ee16d92f96db08d9d2d07da48555a27f3a69d8f0759021dbc601195ed0d2b5bd
 FROM ${ALPINE_IMAGE} AS gdal
 # Minimal, reproducible GDAL/PROJ profile on musl/Alpine.
+# Bound native compiler concurrency for memory-limited WSL builders.
 # Custom libcurl built from source with -DCURL_USE_LIBPSL=OFF -DUSE_LIBIDN2=OFF
 # to eliminate copyleft closure (libidn2, libunistring, libpsl).
 ARG GDAL_VERSION=3.11.4
@@ -26,7 +27,7 @@ RUN curl -fsSL "https://curl.se/download/curl-${CURL_VERSION}.tar.gz" -o /tmp/cu
        -DCURL_USE_OPENSSL=ON \
        -DUSE_NGHTTP2=ON \
        -DCURL_ZLIB=ON \
-    && cmake --build /tmp/curl/build --target install \
+    && cmake --build /tmp/curl/build --parallel 2 --target install \
     && rm -rf /tmp/curl /tmp/curl.tar.gz
 
 # PROJ 9.6.2 for reprojection and EPSG lookups
@@ -42,7 +43,7 @@ RUN curl -fsSL "https://download.osgeo.org/proj/proj-${PROJ_VERSION}.tar.gz" -o 
        -DENABLE_CURL=ON \
        -DSQLITE3_INCLUDE_DIR=/usr/include \
        -DSQLITE3_LIBRARY=/usr/lib/libsqlite3.so \
-    && cmake --build /tmp/proj/build --target install \
+    && cmake --build /tmp/proj/build --parallel 2 --target install \
     && rm -rf /tmp/proj /tmp/proj.tar.gz
 
 # GDAL core: MIT-style. Drivers are limited to TileO's documented inputs:
@@ -96,7 +97,7 @@ RUN curl -fsSL "https://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERS
        -DOGR_ENABLE_DRIVER_MVT=ON \
        -DGDAL_ENABLE_DRIVER_WMS=OFF \
        -DGDAL_ENABLE_DRIVER_WMTS=OFF \
-    && cmake --build /tmp/gdal/build --target install \
+    && cmake --build /tmp/gdal/build --parallel 2 --target install \
     && rm -rf /tmp/gdal /tmp/gdal.tar.gz
 
 FROM ${ALPINE_IMAGE} AS build
@@ -111,7 +112,7 @@ RUN curl -fsSL "https://unofficial-builds.nodejs.org/download/release/v${NODE_VE
 
 # Tippecanoe vector tile compressor
 RUN git clone --depth 1 --branch ${TIPPECANOE_VERSION} https://github.com/felt/tippecanoe.git /tmp/tippecanoe \
-    && make -C /tmp/tippecanoe -j$(nproc) \
+    && make -C /tmp/tippecanoe -j2 \
     && make -C /tmp/tippecanoe install
 
 WORKDIR /app
