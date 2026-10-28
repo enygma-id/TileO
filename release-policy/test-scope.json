@@ -17,12 +17,22 @@
       "src/browser/quickopen.spec.ts"
     ],
     "excluded_tests_pending_scope_approval": [
-      "raster compare shows source GeoTIFF vs result tiles",
-      "raster result survives landing-page roundtrip and still compares",
-      "raster compare can reopen after closing without duplicate source maps"
+      "raster compare shows source GeoTIFF vs result tiles"
     ]
   },
-  "required_areas": ["build", "typecheck", "api-auth-storage", "worker", "vector", "raster", "elevation", "3d", "browser", "distribution", "licensing"],
+  "required_areas": [
+    "build",
+    "typecheck",
+    "api-auth-storage",
+    "worker",
+    "vector",
+    "raster",
+    "elevation",
+    "3d",
+    "browser",
+    "distribution",
+    "licensing"
+  ],
   "fixture_policy": "Fixtures must be generated deterministically, recorded with SHA-256, and mounted read-only without replacing application bytes.",
   "scope_approval": "PENDING_ENGINEERING_AND_RELEASE_STEWARD"
 }

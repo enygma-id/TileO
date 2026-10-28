@@ -80,6 +80,8 @@ test('DSM/DTM inspection, COG and terrain jobs, preview, downloads and deletion'
     await expect(page.locator('#elevation-options-group')).toBeHidden();
     const terrainFile = { ...file, name: `terrain-${file.name}` };
     await page.locator('#file').setInputFiles(terrainFile);
+    await page.locator('#raster-purpose').selectOption('elevation');
+    await expect(page.locator('#elevation-options-group')).toBeVisible();
     await expect(page.locator('#submit')).toBeEnabled();
     await page.locator('#elevation-output').selectOption('terrain-rgb');
     await expect(page.locator('#zoom-options-group')).toBeVisible();
@@ -107,12 +109,15 @@ test('DSM/DTM inspection, COG and terrain jobs, preview, downloads and deletion'
     await tileLoaded;
     await expect(page.locator('#notice')).toContainText('Missing terrain pixels');
     await page.screenshot({ path: 'test-results/elevation-preview.png', fullPage: true });
+    await terrainJob.getByRole('button', { name: 'More actions', exact: true }).click();
     page.once('dialog', dialog => dialog.accept());
-    await terrainJob.getByRole('button', { name: 'Delete', exact: true }).click();
+    await terrainJob.getByRole('menuitem', { name: 'Delete', exact: true }).click();
     await expect(terrainJob).toHaveCount(0);
     await expect(page.locator('#preview-name')).toContainText('Basemap only');
     const terrariumFile = { ...file, name: `terrarium-${file.name}` };
     await page.locator('#file').setInputFiles(terrariumFile);
+    await page.locator('#raster-purpose').selectOption('elevation');
+    await expect(page.locator('#elevation-options-group')).toBeVisible();
     await expect(page.locator('#submit')).toBeEnabled();
     await page.locator('#elevation-output').selectOption('terrarium');
     await page.locator('#export-pmtiles').selectOption('yes');
@@ -133,8 +138,9 @@ test('DSM/DTM inspection, COG and terrain jobs, preview, downloads and deletion'
     const terrariumTile = page.waitForResponse(response => /\/api\/jobs\/[^/]+\/tiles\//.test(response.url()) && response.status() === 200);
     await terrariumJob.getByRole('button', { name: 'Open preview', exact: true }).click();
     await terrariumTile; await expect(page.locator('#loaded-data-info')).toContainText('Terrarium');
+    await terrariumJob.getByRole('button', { name: 'More actions', exact: true }).click();
     page.once('dialog', dialog => dialog.accept());
-    await terrariumJob.getByRole('button', { name: 'Delete', exact: true }).click();
+    await terrariumJob.getByRole('menuitem', { name: 'Delete', exact: true }).click();
     await expect(terrariumJob).toHaveCount(0);
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
