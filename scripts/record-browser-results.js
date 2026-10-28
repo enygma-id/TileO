@@ -15,6 +15,7 @@ if (path.basename(evidence) !== `v${version}`) throw new Error(`Evidence root mu
 const out = path.join(evidence, 'tests/browser');
 fs.mkdirSync(out, { recursive: true });
 const image = inspectImage(options.image);
+const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 const container = `tileo-browser-${Date.now()}`;
 let result;
 try {
@@ -27,7 +28,7 @@ try {
   }
   if (!healthy) throw new Error('Candidate server did not become healthy');
   const gdalVersion = execFileSync('gdal_translate', ['--version'], { encoding: 'utf8' }).trim();
-  result = spawnSync('npx.cmd', ['playwright', 'test', '--reporter=json'], { cwd: ROOT, encoding: 'utf8', shell: process.platform === 'win32', env: { ...process.env, TILEO_TEST_URL: 'http://127.0.0.1:8091' }, maxBuffer: 64 * 1024 * 1024 });
+  result = spawnSync(npx, ['playwright', 'test', '--reporter=json'], { cwd: ROOT, encoding: 'utf8', shell: process.platform === 'win32', env: { ...process.env, TILEO_TEST_URL: 'http://127.0.0.1:8091' }, maxBuffer: 64 * 1024 * 1024 });
   fs.writeFileSync(path.join(out, 'browser-results.json'), result.stdout ?? '');
   fs.writeFileSync(path.join(out, 'browser.stderr.log'), result.stderr ?? '');
   const serverLogs = spawnSync('docker', ['logs', container], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
@@ -48,7 +49,7 @@ try {
   };
   for (const suite of report.suites ?? []) visitSuite(suite);
   const skippedTests = tests.filter((test) => test.expected_status === 'skipped' || test.actual_status === 'skipped').map((test) => test.title).sort();
-  const execution = { schema: 'tileo-browser-execution@1', image_id: image.id, platform: image.platform, url: 'http://127.0.0.1:8091', command: { executable: 'npx', arguments: ['playwright', 'test', '--reporter=json'] }, gdal_fixture_tool: gdalVersion, exit_code: result.status ?? 1, expected: stats.expected ?? 0, failed: stats.unexpected ?? 0, flaky: stats.flaky ?? 0, skipped: stats.skipped ?? 0, duration_ms: stats.duration ?? null, tests, skipped_tests: skippedTests };
+  const execution = { schema: 'tileo-browser-execution@1', image_id: image.id, platform: image.platform, url: 'http://127.0.0.1:8091', command: { executable: npx, arguments: ['playwright', 'test', '--reporter=json'] }, gdal_fixture_tool: gdalVersion, exit_code: result.status ?? 1, expected: stats.expected ?? 0, failed: stats.unexpected ?? 0, flaky: stats.flaky ?? 0, skipped: stats.skipped ?? 0, duration_ms: stats.duration ?? null, tests, skipped_tests: skippedTests };
   atomicWrite(path.join(out, 'execution.json'), JSON.stringify(execution, null, 2) + '\n');
   if (execution.exit_code !== 0 || execution.failed > 0 || execution.expected === 0) process.exit(result.status ?? 1);
   console.log(`Browser tests completed: expected=${execution.expected}, skipped=${execution.skipped}, failed=${execution.failed}`);
