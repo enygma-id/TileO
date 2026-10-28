@@ -59,7 +59,10 @@ gate('G5_TESTS', () => {
   if (browser.image_id !== image.id || browser.exit_code !== 0 || browser.failed > 0) throw new Error('browser execution failed or targeted another image');
   const scope = readJson(path.join(ROOT, 'release-policy/test-scope.json'), 'tileo-test-scope@1');
   const observedFiles = new Set((browser.tests ?? []).map((test) => String(test.file).replaceAll('\\', '/')));
-  for (const required of scope.browser.required_specs ?? []) if (![...observedFiles].some((file) => file.endsWith(required))) throw new Error(`required browser spec did not execute: ${required}`);
+  for (const required of scope.browser.required_specs ?? []) {
+    const relative = required.replace(/^src\/browser\//, '');
+    if (![...observedFiles].some((file) => file === required || file === relative || file.endsWith(`/${required}`) || file.endsWith(`/${relative}`))) throw new Error(`required browser spec did not execute: ${required}`);
+  }
   const declared = scope.browser.excluded_tests_pending_scope_approval ?? [];
   const observed = browser.skipped_tests ?? [];
   if (browser.skipped !== observed.length || observed.some((title) => !declared.some((allowed) => title === allowed || title.endsWith(` > ${allowed}`)))) throw new Error('browser test skips are not exactly predeclared scope exclusions');

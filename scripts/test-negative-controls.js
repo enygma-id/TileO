@@ -72,8 +72,13 @@ function control(id, mutation, expected, mutate, runner = verifier) {
     cloneTree(evidence, caseDir);
     installIsolatedControlFixture(caseDir);
     mutate(caseDir);
+    // NC28 deliberately injects a stale PASS. Its unchanged bytes are input,
+    // while any newly created or modified PASS remains a certification failure.
+    const injectedPass = path.join(caseDir, 'gate/release-gate-pass.json');
+    const injectedPassHash = id === 'NC28' && fs.existsSync(injectedPass) ? sha256File(injectedPass) : null;
     const observed = runner(caseDir);
-    const passExists = listFiles(caseRoot).some((file) => path.basename(file) === 'release-gate-pass.json');
+    const passExists = listFiles(caseRoot).some((file) => path.basename(file) === 'release-gate-pass.json' &&
+      !(file === injectedPass && injectedPassHash && sha256File(file) === injectedPassHash));
     const passed = observed.exit_code !== 0 && observed.output.includes(expected) && !passExists;
     results.push({ id, status: passed ? 'PASS' : 'FAIL', baseline_image_id: image.id, mutation, command: runner.name || 'verifier', expected_rejection: expected, exit_code: observed.exit_code, observed: observed.output.slice(-4000), publishable_pass_present: passExists });
     log(`${passed ? 'PASS' : 'FAIL'} ${id}: ${mutation} -> ${observed.output.split(/\r?\n/).filter(Boolean).at(-1) ?? 'no output'}`);
