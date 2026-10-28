@@ -22,6 +22,9 @@ const AUTHENTIC_SOURCE = {
   'gcc-runtime': { package: '14.2.0-r4', upstream_sha256: 'a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9', aports_commit: '1a03a2a9c9e77f1a07d48b6f6805e72c8c63c03f', aports_archive_sha256: 'fa78002197d55fe1c360efcbba9d6e914ec171987648f388b04a161740d15f22' },
   'mozilla-ca-bundle': { package: '20261020-r0', upstream_sha256: '1048bc7f50fa42a6621bc2f8816173f89a0c0098f26dff072bc8fe40af714400', aports_commit: '660f223b42ca35e7d2a76ce568e15c847b92d33d', aports_archive_sha256: 'd8da92bbd76fc9f836c5e357ae75ddf90843a507e8059700ef7f16043500590a' },
 };
+const SHIPPED_FILE_TARGETS = new Map([
+  ['/usr/lib/libstdc++.so.6', '/usr/lib/libstdc++.so.6.0.33'],
+]);
 for (const required of [registerPath, sourceProvenancePath]) if (!fs.existsSync(required)) throw new Error(`Missing ${path.relative(evidence, required)}`);
 
 const rows = parseCsv(fs.readFileSync(registerPath, 'utf8'));
@@ -43,7 +46,11 @@ const extracted = {};
 try {
   for (const row of rows) {
     const destination = path.join(temp, path.basename(row.shipped_file));
-    execFileSync('docker', ['cp', `${container}:${row.shipped_file}`, destination], { stdio: 'pipe' });
+    // The register records public loader paths. Copy the concrete versioned
+    // target for absolute symlinks because `docker cp -L` incorrectly prefixes
+    // their absolute target with the symlink directory on Docker Desktop.
+    const containerPath = SHIPPED_FILE_TARGETS.get(row.shipped_file) ?? row.shipped_file;
+    execFileSync('docker', ['cp', `${container}:${containerPath}`, destination], { stdio: 'pipe' });
     const actual = sha256File(destination);
     if (actual !== row.binary_sha256) throw new Error(`${row.exception_id} image bytes hash ${actual}, register records ${row.binary_sha256}`);
     extracted[row.shipped_file] = { sha256: actual, bytes: fs.statSync(destination).size };
