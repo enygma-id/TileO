@@ -17,6 +17,10 @@ if (path.basename(evidence) !== `v${version}`) throw new Error(`Evidence root mu
 const git = gitIdentity(ROOT);
 if (!git.clean) throw new Error(`Candidate source must be clean:\n${git.status}`);
 const image = inspectImage(options.image);
+const imageLabels = image.record.Config?.Labels ?? {};
+if (imageLabels['org.opencontainers.image.revision'] !== git.commit) throw new Error('Image revision label does not match the candidate commit');
+if (imageLabels['org.opencontainers.image.version'] !== version) throw new Error('Image version label does not match the candidate version');
+if (imageLabels['org.opencontainers.image.source'] !== 'https://github.com/enygma-id/TileO') throw new Error('Image source label does not match the candidate repository');
 const exportPath = path.resolve(options['image-export']);
 if (!fs.existsSync(exportPath) || fs.statSync(exportPath).size === 0) throw new Error('Image export is missing or empty');
 for (const log of [options['build-stdout'], options['build-stderr']]) if (!fs.existsSync(path.resolve(log))) throw new Error(`Build log missing: ${log}`);

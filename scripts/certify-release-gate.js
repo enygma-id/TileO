@@ -36,6 +36,10 @@ gate('G2_IMAGE', () => {
   if (image.id !== candidate.image_id || image.platform !== candidate.platform) throw new Error('actual Docker image ID/platform does not match candidate');
   const inspect = readJson(path.join(evidence, 'image/image-inspect.json'));
   if (inspect.Id !== image.id || `${inspect.Os}/${inspect.Architecture}` !== image.platform) throw new Error('image-inspect.json subject mismatch');
+  const labels = inspect.Config?.Labels ?? {};
+  if (labels['org.opencontainers.image.revision'] !== candidate.commit) throw new Error('image revision label does not match candidate commit');
+  if (labels['org.opencontainers.image.version'] !== candidate.version) throw new Error('image version label does not match candidate version');
+  if (labels['org.opencontainers.image.source'] !== `https://github.com/${candidate.repository}`) throw new Error('image source label does not match candidate repository');
 });
 gate('G3_EVIDENCE', () => {
   const args = ['scripts/verify-release-evidence.js', '--image', image.id, '--evidence-dir', evidence];

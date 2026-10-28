@@ -6,7 +6,6 @@ dist/
 .env.*
 !.env.example
 *.log
-!artifacts/compliance/*.log
 test-results/
 TileO-main*-Audit*.md
 TileO-*-Audit*.md
@@ -17,6 +16,8 @@ TileO-v1.0.0-RC9-Engineering-Closure-Protocol.md
 TileO-v*-Release-Closure/
 # Local agent session transcripts; never publish them with the release source.
 codex-session-*.md
+# Temporary engineering checklists; never ship them in the release source.
+TEMP_RELEASE_*.md
 release-evidence/
 /artifacts/
 .DS_Store

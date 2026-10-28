@@ -8,6 +8,11 @@ on:
         required: true
         type: boolean
         default: false
+      push_latest:
+        description: Also publish the GHCR latest tag; requires explicit Release Steward approval
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -45,9 +50,15 @@ jobs:
         shell: bash
         run: |
           mkdir -p /tmp/tileo-context /tmp/tileo-build /tmp/tileo-export
+          TILEO_VERSION=$(node -p "require('./package.json').version")
           git archive HEAD | tar -x -C /tmp/tileo-context
           set +e
-          docker build --platform linux/amd64 --provenance=false --label "org.opencontainers.image.revision=$GITHUB_SHA" --tag "$TILEO_IMAGE" /tmp/tileo-context >/tmp/tileo-build/stdout.log 2>/tmp/tileo-build/stderr.log
+          docker build --platform linux/amd64 --provenance=false \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --label "org.opencontainers.image.version=$TILEO_VERSION" \
+            --label "org.opencontainers.image.source=https://github.com/${GITHUB_REPOSITORY}" \
+            --label "org.opencontainers.image.title=TileO" \
+            --tag "$TILEO_IMAGE" /tmp/tileo-context >/tmp/tileo-build/stdout.log 2>/tmp/tileo-build/stderr.log
           status=$?
           set -e
           cat /tmp/tileo-build/stdout.log
@@ -171,6 +182,7 @@ jobs:
         if: inputs.publish
         env:
           GH_TOKEN: ${{ github.token }}
+          PUSH_LATEST: ${{ inputs.push_latest }}
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           git tag --annotate v0.1.0 "$GITHUB_SHA" --message 'TileO 0.1.0'
@@ -188,9 +200,11 @@ jobs:
           gh release create v0.1.0 /tmp/tileo-release-assets/* --verify-tag --title 'TileO 0.1.0' --notes-file "$TILEO_EVIDENCE/release/release-notes.md"
           echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           docker tag "$TILEO_IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:0.1.0"
-          docker tag "$TILEO_IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
           docker push "ghcr.io/${GITHUB_REPOSITORY,,}:0.1.0"
-          docker push "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+          if [ "$PUSH_LATEST" = "true" ]; then
+            docker tag "$TILEO_IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+            docker push "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
+          fi
           node scripts/verify-published-release.js --repo "$GITHUB_REPOSITORY" --tag v0.1.0 --candidate "$TILEO_EVIDENCE/candidate.json" --out-dir /tmp/tileo-publication
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: inputs.publish

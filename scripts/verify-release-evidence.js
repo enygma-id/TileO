@@ -27,6 +27,9 @@ for (const file of listFiles(evidence)) {
 
 const candidate = readJson(path.join(evidence, 'candidate.json'), 'tileo-release-candidate@1');
 if (candidate.version !== version || candidate.image_id !== image.id || candidate.platform !== image.platform || candidate.clean !== true) throw new Error('candidate.json does not bind the requested image, platform, version and clean source state');
+const inspect = readJson(path.join(evidence, 'image/image-inspect.json'));
+const labels = inspect.Config?.Labels ?? {};
+if (inspect.Id !== image.id || labels['org.opencontainers.image.revision'] !== candidate.commit || labels['org.opencontainers.image.version'] !== candidate.version || labels['org.opencontainers.image.source'] !== `https://github.com/${candidate.repository}`) throw new Error('image labels do not bind candidate commit, version and source');
 const source = readJson(path.join(evidence, 'source/source-baseline.json'), 'tileo-source-baseline@1');
 const provenance = readJson(path.join(evidence, 'image/release-provenance.json'), 'tileo-release-provenance@1');
 if (source.git?.commit !== candidate.commit || source.git?.dirty !== false || provenance.image?.id !== image.id || provenance.source_baseline?.git?.commit !== candidate.commit) throw new Error('Source, candidate and image provenance identities do not match');
