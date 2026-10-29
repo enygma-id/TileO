@@ -1,129 +1,89 @@
-# TileO 0.1.0 — human approval sampai GO
+# TileO 0.1.0 — approval sampai GO
 
-Dokumen ini menjelaskan pekerjaan manusia yang tidak dapat digantikan test atau
-perubahan JSON. Status sekarang **BELUM GO**. WSL 968ece0 memiliki bukti teknis
-konsisten, tetapi source baru F01/F02 membutuhkan kandidat protected Actions
-baru. Lihat [petunjuk mandiri](FINAL_REAUDIT_SELF_SERVICE.md) untuk commands.
+**Status sekarang: belum GO.** Test lulus dan checksum cocok belum merupakan
+approval. Ikuti [langkah mandiri](FINAL_REAUDIT_SELF_SERVICE.md) untuk commands.
 
-## Pemilik tugas dan blocker saat dokumen disiapkan
+## Siapa mengerjakan apa?
 
-| Tugas | PIC yang dikonfirmasi | Bukti/hasil yang diperlukan |
-|---|---|---|
-| Engineering | donyariefianto, ID 56543110 | Review image/core/tests dan keputusan Compare eksplisit |
-| Legal/IP | erickkarya, ID 58256885 | Clearance rights first-party/Enterprise dan EXC-001/002/003 |
-| Release Steward | donyariefianto, ID 56543110 | Keputusan release setelah kedua review dan proof valid |
-| Setting repository | Administrator dengan akses administration | Raw environment/branch settings + checker exit 0 |
-| Dispatch workflow | Operator ketiga atau GitHub App yang sah | Run actor di luar dua reviewer, akses dispatch |
+| PIC | Tugas |
+|---|---|
+| Admin repository | Pasang proteksi main/environment, verifikasi setting, review/commit policy |
+| Operator ketiga / GitHub App | Memulai workflow; tidak memberikan approval manusia |
+| donyariefianto — Engineering | Review image/core/tests dan putuskan scope Compare |
+| erickkarya — Legal/IP | Review hak first-party/Enterprise, tiga exception, source dan notices |
+| donyariefianto — Release Steward | Terima atau tolak release setelah review/proof lengkap |
 
-Pemilik menyatakan operator ketiga/App **belum ada**. Environment IDs diketahui,
-tetapi snapshot live masih tanpa required-reviewer rules dan bypass aktif.
-Proteksi main belum terbukti (GET publik mendapat HTTP 401). Ini blocker F03
-yang harus diselesaikan admin. Agent tidak memiliki kredensial admin/gh CLI.
+**Blocker saat ini:** operator ketiga/App belum ada dan proteksi belum
+terverifikasi. Dony/Erick tidak dapat memulai run lalu menyetujui role sendiri
+karena `Prevent self-review`. Jangan melemahkan aturan itu.
 
-Jangan mengubah policy menjadi CONFIGURED secara manual. Jalankan checker live
-sesudah pengaturan benar, review/commit policy yang dihasilkan, lalu merge source.
-Jangan mematikan prevent-self-review agar kedua akun dapat melewati blocker.
-GitHub melarang initiator menyetujui deployment sendiri ketika proteksi tersebut
-aktif. Operator/App hanya memulai run; approval tetap dua manusia asli.
+Jika memakai App, admin membuat dan memasangnya hanya pada TileO dengan
+**Actions: Read and write**, **Metadata: Read**, lalu memakai installation token
+untuk dispatch. App tidak dimasukkan sebagai human reviewer. Ikuti
+[panduan token resmi](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app).
+Periksa actor run benar-benar operator/App yang dipilih sebelum review.
 
-## Yang diperiksa sebelum menekan Approve
+## Apa yang harus ditinjau?
 
-Setiap reviewer mengambil candidate ID, commit, image identity dan **core manifest
-SHA-256 dari summary/artifact run yang sedang menunggu**, bukan angka dari WSL
-atau run lain. Download core/image/closure dari run itu dan periksa checksum.
-Jangan menganggap hijau CI/PR sebagai approval image. Jangan approve jika ada
-hash berbeda, temuan wajib terbuka atau materi yang tidak dapat ditinjau.
+Ambil candidate ID, commit, image identity dan **core SHA-256 dari run yang
+sedang menunggu**, lalu periksa artifact core/image beserta checksumnya.
+Gunakan subject yang sama untuk ketiga review.
 
-Engineering memeriksa final-image inventory tanpa baseline historis, SBOM final,
-GCC/CA binding, 130 integration tests atau jumlah aktual yang diwajibkan source,
-browser/Compose, controls, provenance dan manifest. Compare skip harus diputuskan:
-jika pengecualian diterima untuk 0.1.0, nyatakan eksplisit; jika ditolak, jangan
-approve—perbaiki/uji fitur atau scope policy sebelum freeze kandidat pengganti.
+- **Engineering:** inventory tanpa baseline historis, SBOM final, GCC/CA binding,
+  tests/browser/Compose, controls dan manifest. Terima atau tolak Compare skip
+  secara eksplisit. Jika ditolak, perbaiki scope/fitur dan buat kandidat baru.
+- **Legal/IP:** putuskan clearance hak dan EXC-001/002/003, termasuk source
+  delivery dan notices. Proposed CLA bukan bukti persetujuan penulis.
+- **Steward:** pastikan review utama dari dua manusia berbeda, subject cocok,
+  proof valid dan distribusi memang diizinkan.
 
-Legal/IP memeriksa source/notice/exception register, cara delivery GCC/Mozilla,
-serta hak first-party/Enterprise. Proposed CLA bukan bukti persetujuan penulis.
-Jika rights/exception belum clear, jangan approve. Technical source VERIFIED
-tidak otomatis memberi clearance Legal/IP.
+**Jika belum menerima hasil review, pilih Reject atau jangan approve.** Review
+PR tidak menggantikan review image. Approval run lama tidak dipakai ulang.
 
-Steward memeriksa kedua review berasal dari manusia berbeda, subject sama,
-source-access routes benar, proof NC22–NC24 tepercaya dan keputusan distribusi.
-Keputusan dry run bukan izin menggunakan approval itu pada produksi.
+## Cara memberi approval
 
-## Cara memberi keputusan yang dapat diverifikasi
+Actions → run aktual → **Review deployments** → pilih environment role sendiri.
+Sesudah review nyata, pilih Approve dengan comment berikut. Ganti `CANDIDATE_ID`
+dan `CORE_SHA256` dengan nilai aktual dari run itu:
 
-Di Actions → run aktual → Review deployments, pilih environment role sendiri.
-Hanya pilih Approve setelah benar-benar menerima hasil review. Comment wajib
-berisi candidate ID dan core digest aktual, serta statement role berikut.
-Contoh format (ganti dua placeholder dengan nilai run saat ini):
+| Role / environment | Comment |
+|---|---|
+| Engineering / release-engineering | `CANDIDATE_ID CORE_SHA256 COMPARE_SCOPE=ACCEPT_EXCLUSION` |
+| Legal/IP / release-legal | `CANDIDATE_ID CORE_SHA256 RIGHTS=APPROVE EXCEPTIONS=EXC-001,EXC-002,EXC-003` |
+| Steward / release | `CANDIDATE_ID CORE_SHA256 REVIEW=ACCEPT` |
 
-Engineering, environment release-engineering:
+Comment adalah rekaman keputusan asli, bukan teks untuk sekadar melewati gate.
+Collector memeriksa user/environment IDs, proteksi live, event GitHub, subject
+dan run/attempt. File approval lokal buatan sendiri tidak diterima.
 
-```text
-ACTUAL_CANDIDATE_ID ACTUAL_CORE_SHA256 COMPARE_SCOPE=ACCEPT_EXCLUSION
-```
+## Urutan dry run dan produksi
 
-Legal/IP, environment release-legal:
+1. Operator memulai **publish=false** pada main yang sudah direview.
+2. Tiga reviewer meninjau kandidat dry run dan memberi keputusan asli.
+3. Harness menjalankan actual NC22–NC24; run harus success, attempt 1, dan proof
+   tervalidasi. Dry run tidak menghasilkan production PASS.
+4. Setelah keputusan publikasi nyata, operator memulai **run produksi baru**
+   pada commit yang sama, memakai proof run ID tersebut (maksimal tujuh hari).
+5. Reviewer memberi **review dan approval baru** atas candidate/core/image
+   produksi. Tidak ada rebuild setelah approval.
 
-```text
-ACTUAL_CANDIDATE_ID ACTUAL_CORE_SHA256 RIGHTS=APPROVE EXCEPTIONS=EXC-001,EXC-002,EXC-003
-```
+## Checklist GO
 
-Release Steward, environment release:
+- [ ] Proteksi dan reviewer policy terverifikasi; operator tersedia.
+- [ ] Source/policy masuk main melalui review; satu kandidat produksi dengan
+  seluruh evidence cocok dan baseline historis tidak ada dalam image.
+- [ ] Actual NC22–NC24 proof + raw logs lolos validator G8; bukan unit fixture.
+- [ ] Scope Compare dan hak/exception diterima reviewer asli.
+- [ ] G7 menerima tiga approval asli untuk candidate/core/run produksi yang sama.
+- [ ] Final authorization dan authorized closure benar-benar dihasilkan.
 
-```text
-ACTUAL_CANDIDATE_ID ACTUAL_CORE_SHA256 REVIEW=ACCEPT
-```
+Jika semua terpenuhi: **GO memulai publikasi**. Run `publish=true` dapat langsung
+melanjutkan tag/Release/push setelah guard lulus; reviewer harus memahami ini.
 
-Statement ini adalah rekaman keputusan manusia asli, bukan kata sandi untuk
-melewati gate. Jika menolak, gunakan Reject dan tulis alasan. Approval collector
-memeriksa event asli GitHub, user/environment IDs, comment, run/attempt dan
-proteksi live. File lokal, review PR, atau copy approval run lain tidak cukup.
+- [ ] Source assets publik lolos anonymous verification sebelum image push.
+- [ ] Exact image dipush tanpa rebuild dan full verification `PUBLISHED_VERIFIED`.
+- [ ] Release URL dan receipts disimpan di luar frozen core untuk handoff.
 
-## Dry run dahulu, produksi dengan review baru
-
-1. Operator memulai publish=false, attempt 1, dari main hasil review.
-2. Reviewer memberi keputusan asli atas candidate/core dry run. Bila gagal,
-   hentikan; jangan menciptakan approval pengganti.
-3. Harness actual collector/certifier menguji missing/rejected/unauthorized role,
-   wrong candidate/core, serta replay run/attempt. Logs harus exit 1 dengan alasan
-   tepat, baseline G1–G7 lulus, dan tidak ada production PASS.
-4. Run selesai success dan proof artifact divalidasi terhadap GitHub API digest,
-   source/policy hashes, raw logs dan subject dry run. NC22–NC24 di frozen core
-   tetap pending; proof eksternal adalah bukti tambahan, bukan edit core.
-5. Setelah keputusan publikasi nyata, operator memulai run produksi baru pada
-   commit yang sama dengan proof run ID itu. Proof maksimal tujuh hari. Run
-   produksi membangun satu candidate lalu meminta **approval baru** atas
-   image/core/run produksinya. Jangan rebuild setelah approval.
-
-## Kapan boleh menyebut GO dan selesai
-
-- [ ] F01: actual protected negative-proof artifact + raw logs tervalidasi;
-  bukan hanya unit fixture atau JSON status PASS buatan caller.
-- [ ] F02: image final tidak mengandung SBOM/notices baseline; post-scanner
-  verifier dan seluruh dependent evidence lulus untuk kandidat baru yang sama.
-- [ ] F03: proteksi/reviewer policy valid, source masuk main melalui review,
-  operator tersedia, keputusan Compare dan rights/exception asli tersedia.
-- [ ] G7: approval Engineering, Legal/IP, Steward asli, lengkap, subject-bound,
-  fresh untuk run/attempt produksi dan dua manusia review utama berbeda.
-- [ ] G8: prior dry-run proof dari exact commit/implementation/policy, age ≤7
-  hari, run success/attempt 1, artifact digest/raw records valid. Proof regresi
-  tidak menggantikan approval production image.
-- [ ] Final authorization dan authorized closure benar-benar dihasilkan oleh
-  protected flow; PASS menunjuk candidate/core/image/run yang tepat.
-
-**GO memulai publikasi** baru boleh dicatat jika semua item di atas selesai.
-Tidak ada command yang sah untuk mengubah NO-GO menjadi GO dengan edit status.
-Jika publish=true sudah dipilih dan reviewer menyetujui, workflow akan melanjutkan
-publikasi setelah guard lulus; review final harus mempertimbangkan konsekuensi ini.
-
-- [ ] F04: exact source assets publik tersedia dan anonymous source-access check
-  berhasil sebelum image push.
-- [ ] Exact saved image dipush tanpa rebuild, lalu tag/assets/registry identity
-  diverifikasi penuh dengan status PUBLISHED_VERIFIED.
-- [ ] Release URL, source-access/full receipts, raw logs dan checksum tersimpan
-  di luar frozen core dan disertakan pada handoff.
-
-**Release selesai** baru boleh dicatat sesudah F04 lulus. Jika source berhasil
-tetapi push/registry gagal, status parsial harus dipertahankan; jangan menyatakan
-rilis selesai atau mengganti assets diam-diam. Semua blocker menyebut owner,
-command/exit/reason dan tindakan nyata yang masih diperlukan.
+Sesudah tiga item terakhir: **release selesai**. Jika publikasi hanya berhasil
+sebagian, catat status parsial dan blocker. Jangan mengedit pending/PASS atau
+mengganti assets diam-diam untuk membuat status tampak selesai.
