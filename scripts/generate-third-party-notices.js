@@ -112,7 +112,7 @@ function main() {
   lines.push('');
   lines.push('> **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.');
   lines.push('');
-  lines.push(`Generated: ${new Date().toISOString().slice(0, 10)} · Lockfile SHA-256: \`${lockSha}\``);
+  lines.push(`Generated from committed license evidence · Lockfile SHA-256: \`${lockSha}\``);
   lines.push('');
   lines.push('## Verification summary');
   lines.push('');

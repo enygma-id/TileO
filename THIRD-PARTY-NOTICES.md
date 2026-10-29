@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated: 2026-10-28 · Lockfile SHA-256: `b12910b8363da6fbea47aeb7f59273406ccb0906303bc09235e6b0f1c7f923cb`
+Generated from committed license evidence · Lockfile SHA-256: `b12910b8363da6fbea47aeb7f59273406ccb0906303bc09235e6b0f1c7f923cb`
 
 ## Verification summary
 
