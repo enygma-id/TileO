@@ -1,16 +1,38 @@
 {
   "schema": "tileo-reviewers-policy@1",
   "repository": "enygma-id/TileO",
-  "status": "PENDING_LIVE_PROTECTION_VERIFICATION",
+  "status": "CONFIGURED",
   "environments": {
-    "release-engineering": { "role": "Engineering", "environment_id": 25648334569, "authorized_reviewers": [56543110] },
-    "release-legal": { "role": "Legal-IP", "environment_id": 25648385174, "authorized_reviewers": [58256885] },
-    "release": { "role": "Release-Steward", "environment_id": 25436365187, "authorized_reviewers": [56543110] }
+    "release-engineering": {
+      "role": "Engineering",
+      "environment_id": 25648334569,
+      "authorized_reviewers": [
+        56543110
+      ]
+    },
+    "release-legal": {
+      "role": "Legal-IP",
+      "environment_id": 25648385174,
+      "authorized_reviewers": [
+        58256885
+      ]
+    },
+    "release": {
+      "role": "Release-Steward",
+      "environment_id": 25436365187,
+      "authorized_reviewers": [
+        56543110
+      ]
+    }
   },
   "requirements": {
     "distinct_engineering_and_legal_identities": true,
     "prevent_self_review": true,
     "admin_bypass_disabled": true
   },
-  "note": "Owner confirmed Engineering/Steward=donyariefianto (56543110), Legal-IP=erickkarya (58256885). IDs verified through public GitHub API. Live required-reviewer/self-review/admin/branch protections still require administrator configuration and verification; this is not image/core approval. A distinct operator or App must dispatch because self-review is prohibited."
+  "note": "Owner confirmed Engineering/Steward=donyariefianto (56543110), Legal-IP=erickkarya (58256885). IDs verified through public GitHub API. Live required-reviewer/self-review/admin/branch protections still require administrator configuration and verification; this is not image/core approval. A distinct operator or App must dispatch because self-review is prohibited.",
+  "configuration_evidence": {
+    "checked_at": "2026-10-29T08:07:35.708Z",
+    "report_sha256": "5a031d316bffb341ceac23a918608a75460ba4bbd4dc267d06bef3c1d40f8f82"
+  }
 }
