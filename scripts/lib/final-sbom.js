@@ -9,7 +9,15 @@ export function verifyFinalSbom(evidence) {
   if(s.outputs.spdx!==sha256File(path.join(evidence,'sbom/sbom-image.spdx.json'))||s.outputs.cyclonedx!==sha256File(path.join(evidence,'sbom/sbom-image.cdx.json')))throw Error('Final SBOM scanner output hashes differ');
   if(spdx.spdxVersion!=='SPDX-2.3'||spdx.dataLicense!=='CC0-1.0'||!spdx.packages?.length||cdx.bomFormat!=='CycloneDX'||!/^1\.[5-9]$/.test(cdx.specVersion)||!cdx.components?.length)throw Error('Final SBOM schema/content invalid');
   const props=new Map((cdx.metadata?.properties??[]).map(p=>[p.name,p.value]));
-  if(props.get('syft:image:labels:org.opencontainers.image.revision')!==c.commit||props.get('syft:image:labels:org.opencontainers.image.version')!==c.version||props.get('syft:image:labels:org.opencontainers.image.source')!==`https://github.com/${c.repository}`||cdx.metadata?.component?.version!==c.image_id.replace(/^sha256:/,''))throw Error('Final SBOM commit/image labels mismatch');
+  const bindings = {
+    revision: [props.get('syft:image:labels:org.opencontainers.image.revision'), c.commit],
+    version: [props.get('syft:image:labels:org.opencontainers.image.version'), c.version],
+    source: [props.get('syft:image:labels:org.opencontainers.image.source'), `https://github.com/${c.repository}`],
+    image: [cdx.metadata?.component?.version, c.image_id.replace(/^sha256:/,'')],
+  };
+  for (const [field, [actual, expected]] of Object.entries(bindings)) {
+    if (actual !== expected) throw Error(`Final SBOM commit/image labels mismatch: ${field}; expected=${JSON.stringify(expected)} actual=${JSON.stringify(actual)}`);
+  }
   if(inv.schema!=='tileo-rootfs-inventory@1'||inv.image_id!==c.image_id||!inv.files?.length)throw Error('Final inventory subject invalid');
   if(inv.files.some(f=>/^\/app\/(baseline|docs\/history)(\/|$)/.test(f.path)||supersededHashes.includes(f.sha256)))throw Error('Superseded baseline evidence found in runtime inventory');
   for(const pattern of [/\/libstdc\+\+\.so\.6\./,/\/libgcc_s\.so\.1$/,/\/etc\/ssl\/certs\/ca-certificates\.crt$/])if(!inv.files.some(f=>pattern.test(f.path)&&/^[0-9a-f]{64}$/.test(f.sha256??'')))throw Error('Required native exception payload absent from inventory');

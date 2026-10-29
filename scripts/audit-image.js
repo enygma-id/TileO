@@ -352,7 +352,7 @@ try {
       '-v', '//var/run/docker.sock:/var/run/docker.sock',
       '-v', `${sbomDirPosix}:/out`,
       SYFT_IMAGE,
-      IMAGE_TAG,
+      imageId,
       '-o', 'spdx-json=/out/sbom-image.spdx.json',
       '-q'
     ]);
@@ -363,7 +363,7 @@ try {
       '-v', '//var/run/docker.sock:/var/run/docker.sock',
       '-v', `${sbomDirPosix}:/out`,
       SYFT_IMAGE,
-      IMAGE_TAG,
+      imageId,
       '-o', 'cyclonedx-json=/out/sbom-image.cdx.json',
       '-q'
     ]);
