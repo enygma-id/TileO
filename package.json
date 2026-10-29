@@ -19,7 +19,7 @@
     "notices": "node scripts/generate-third-party-notices.js",
     "version:show": "npm pkg get version",
     "release:candidate": "node scripts/prepare-release.js --version 0.1.0",
-    "test": "npm run build && node --test dist/tests/*.test.js && node scripts/test-source-access.js",
+    "test": "npm run build && node --test dist/tests/*.test.js && node scripts/test-source-access.js && node scripts/test-ca-rebuild.js",
     "test:browser": "playwright test",
     "release:gate": "node scripts/release-gate.js"
   },

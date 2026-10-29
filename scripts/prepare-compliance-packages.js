@@ -8,6 +8,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseArgs, TAR_EXECUTABLE } from './lib/release-evidence.js';
 import { sourceAccess } from './lib/release-assets.js';
+import { rebuildCa } from './lib/ca-rebuild.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
@@ -130,18 +131,7 @@ function verifyCaBundle(sourceArchive, aportDir, expectedSha256) {
   try {
     fs.copyFileSync(sourceArchive, path.join(work, path.basename(sourceArchive)));
     fs.cpSync(aportDir, path.join(work, 'aport'), { recursive: true });
-    const sourceName = path.basename(sourceArchive);
-    const command = [
-      'set -eu',
-      'apk add --no-cache perl patch make >/dev/null',
-      `tar -xjf /work/${sourceName} -C /work`,
-      'src=$(find /work -mindepth 1 -maxdepth 1 -type d -name "ca-certificates-*" | head -n1)',
-      'for p in /work/aport/*.patch; do [ -e "$p" ] || continue; patch -d "$src" -p1 < "$p"; done',
-      'make -C "$src" certdata.stamp >/dev/null',
-      'cd "$src"',
-      'find -- *.crt | sort | while read -r i; do cat "$i"; printf "\\n"; done > /work/generated-ca-certificates.crt',
-    ].join('; ');
-    execFileSync('docker', ['run', '--rm', '--mount', `type=bind,source=${work},target=/work`, ALPINE_IMAGE, 'sh', '-lc', command], { stdio: 'inherit' });
+    rebuildCa(work, path.basename(sourceArchive), ALPINE_IMAGE);
     const generated = path.join(work, 'generated-ca-certificates.crt');
     const actual = digest(generated);
     if (actual !== expectedSha256) throw new Error(`CA bundle rebuilt from authentic source is ${actual}, image contains ${expectedSha256}`);
