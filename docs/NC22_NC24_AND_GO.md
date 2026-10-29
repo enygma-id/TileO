@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # Kerjakan sendiri: proof NC22–NC24 sampai GO
 
 Jalankan setiap langkah terpisah. **Jika gagal, berhenti dan simpan log.**
@@ -124,3 +125,133 @@ Release, image/core identity, proof ZIP, raw logs dan checksum.
 Jika run produksi gagal, ambil artifact `tileo-0.1.0-publication-attempt` jika
 tersedia. Status partial/failed tetap dicatat; jangan overwrite assets atau
 menyatakan GO/release selesai dengan edit JSON.
+=======
+# TileO 0.1.0 — urutan NC22–NC24 sampai GO
+
+Kerjakan berurutan. Jika gagal, simpan log dan perbaiki sebelum lanjut.
+Mac Erick dan WSL Dony sama-sama bisa dipakai; jalankan perintah dari folder
+checkout TileO. Checker proteksi tidak membutuhkan Docker.
+
+## 1. Erick (Admin) — atur dan periksa proteksi
+
+Login sebagai `erickkarya`. Atur classic protection `main` dan environment
+sesuai [petunjuk konfigurasi](FINAL_REAUDIT_SELF_SERVICE.md).
+Pertahankan Prevent self-review. Jalankan:
+
+```bash
+gh api user --jq .login
+gh repo view enygma-id/TileO --json viewerPermission --jq .viewerPermission
+TILEO_ADMIN_DIR="$(mktemp -d /tmp/tileo-admin.XXXXXXXX)"
+node scripts/check-release-protections.js --out-dir "$TILEO_ADMIN_DIR/check" --write-policy
+```
+
+**Lanjut jika:** akun benar, akses Admin/token sesuai, hasil
+`PROTECTIONS_VERIFIED` dan exit 0. Jika 404, periksa rule serta izin token.
+Jangan mengedit status policy menjadi CONFIGURED sendiri.
+
+## 2. Erick dan Dony — masukkan policy melalui PR
+
+Erick membuat PR perubahan `release-policy/reviewers.json`; Dony meninjau.
+Merge setelah aturan PR terpenuhi. Gunakan checkout bersih dari commit main
+hasil merge untuk langkah berikutnya. Approval PR belum menjadi approval image.
+
+**Lanjut jika:** policy terverifikasi sudah ada di main.
+
+## 3. Erick (Admin) — siapkan GitHub App
+
+Pasang App untuk repo TileO dengan Actions Read/write dan Metadata Read.
+Siapkan installation token sesuai [petunjuk App](HUMAN_APPROVAL_TO_GO.md).
+Simpan token/private key secara rahasia. App hanya memicu run.
+Erick melakukan langkah berikut:
+
+1. Login GitHub sebagai erickkarya.
+2. Buka foto profil → Settings → Developer settings → GitHub Apps → New GitHub App.
+3. Isi:
+   - App name: nama unik, misalnya TileO Release Operator.
+   - Homepage URL: https://github.com/enygma-id/TileO.
+   - Webhook → Active: hilangkan centang karena App ini hanya dipakai untuk memicu workflow.
+   - Repository permissions → Actions: Read and write.
+   - Metadata: Read-only.
+   - Izin lain biarkan tanpa akses.
+4. Klik Create GitHub App. App boleh dimiliki akun pribadi Erick; kepemilikan organisasi memerlukan hak yang sesuai. Panduan pendaftaran GitHub App (https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app)
+5. Pada halaman App, pilih Install App, pilih organisasi enygma-id, lalu Only select repositories → TileO → Install. Jika organisasi meminta persetujuan pemilik, pemilik organisasi perlu menyetujuinya.
+6. Kembali ke pengaturan App:
+   - Catat App ID.
+   - Klik Generate a private key dan simpan file .pem secara rahasia.
+   - Catat Installation ID dari URL halaman instalasinya.
+
+File .pem belum merupakan installation token. File itu digunakan untuk membuat JWT, lalu meminta installation token melalui API GitHub. Installation token inilah yang dimasukkan pada perintah read -rs; token tersebut berlaku satu jam. Panduan token instalasi (https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app)
+
+
+**Lanjut jika:** installation token App tersedia.
+
+## 4. Dony (melalui App) — mulai dry run
+
+```bash
+read -rs -p "Installation token App: " TILEO_APP_TOKEN
+echo
+GH_TOKEN="$TILEO_APP_TOKEN" gh workflow run release.yml --repo enygma-id/TileO --ref main -f publish=false -f push_latest=false
+unset TILEO_APP_TOKEN
+gh run list --repo enygma-id/TileO --workflow release.yml --limit 5
+```
+
+Catat ID run baru. Pastikan actor adalah App, commit main benar, attempt 1.
+Actions membangun dan menguji kandidat; tunggu permintaan review.
+
+## 5. Dony → Erick → Dony — review dry run
+
+Buka Actions → run baru → Review deployments. Tinjau bukti dahulu, lalu
+gunakan candidate ID/core digest aktual dengan
+[format komentar approval](HUMAN_APPROVAL_TO_GO.md).
+
+| Urutan | Siapa | Environment / keputusan |
+|---|---|---|
+| 1 | Dony | release-engineering: Engineering dan scope Compare |
+| 2 | Erick | release-legal: hak, source dan tiga exception |
+| 3 | Dony | release: keputusan Release Steward |
+
+Jika review ditolak, perbaiki penyebabnya. Sesudah ketiganya diterima, Actions
+otomatis menjalankan actual NC22–NC24 dan mengunggah proof.
+
+## 6. Dony (Maintainer) — validasi proof
+
+Gunakan checkout commit/policy yang sama dengan dry run:
+
+```bash
+read -r -p "ID dry run: " TILEO_DRY_RUN_ID
+gh run watch "$TILEO_DRY_RUN_ID" --repo enygma-id/TileO --exit-status
+TILEO_PROOF_DIR="$(mktemp -d /tmp/tileo-proof.XXXXXXXX)"
+gh run download "$TILEO_DRY_RUN_ID" --repo enygma-id/TileO --name tileo-0.1.0-core-evidence --dir "$TILEO_PROOF_DIR/core"
+node scripts/verify-approval-negative-proof.js --candidate "$TILEO_PROOF_DIR/core/candidate.json" --run-id "$TILEO_DRY_RUN_ID" --out-dir "$TILEO_PROOF_DIR/validated"
+```
+
+**Lanjut jika:** run sukses, validator exit 0 dan
+`NEGATIVE_PROOF_VALIDATED_NOT_AUTHORIZATION`. Simpan bukti dan URL run.
+Proof maksimal tujuh hari; perubahan source/policy memerlukan proof baru.
+
+## 7. Dony (melalui App) — mulai produksi setelah siap publikasi
+
+Buat run baru pada commit main yang sama:
+`publish=true`, `push_latest=false`, `negative_proof_run_id=ID_DRY_RUN`.
+Gunakan installation token App seperti langkah 4.
+
+**Run ini dapat membuat tag, Release dan push image setelah seluruh gate lulus.**
+
+## 8. Dony → Erick → Dony — review kandidat produksi
+
+Ulangi urutan langkah 5 menggunakan candidate/core/image produksi yang baru.
+Approval dry run tidak diwariskan. Jangan rebuild setelah approval.
+
+**GO:** Actions harus menerima seluruh gate teknis G1–G6, approval asli G7,
+proof tepercaya G8, dan menghasilkan authorization serta authorized closure
+untuk kandidat produksi yang sama. Pending/gagal berarti belum GO.
+
+## 9. Dony dan Erick — periksa hasil publikasi
+
+Actions memverifikasi source publik anonim sebelum image push dan verifikasi
+penuh sesudah push. Rilis selesai hanya jika receipt `PUBLISHED_VERIFIED`.
+
+Simpan authorized closure, proof, approvals, receipts, checksum, identitas
+commit/core/image, URL Actions dan Release. Jika gagal, catat command, exit
+code dan log; jangan mengganti hasil secara manual.
+>>>>>>> Stashed changes
