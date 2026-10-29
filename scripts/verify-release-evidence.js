@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { verifyFinalSbom } from './lib/final-sbom.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -59,6 +60,7 @@ if (provenance.audit_artifacts?.['sbom-image.spdx.json'] !== sha256File(spdxPath
 
 const inventory = readJson(path.join(evidence, 'image/rootfs-files.json'), 'tileo-rootfs-inventory@1');
 if (inventory.image_id !== image.id || !Array.isArray(inventory.files) || inventory.files.length === 0) throw new Error('Rootfs inventory is empty or bound to another image');
+if (JSON.stringify(readJson(path.join(evidence,'sbom/final-verification.json'))) !== JSON.stringify(verifyFinalSbom(evidence))) throw new Error('Post-scanner final SBOM verification record mismatch');
 if (inventory.files.some((entry) => entry.type === 'file' && (!/^[0-9a-f]{64}$/.test(entry.sha256) || !entry.classification))) throw new Error('Rootfs inventory contains unclassified or unhashed files');
 const inventoryText = JSON.stringify(inventory);
 for (const forbidden of ['PVRTexToolCLI', 'texture-compressor', 'astcenc']) if (inventoryText.includes(forbidden)) throw new Error(`Forbidden runtime payload found: ${forbidden}`);

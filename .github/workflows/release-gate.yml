@@ -32,12 +32,9 @@ jobs:
       - name: Install dependencies (ci)
         run: npm ci
 
-      - name: Generate notices and SBOM baseline artifacts
+      - name: Verify committed notices (final image SBOM belongs to protected release)
         run: |
-          npm run notices
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
-          syft . -o spdx-json=baseline/sbom.spdx.json -q
-          syft . -o cyclonedx-json=baseline/sbom.cyclonedx.json -q
+          node scripts/check-notice-parity.js
 
       - name: Run 5-stage automated release gate
         run: npm run release:gate

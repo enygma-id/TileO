@@ -1,16 +1,16 @@
 {
   "schema": "tileo-reviewers-policy@1",
   "repository": "enygma-id/TileO",
-  "status": "PENDING_HUMAN_CONFIGURATION",
+  "status": "PENDING_LIVE_PROTECTION_VERIFICATION",
   "environments": {
-    "release-engineering": { "role": "Engineering", "environment_id": null, "authorized_reviewers": [] },
-    "release-legal": { "role": "Legal-IP", "environment_id": null, "authorized_reviewers": [] },
-    "release": { "role": "Release-Steward", "environment_id": null, "authorized_reviewers": [] }
+    "release-engineering": { "role": "Engineering", "environment_id": 25648334569, "authorized_reviewers": [56543110] },
+    "release-legal": { "role": "Legal-IP", "environment_id": 25648385174, "authorized_reviewers": [58256885] },
+    "release": { "role": "Release-Steward", "environment_id": 25436365187, "authorized_reviewers": [56543110] }
   },
   "requirements": {
     "distinct_engineering_and_legal_identities": true,
     "prevent_self_review": true,
     "admin_bypass_disabled": true
   },
-  "note": "Repository administrators must replace null/empty values with authenticated GitHub environment and reviewer IDs before a production candidate can be authorized."
+  "note": "Owner confirmed Engineering/Steward=donyariefianto (56543110), Legal-IP=erickkarya (58256885). IDs verified through public GitHub API. Live required-reviewer/self-review/admin/branch protections still require administrator configuration and verification; this is not image/core approval. A distinct operator or App must dispatch because self-review is prohibited."
 }

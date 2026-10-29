@@ -120,6 +120,7 @@ export function atomicWrite(file, content) {
 }
 
 export const CORE_REQUIRED_PATHS = [
+  'sbom/final-verification.json',
   'candidate.json',
   'source/source-baseline.json',
   'source/source-export-manifest.json',

@@ -13,6 +13,11 @@ on:
         required: false
         type: boolean
         default: false
+      negative_proof_run_id:
+        description: Successful publish=false proof run on this exact commit (required for publish=true)
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -68,7 +73,9 @@ jobs:
       - name: Bind candidate metadata
         run: node scripts/prepare-candidate-metadata.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --image-export /tmp/tileo-export/tileo-0.1.0-image.tar.gz --build-stdout /tmp/tileo-build/stdout.log --build-stderr /tmp/tileo-build/stderr.log
       - name: Regenerate final-image inventory and SBOM
-        run: node scripts/audit-image.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/image"
+        run: |
+          node scripts/audit-image.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/image"
+          node scripts/verify-final-sbom.js --evidence-dir "$TILEO_EVIDENCE"
       - name: Build and verify corresponding source against image bytes
         run: |
           node scripts/prepare-compliance-packages.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
@@ -100,6 +107,7 @@ jobs:
           node scripts/verify-release-evidence.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json"
           node scripts/build-release-closure-package.js --evidence-dir "$TILEO_EVIDENCE" --authorization-dir /tmp/tileo-authorization --out-dir /tmp/tileo-closure
           echo "### Candidate review subject" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Each reviewer must include the candidate/core digest below and their real decision: Engineering COMPARE_SCOPE=ACCEPT_EXCLUSION; Legal-IP RIGHTS=APPROVE EXCEPTIONS=EXC-001,EXC-002,EXC-003; Release Steward REVIEW=ACCEPT. Do not approve if the actual review rejects scope or rights.' >> "$GITHUB_STEP_SUMMARY"
           node -e "const fs=require('fs'),c=require('./release-evidence/v0.1.0/candidate.json'),crypto=require('crypto'),m=fs.readFileSync('./release-evidence/v0.1.0/core-evidence-manifest.json'); console.log('- Candidate: '+c.candidate_id+'\n- Commit: '+c.commit+'\n- Image: '+c.image_id+'\n- Core evidence SHA-256: '+crypto.createHash('sha256').update(m).digest('hex'))" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -158,6 +166,9 @@ jobs:
     needs: legal
     runs-on: ubuntu-latest
     environment: release
+    env:
+      TILEO_PUBLISH: ${{ inputs.publish }}
+      NEGATIVE_PROOF_RUN_ID: ${{ inputs.negative_proof_run_id }}
     permissions:
       actions: read
       contents: write
@@ -171,16 +182,43 @@ jobs:
         with: { name: tileo-0.1.0-core-evidence, path: release-evidence/v0.1.0 }
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with: { name: tileo-0.1.0-candidate-image, path: /tmp/tileo-export }
-      - name: Collect authenticated review history and certify
+      - name: Collect authenticated review history
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p /tmp/tileo-authorization /tmp/tileo-final
           gunzip -c /tmp/tileo-export/tileo-0.1.0-image.tar.gz | docker load
           node scripts/collect-human-approvals.js --run-id "$GITHUB_RUN_ID" --run-attempt "$GITHUB_RUN_ATTEMPT" --candidate "$TILEO_EVIDENCE/candidate.json" --output /tmp/tileo-authorization/authorization.json
-          node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-authorization --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json
+      - name: Actual NC22–NC24 rejection tests on isolated attack inputs
+        if: ${{ !inputs.publish }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/run-approval-negative-controls.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-negative-proof
+      - name: Upload successful protected negative proof
+        if: ${{ success() && !inputs.publish }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-approval-negative-proof
+          path: /tmp/tileo-negative-proof
+          retention-days: 30
+          if-no-files-found: error
+      - name: Preserve negative proof diagnostics
+        if: ${{ failure() && !inputs.publish }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-approval-negative-proof-FAILED-DIAGNOSTICS
+          path: /tmp/tileo-negative-proof
+          if-no-files-found: warn
+      - name: Certify production authorization with mandatory trusted negative proof
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test -n "$NEGATIVE_PROOF_RUN_ID"
+          node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-authorization --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json --negative-proof-run-id "$NEGATIVE_PROOF_RUN_ID"
           node scripts/build-release-closure-package.js --evidence-dir "$TILEO_EVIDENCE" --authorization-dir /tmp/tileo-authorization --out-dir /tmp/tileo-final --final
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: inputs.publish
         with:
           name: tileo-0.1.0-authorized-closure
           path: /tmp/tileo-final
@@ -193,6 +231,7 @@ jobs:
           PUSH_LATEST: ${{ inputs.push_latest }}
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-publish-guard --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json --negative-proof-run-id "$NEGATIVE_PROOF_RUN_ID"
           git tag --annotate v0.1.0 "$GITHUB_SHA" --message 'TileO 0.1.0'
           git push origin refs/tags/v0.1.0
           mkdir -p /tmp/tileo-release-assets

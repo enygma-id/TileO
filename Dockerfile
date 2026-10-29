@@ -207,7 +207,6 @@ COPY web /rootfs/app/web
 COPY scripts /rootfs/app/scripts
 COPY THIRD-PARTY-NOTICES.md THIRD_PARTY_NOTICES.md /rootfs/app/
 COPY third-party /rootfs/app/third-party
-COPY baseline /rootfs/app/baseline
 
 # Setup users, permissions, and directories
 RUN echo "node:x:1000:1000:node:/app:/bin/false" > /rootfs/etc/passwd \

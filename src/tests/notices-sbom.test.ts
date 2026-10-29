@@ -61,23 +61,12 @@ test('Geospatial data separation and ODbL boundaries are formally declared', () 
   assert.ok(content.includes('BSD-3-Clause'), 'Must document BSD-3-Clause renderer license');
 });
 
-test('Syft SBOM artifacts are generated and syntactically valid', () => {
-  const baselineDir = path.join(ROOT_DIR, 'baseline');
-  const spdxFile = path.join(baselineDir, 'sbom.spdx.json');
-  const cdxFile = path.join(baselineDir, 'sbom.cyclonedx.json');
-
-  assert.ok(fs.existsSync(spdxFile), 'baseline/sbom.spdx.json must exist');
-  assert.ok(fs.existsSync(cdxFile), 'baseline/sbom.cyclonedx.json must exist');
-
-  const spdx = JSON.parse(fs.readFileSync(spdxFile, 'utf8'));
-  assert.equal(spdx.spdxVersion, 'SPDX-2.3', 'SPDX version must be 2.3');
-  assert.ok(Array.isArray(spdx.packages) && spdx.packages.length > 100, 'SPDX must list packages');
-
-  const cdx = JSON.parse(fs.readFileSync(cdxFile, 'utf8'));
-  assert.equal(cdx.bomFormat, 'CycloneDX', 'BOM format must be CycloneDX');
-  assert.ok(Array.isArray(cdx.components) && cdx.components.length > 100, 'CycloneDX must list components');
+test('Runtime does not distribute superseded baseline evidence', () => {
+  assert.equal(fs.existsSync(path.join(ROOT_DIR, 'baseline')), false);
+  // Final-image SBOM is tested after scanning, outside the image being scanned.
+  // It must not be embedded into its own scan input.
+  if (ROOT_DIR === '/app') assert.equal(fs.existsSync('/app/docs/history'), false);
 });
-
 test('Zero copyleft packages in package-lock.json runtime dependencies', () => {
   const lockPath = path.join(ROOT_DIR, 'package-lock.json');
   const lock = JSON.parse(fs.readFileSync(lockPath, 'utf8'));

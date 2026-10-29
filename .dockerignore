@@ -15,3 +15,5 @@ Release-Audit*.md
 TileO-*-Protocol*.md
 TileO-v*-Release-Closure
 release-evidence
+baseline
+docs/history

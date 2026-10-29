@@ -4,11 +4,13 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { atomicWrite, gitIdentity, inspectImage, parseArgs, readJson, sha256, sha256File } from './lib/release-evidence.js';
+import { requireTrustedProof } from './lib/approval-negative-proof.js';
+import { decisionCommentValid, assertEnvironmentProtection } from './lib/approval-decisions.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
 let options;
-try { options = parseArgs(process.argv.slice(2), { '--image': 'required', '--evidence-dir': 'required', '--out-dir': 'required', '--manifest': 'optional', '--enforce-human-approval': 'boolean', '--approval-attestation': 'optional' }); }
+try { options = parseArgs(process.argv.slice(2), { '--image': 'required', '--evidence-dir': 'required', '--out-dir': 'required', '--manifest': 'optional', '--enforce-human-approval': 'boolean', '--approval-attestation': 'optional', '--negative-proof-run-id': 'optional' }); }
 catch (error) { console.error(error.message); process.exit(2); }
 const evidence = path.resolve(options['evidence-dir']);
 const outDir = path.resolve(options['out-dir']);
@@ -74,6 +76,7 @@ gate('G6_EXCEPTIONS', () => {
 });
 
 let authorization = null;
+let negativeProof = null;
 if (options['enforce-human-approval']) {
   gate('G7_HUMAN', () => {
     if (!options.manifest || !options['approval-attestation']) throw new Error('--manifest and --approval-attestation are required');
@@ -86,17 +89,25 @@ if (options['enforce-human-approval']) {
     for (const role of ['Engineering', 'Legal-IP', 'Release-Steward']) if (!roles.has(role)) throw new Error(`missing authenticated ${role} receipt`);
     const reviewers = readJson(path.join(ROOT, 'release-policy/reviewers.json'), 'tileo-reviewers-policy@1');
     if (reviewers.status !== 'CONFIGURED') throw new Error('reviewer policy is not configured');
+    for(const [name,config] of Object.entries(reviewers.environments)) assertEnvironmentProtection(config,JSON.parse(execFileSync('gh',['api',`repos/${authorization.repository}/environments/${encodeURIComponent(name)}`],{encoding:'utf8'})));
     for (const receipt of authorization.receipts) {
+      if (receipt.decision !== 'APPROVE') throw new Error('receipt decision is not APPROVE');
       const configured = reviewers.environments?.[receipt.environment];
       if (!configured || configured.role !== receipt.role || String(configured.environment_id) !== String(receipt.environment_id) || !configured.authorized_reviewers.map(String).includes(String(receipt.reviewer_user_id))) throw new Error(`receipt reviewer/environment is not authorized for ${receipt.role}`);
       if (!String(receipt.comment).includes(candidate.candidate_id) || !String(receipt.comment).includes(coreDigest)) throw new Error(`receipt comment does not bind candidate/core digest for ${receipt.role}`);
+      if (!decisionCommentValid(receipt.role,receipt.comment)) throw new Error(`missing explicit scope/rights/review decision for ${receipt.role}`);
     }
+    if (new Set(authorization.receipts.map(r=>r.role)).size !== 3 || authorization.receipts.length !== 3 || String(authorization.receipts.find(r=>r.role==='Engineering')?.reviewer_user_id) === String(authorization.receipts.find(r=>r.role==='Legal-IP')?.reviewer_user_id)) throw new Error('Engineering and Legal-IP must be distinct authenticated humans with exact roles');
     const run = JSON.parse(execFileSync('gh', ['api', `repos/${authorization.repository}/actions/runs/${authorization.workflow_run_id}`], { encoding: 'utf8' }));
     const history = JSON.parse(execFileSync('gh', ['api', `repos/${authorization.repository}/actions/runs/${authorization.workflow_run_id}/approvals`], { encoding: 'utf8' }));
     if (run.head_sha !== candidate.commit || String(run.run_attempt) !== String(authorization.run_attempt)) throw new Error('live GitHub run subject mismatch');
     if (String(run.run_attempt) !== '1') throw new Error('authorization replay/rerun is not allowed; use a new workflow run');
     const eventFingerprint = (event) => sha256(JSON.stringify({ state: String(event.state ?? '').toLowerCase(), environment_ids: (event.environments ?? []).map((environment) => String(environment.id)).sort(), reviewer_user_id: String(event.user?.id ?? event.reviewer?.id ?? ''), reviewer_login: event.user?.login ?? event.reviewer?.login ?? null, comment: String(event.comment ?? '') }));
     for (const receipt of authorization.receipts) if (!history.some((event) => eventFingerprint(event) === receipt.event_sha256 && String(event.state).toLowerCase() === 'approved')) throw new Error(`live GitHub approval event missing for ${receipt.role}`);
+  });
+  gate('G8_NEGATIVE_PROOF', () => {
+    negativeProof=requireTrustedProof(ROOT,candidate,options['negative-proof-run-id'],process.env,undefined,outDir);
+    atomicWrite(path.join(outDir,'validated-negative-proof.json'),JSON.stringify(negativeProof,null,2)+'\n');
   });
 } else {
   console.log('PENDING G7_HUMAN: authenticated Engineering, Legal-IP and Release-Steward approvals are required');
@@ -113,6 +124,7 @@ const report = {
   platform: image.platform,
   passed_checks: passed,
   failures,
+  negative_controls_proof: negativeProof,
   human_approval: authorization ? { workflow_run_id: authorization.workflow_run_id, run_attempt: authorization.run_attempt, roles: authorization.receipts.map((receipt) => receipt.role) } : 'PENDING'
 };
 atomicWrite(path.join(outDir, failures.length ? 'eligibility-report.json' : options['enforce-human-approval'] ? 'authorization-report.json' : 'technical-eligibility.json'), JSON.stringify(report, null, 2) + '\n');
@@ -121,5 +133,5 @@ if (!options['enforce-human-approval']) {
   console.log('TECHNICALLY_ELIGIBLE_PENDING_APPROVAL');
   process.exit(0);
 }
-atomicWrite(passPath, JSON.stringify({ schema: 'tileo-release-gate-pass@3', status: 'AUTHORIZED_FOR_PUBLICATION', candidate_id: candidate.candidate_id, version, commit: candidate.commit, image_id: image.id, platform: image.platform, core_evidence_sha256: authorization.core_evidence_sha256, workflow_run_id: authorization.workflow_run_id, run_attempt: authorization.run_attempt, authorized_at: new Date().toISOString() }, null, 2) + '\n');
+atomicWrite(passPath, JSON.stringify({ schema: 'tileo-release-gate-pass@3', status: 'AUTHORIZED_FOR_PUBLICATION', candidate_id: candidate.candidate_id, version, commit: candidate.commit, image_id: image.id, platform: image.platform, core_evidence_sha256: authorization.core_evidence_sha256, workflow_run_id: authorization.workflow_run_id, run_attempt: authorization.run_attempt, negative_controls_proof: negativeProof, authorized_at: new Date().toISOString() }, null, 2) + '\n');
 console.log('AUTHORIZED_FOR_PUBLICATION');

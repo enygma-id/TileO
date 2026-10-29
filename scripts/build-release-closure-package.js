@@ -6,6 +6,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { atomicWrite, listFiles, parseArgs, readJson, relativeSafe, sha256File, TAR_EXECUTABLE } from './lib/release-evidence.js';
+import { fetchTrustedProof } from './lib/approval-negative-proof.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
@@ -28,6 +29,10 @@ if (options.final && !fs.existsSync(passFile)) throw new Error('--final requires
 if (fs.existsSync(passFile)) {
   const pass = readJson(passFile, 'tileo-release-gate-pass@3');
   if (pass.status !== 'AUTHORIZED_FOR_PUBLICATION' || pass.candidate_id !== candidate.candidate_id || pass.core_evidence_sha256 !== sha256File(path.join(evidence, 'core-evidence-manifest.json'))) throw new Error('Authorization PASS does not match frozen core evidence');
+  if (process.env.GITHUB_ACTIONS !== 'true' || process.env.TILEO_PUBLISH !== 'true' || String(pass.workflow_run_id) !== process.env.GITHUB_RUN_ID || String(pass.run_attempt) !== process.env.GITHUB_RUN_ATTEMPT) throw new Error('Final package requires current protected production run authorization');
+  const verified = fetchTrustedProof(ROOT,candidate,pass.negative_controls_proof?.run_id,process.env.GITHUB_RUN_ID);
+  if (JSON.stringify(verified)!==JSON.stringify(pass.negative_controls_proof)) throw new Error('Final package NC22–NC24 proof binding mismatch');
+  if (`sha256:${sha256File(path.join(authorization,`negative-proof-${verified.run_id}.zip`))}`!==verified.artifact_digest) throw new Error('Archived negative proof bytes differ from trusted GitHub artifact');
 }
 fs.mkdirSync(out, { recursive: true });
 const staging = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-closure-'));

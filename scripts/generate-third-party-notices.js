@@ -25,8 +25,7 @@ const NATIVE_FILE = path.join(ROOT, 'third-party', 'native', 'components.json');
 const OUTPUT_FILE = process.env.TILEO_NOTICES_OUTPUT
   ? path.resolve(process.env.TILEO_NOTICES_OUTPUT)
   : path.join(ROOT, 'THIRD-PARTY-NOTICES.md');
-const BASELINE_FILE = path.join(ROOT, 'baseline', 'THIRD-PARTY-NOTICES.md');
-const writeBaseline = process.argv.includes('--baseline');
+if (process.argv.includes('--baseline')) throw new Error('--baseline is retired; superseded audit history is not regenerated release evidence');
 
 function sha256(buffer) {
   return crypto.createHash('sha256').update(buffer).digest('hex');
@@ -257,10 +256,6 @@ function main() {
 
   const output = lines.join('\n');
   fs.writeFileSync(OUTPUT_FILE, output, 'utf8');
-  if (writeBaseline) {
-    fs.mkdirSync(path.dirname(BASELINE_FILE), { recursive: true });
-    fs.writeFileSync(BASELINE_FILE, output, 'utf8');
-  }
   console.log(`Generated ${OUTPUT_FILE} (${packages.length} npm entries, ${native.components.length} native components, ${formatBytes(Buffer.byteLength(output))}).`);
   if (runtimeMetadataOnly.length > 0) {
     console.warn(`Review required: ${runtimeMetadataOnly.length} runtime npm entries have metadata-only notice evidence.`);

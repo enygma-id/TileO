@@ -4,6 +4,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { atomicWrite, parseArgs, readJson, sha256, sha256File } from './lib/release-evidence.js';
+import { decisionCommentValid, assertEnvironmentProtection } from './lib/approval-decisions.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let options;
@@ -28,6 +29,7 @@ for (const environment of policy.required_approval_environments) {
 function gh(endpoint) {
   return JSON.parse(execFileSync('gh', ['api', endpoint], { cwd: ROOT, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 }));
 }
+for(const [name,config] of Object.entries(reviewers.environments)) assertEnvironmentProtection(config,gh(`repos/${policy.repository}/environments/${encodeURIComponent(name)}`));
 const run = gh(`repos/${policy.repository}/actions/runs/${options['run-id']}`);
 if (String(run.run_attempt) !== options['run-attempt'] || run.head_sha !== candidate.commit || run.repository?.full_name !== policy.repository) throw new Error('GitHub run repository, commit or attempt does not match candidate');
 const history = gh(`repos/${policy.repository}/actions/runs/${options['run-id']}/approvals`);
@@ -39,7 +41,7 @@ for (const [environmentName, configured] of Object.entries(reviewers.environment
     const environmentIds = (event.environments ?? []).map((environment) => String(environment.id));
     const userId = String(event.user?.id ?? event.reviewer?.id ?? '');
     const comment = String(event.comment ?? '');
-    return String(event.state).toLowerCase() === 'approved' && environmentIds.includes(String(configured.environment_id)) && configured.authorized_reviewers.map(String).includes(userId) && comment.includes(candidate.candidate_id) && comment.includes(coreDigest);
+    return String(event.state).toLowerCase() === 'approved' && environmentIds.includes(String(configured.environment_id)) && configured.authorized_reviewers.map(String).includes(userId) && comment.includes(candidate.candidate_id) && comment.includes(coreDigest) && decisionCommentValid(configured.role,comment);
   });
   if (!match) throw new Error(`No authenticated ${configured.role} approval binds ${candidate.candidate_id} and ${coreDigest}`);
   receipts.push({ role: configured.role, environment: environmentName, environment_id: configured.environment_id, reviewer_login: match.user?.login ?? match.reviewer?.login, reviewer_user_id: match.user?.id ?? match.reviewer?.id, decision: 'APPROVE', comment: match.comment, event_sha256: eventFingerprint(match) });
