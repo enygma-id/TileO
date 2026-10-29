@@ -85,6 +85,14 @@ jobs:
           node scripts/record-test-results.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/tests"
           node scripts/record-browser-results.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
           node scripts/generate-image-notice-paths.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/image"
+      - name: Preserve failed candidate diagnostics
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-candidate-FAILED-DIAGNOSTICS
+          path: release-evidence/v0.1.0
+          retention-days: 30
+          if-no-files-found: warn
       - name: Execute fail-closed negative controls
         run: |
           export TILEO_COMMIT="$GITHUB_SHA"

@@ -54,7 +54,23 @@ try {
   const skippedTests = tests.filter((test) => test.expected_status === 'skipped' || test.actual_status === 'skipped').map((test) => test.title).sort();
   const execution = { schema: 'tileo-browser-execution@1', image_id: image.id, platform: image.platform, url: 'http://127.0.0.1:8091', command: { executable: npx, arguments: ['playwright', 'test', '--reporter=json'] }, gdal_fixture_tool: gdalVersion, exit_code: result.status ?? 1, expected: stats.expected ?? 0, failed: stats.unexpected ?? 0, flaky: stats.flaky ?? 0, skipped: stats.skipped ?? 0, duration_ms: stats.duration ?? null, tests, skipped_tests: skippedTests };
   atomicWrite(path.join(out, 'execution.json'), JSON.stringify(execution, null, 2) + '\n');
-  if (execution.exit_code !== 0 || execution.failed > 0 || execution.expected === 0) process.exitCode = execution.exit_code || 1;
+  if (execution.exit_code !== 0 || execution.failed > 0 || execution.expected === 0) {
+    console.error(`Browser tests FAILED: exit=${execution.exit_code}, expected=${execution.expected}, failed=${execution.failed}, flaky=${execution.flaky}, skipped=${execution.skipped}`);
+    if (result.stderr) console.error(result.stderr);
+    if (result.error) console.error(result.error.message);
+    for (const error of report.errors ?? []) console.error(error.message ?? JSON.stringify(error));
+    const printErrors = (suite) => {
+      for (const spec of suite.specs ?? []) for (const test of spec.tests ?? []) {
+        for (const attempt of test.results ?? []) for (const error of attempt.errors ?? []) {
+          console.error(`${spec.file}: ${spec.title}: ${error.message ?? JSON.stringify(error)}`);
+        }
+      }
+      for (const child of suite.suites ?? []) printErrors(child);
+    };
+    for (const suite of report.suites ?? []) printErrors(suite);
+    console.error(`Raw browser evidence: ${out}`);
+    process.exitCode = execution.exit_code || 1;
+  }
   else console.log(`Browser tests completed: expected=${execution.expected}, skipped=${execution.skipped}, failed=${execution.failed}`);
 } finally {
   const serverLogs = spawnSync('docker', ['logs', container], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
