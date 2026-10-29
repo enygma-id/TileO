@@ -79,7 +79,14 @@ jobs:
           node scripts/record-browser-results.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
           node scripts/generate-image-notice-paths.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/image"
       - name: Execute fail-closed negative controls
-        run: node scripts/test-negative-controls.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
+        run: |
+          export TILEO_COMMIT="$GITHUB_SHA"
+          export TILEO_RUN="$RUNNER_TEMP/tileo-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          export TILEO_IMAGE_ID=$(docker image inspect --format '{{.Id}}' "$TILEO_IMAGE")
+          mkdir -p "$TILEO_RUN"
+          python3 scripts/record-compose-smoke.py
+          python3 scripts/prepare-preclosure-report.py
+          node scripts/test-negative-controls.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
       - name: Finalize candidate provenance after all collectors
         run: node scripts/finalize-release-provenance.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
       - name: Technical certification
@@ -88,6 +95,7 @@ jobs:
           node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-authorization
           cp /tmp/tileo-authorization/technical-eligibility.json "$TILEO_EVIDENCE/gate/technical-eligibility.json"
           node scripts/create-release-closure-report.js --evidence-dir "$TILEO_EVIDENCE"
+          node scripts/finalize-release-provenance.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
           node scripts/create-release-manifest.js --evidence-dir "$TILEO_EVIDENCE" --output "$TILEO_EVIDENCE/core-evidence-manifest.json"
           node scripts/verify-release-evidence.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json"
           node scripts/build-release-closure-package.js --evidence-dir "$TILEO_EVIDENCE" --authorization-dir /tmp/tileo-authorization --out-dir /tmp/tileo-closure
@@ -197,7 +205,9 @@ jobs:
           cp "$TILEO_EVIDENCE/sbom/sbom-image.spdx.json" /tmp/tileo-release-assets/
           cp "$TILEO_EVIDENCE/sbom/sbom-image.cdx.json" /tmp/tileo-release-assets/
           (cd /tmp/tileo-release-assets && sha256sum * > SHA256SUMS)
+          node scripts/validate-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --assets-dir /tmp/tileo-release-assets --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --output /tmp/tileo-staged-assets.json
           gh release create v0.1.0 /tmp/tileo-release-assets/* --verify-tag --title 'TileO 0.1.0' --notes-file "$TILEO_EVIDENCE/release/release-notes.md"
+          node scripts/verify-public-source-access.js --candidate "$TILEO_EVIDENCE/candidate.json" --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-source-access
           echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           docker tag "$TILEO_IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:0.1.0"
           docker push "ghcr.io/${GITHUB_REPOSITORY,,}:0.1.0"
@@ -205,7 +215,7 @@ jobs:
             docker tag "$TILEO_IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
             docker push "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
           fi
-          node scripts/verify-published-release.js --repo "$GITHUB_REPOSITORY" --tag v0.1.0 --candidate "$TILEO_EVIDENCE/candidate.json" --out-dir /tmp/tileo-publication
+          node scripts/verify-published-release.js --repo "$GITHUB_REPOSITORY" --tag v0.1.0 --candidate "$TILEO_EVIDENCE/candidate.json" --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-publication
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: inputs.publish
         with:
@@ -213,3 +223,13 @@ jobs:
           path: /tmp/tileo-publication
           retention-days: 90
           if-no-files-found: error
+      - name: Preserve publication attempt receipts even after partial failure
+        if: always() && inputs.publish
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-0.1.0-publication-attempt
+          path: |
+            /tmp/tileo-staged-assets.json
+            /tmp/tileo-source-access/*.json
+            /tmp/tileo-publication/**/*.json
+          if-no-files-found: warn

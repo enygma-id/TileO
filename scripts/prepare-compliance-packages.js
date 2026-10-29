@@ -7,6 +7,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { parseArgs, TAR_EXECUTABLE } from './lib/release-evidence.js';
+import { sourceAccess } from './lib/release-assets.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).version;
@@ -205,6 +206,11 @@ try {
     'MIT.txt': 'third-party/licenses/native/musl/COPYING.txt',
   };
   for (const [name, source] of Object.entries(noticeSources)) fs.copyFileSync(path.join(ROOT, source), path.join(noticesDir, name));
+  const caMembers = execFileSync(TAR_EXECUTABLE, ['-tjf', caSource], { encoding: 'utf8' }).trim().split('\n');
+  const converter = caMembers.find(name => name.endsWith('/mk-ca-bundle.pl'));
+  if (!converter) throw new Error('Authentic CA archive lacks converter notices');
+  fs.writeFileSync(path.join(noticesDir, 'CA-converter-mk-ca-bundle.pl.txt'), execFileSync(TAR_EXECUTABLE, ['-xOjf', caSource, converter]));
+  fs.writeFileSync(path.join(noticesDir, 'COMPONENTS.md'), '# Component notices\n\nMPL-2.0.txt covers Mozilla certdata. CA-converter-mk-ca-bundle.pl.txt preserves the actual converter copyright/license header from the verified source. MIT.txt is the musl notice, not a substitute for the CA converter notice. Distribution recipes and patches are included in the corresponding-source archives.\n');
 
   const rows = [
     ['EXC-001', 'libstdc++', target.stdcxxPackage, 'Alpine Linux', '/usr/lib/libstdc++.so.6', 'GPL-3.0-only WITH GCC-exception-3.1', target.libstdcxxSha256, 'source/gcc-runtime-corresponding-source.tar.gz', gccArchiveSha256, GCC.aportsCommit],
@@ -219,6 +225,7 @@ try {
   const provenance = {
     schema: 'tileo-source-provenance@3', generated_at: new Date().toISOString(),
     target_image: { tag: image, id: target.id }, legal_approval: 'PENDING',
+    packages: { libstdcxx: target.stdcxxPackage, libgcc: target.gccPackage, ca: target.caPackage },
     archives: {
       'source/gcc-runtime-corresponding-source.tar.gz': gccArchiveSha256,
       'source/mozilla-ca-bundle-source.tar.gz': caArchiveSha256,
@@ -228,7 +235,7 @@ try {
   fs.writeFileSync(path.join(out, 'reviewed-license-decision.md'), '# TileO disclosed exceptions\n\nTechnical source verification: **PASS**\n\nLegal/IP approval: **PENDING**\n\nNo release authorization is granted by this generated file.\n');
   fs.copyFileSync(path.join(ROOT, 'THIRD-PARTY-NOTICES.md'), path.join(customerDir, 'THIRD-PARTY-NOTICES.md'));
   fs.copyFileSync(path.join(ROOT, 'third-party', 'ENTERPRISE_EXCEPTIONS.md'), path.join(customerDir, 'THIRD-PARTY-EXCEPTIONS.md'));
-  fs.writeFileSync(path.join(customerDir, 'SOURCE-ACCESS.md'), `# TileO 0.1.0 corresponding source\n\nThese files accompany the exact candidate image ${target.id}. They must be published or delivered with that binary after human authorization.\n\n- GCC runtime: \`../source/gcc-runtime-corresponding-source.tar.gz\` (SHA-256 ${gccArchiveSha256})\n- Mozilla CA bundle: \`../source/mozilla-ca-bundle-source.tar.gz\` (SHA-256 ${caArchiveSha256})\n\nLegal/IP approval and the final public download URLs remain pending.\n`);
+  fs.writeFileSync(path.join(customerDir, 'SOURCE-ACCESS.md'), sourceAccess(JSON.parse(fs.readFileSync(path.join(evidenceRoot, 'candidate.json'))), provenance));
   fs.writeFileSync(path.join(customerDir, 'delivery-manifest.json'), JSON.stringify({ schema: 'tileo-customer-delivery@2', version, legal_approval: 'PENDING', source_archives: provenance.archives }, null, 2) + '\n');
   console.log(`Authentic corresponding source prepared for ${target.id}; Legal/IP approval remains PENDING.`);
 } finally {

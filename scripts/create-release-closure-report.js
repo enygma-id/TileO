@@ -41,6 +41,10 @@ No tag, GitHub Release, or GHCR production tag has been created by this engineer
 
 ## Evidence checksums
 
+- PUB-01: generated versioned source-access routes and closure paths finalized before core freeze.
+- PUB-02: staging and uploaded asset validation must match this frozen core; runtime publication pending until a separate receipt exists.
+- PUB-03: anonymous source-access verification is required before registry push; full verification is required afterward. Receipts are stored outside this core. No live publication PASS is asserted by this report.
+
 - GCC corresponding source: \`${sha256File(path.join(evidence, 'compliance/source/gcc-runtime-corresponding-source.tar.gz'))}\`
 - Mozilla CA source: \`${sha256File(path.join(evidence, 'compliance/source/mozilla-ca-bundle-source.tar.gz'))}\`
 - SPDX SBOM: \`${sha256File(path.join(evidence, 'sbom/sbom-image.spdx.json'))}\`
