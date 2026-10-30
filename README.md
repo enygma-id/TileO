@@ -14,6 +14,12 @@
     &nbsp;·&nbsp;
     <a href="#samples">Samples</a>
   </p>
+
+  <p>
+    <a href="https://doi.org/10.5281/zenodo.23799700" title="TileO DOI (all versions)">
+      <img src="https://zenodo.org/badge/1428312673.svg" alt="DOI">
+    </a>
+  </p>
 </div>
 
 # TileO
@@ -201,6 +207,13 @@ See the [AI Acknowledgement](AI_ACKNOWLEDGEMENT.md) for scope and accountability
 | Samples | [Sample catalogue](samples/README.md) · [TileO-Samples-01](samples/TileO-Samples-01/README.md) |
 | AI transparency | [AI Acknowledgement](AI_ACKNOWLEDGEMENT.md) |
 | Third-party licensing and provenance | [Notices](THIRD_PARTY_NOTICES.md) · [Inventory](third-party/DEPENDENCIES.md) · [Release compliance](third-party/RELEASE_GATE.md) |
+
+## Citation
+
+For academic or research use, cite the **specific TileO version** used. See [CITATION.cff](CITATION.cff) for the software citation metadata.
+
+- **TileO v0.1.0 (version-specific DOI):** https://doi.org/10.5281/zenodo.23799701
+- **TileO (all versions; concept DOI):** https://doi.org/10.5281/zenodo.23799700
 
 ## Contributing
 
