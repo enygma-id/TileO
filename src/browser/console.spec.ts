@@ -7,16 +7,27 @@ test('English console uploads, converts with Tippecanoe, previews and rejects in
   await expect(page.locator('#connection')).toContainText('Worker connected', { timeout: 30000 });
   await expect(page.locator('#vector-options-group')).toBeHidden();
   await expect(page.locator('#raster-options-group')).toBeHidden();
+  // Inspection is serialized server-side. Finish the deliberately invalid TIFF
+  // before selecting the next dataset, rather than aborting its browser request
+  // while GDAL still holds the server upload slot.
+  const invalidInspection = page.waitForResponse(response =>
+    response.request().method() === 'POST' && response.url().includes('/api/inspect?filename=image.tif'));
   await page.locator('#file').setInputFiles({ name: 'image.tif', mimeType: 'image/tiff', buffer: Buffer.from('test') });
   await expect(page.locator('#file-info')).toContainText('image.tif');
   await expect(page.locator('#vector-options-group')).toBeHidden();
   await expect(page.locator('#raster-options-group')).toBeVisible();
+  expect((await invalidInspection).ok()).toBeFalsy();
+  await expect(page.locator('#upload-status')).toBeHidden();
   await page.locator('#clear-file').click();
   await expect(page.locator('#file-info')).toBeHidden();
   await expect(page.locator('#raster-options-group')).toBeHidden();
   await expect(page.locator('#file')).toHaveValue('');
   const file = { name: `browser-${Date.now()}.geojson`, mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ type: 'FeatureCollection', features: [{ type: 'Feature', properties: { name: 'Test point' }, geometry: { type: 'Point', coordinates: [119.4,-5.15] } }] })) };
+  const vectorInspection = page.waitForResponse(response =>
+    response.request().method() === 'POST' && response.url().includes(`/api/inspect?filename=${file.name}`));
   await page.locator('#file').setInputFiles(file);
+  expect((await vectorInspection).ok()).toBeTruthy();
+  await expect(page.getByRole('button', { name: 'Create tile job' })).toBeEnabled();
   await expect(page.locator('#vector-options-group')).toBeVisible();
   await expect(page.locator('#raster-options-group')).toBeHidden();
   await page.locator('#max-zoom').fill('4');
