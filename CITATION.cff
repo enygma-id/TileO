@@ -4,6 +4,8 @@ message: "If you use TileO in research, publications, or software development, p
 
 type: software
 title: "TileO"
+version: "0.1.0"
+doi: "10.5281/zenodo.23799701"
 
 authors:
   - family-names: "Karya"
