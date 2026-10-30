@@ -51,3 +51,20 @@ test('SA06 registry failure after source success remains partial', () => {
   const workflow = fs.readFileSync(new URL('../.github/workflows/release.yml', import.meta.url), 'utf8');
   assert.ok(workflow.indexOf('node scripts/verify-public-source-access.js') < workflow.indexOf('docker push'));
 });
+
+check('actual staging CLI assembles exact assets and preserves previous attempts', f => {
+  const directory=path.join(f.root,'actual-stage');
+  const cli=new URL('./stage-release-assets.js',import.meta.url).pathname;
+  const args=[cli,'--evidence-dir',f.core,'--closure',f.closure,'--out-dir',directory];
+  const output=JSON.parse(execFileSync(process.execPath,args,{encoding:'utf8'}));
+  assert.equal(output.status,'STAGED_ASSETS_VERIFIED_NOT_AUTHORIZATION');
+  assert.equal(Object.keys(output.assets).length,9);
+  validateAssets(f.core,directory,f.closure);
+  const before=sha256File(path.join(directory,'SHA256SUMS'));
+  assert.throws(()=>execFileSync(process.execPath,args,{stdio:'pipe'}));
+  assert.equal(sha256File(path.join(directory,'SHA256SUMS')),before);
+});
+check('actual staging CLI rejects corrupt frozen source', f => {
+  fs.appendFileSync(path.join(f.core,'source/TileO-0.1.0-source.tar.gz'),'CORRUPT');
+  assert.throws(()=>execFileSync(process.execPath,[new URL('./stage-release-assets.js',import.meta.url).pathname,'--evidence-dir',f.core,'--closure',f.closure,'--out-dir',path.join(f.root,'bad-stage')],{stdio:'pipe'}),/Frozen core changed/);
+});

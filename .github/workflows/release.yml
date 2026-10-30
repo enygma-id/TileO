@@ -51,6 +51,8 @@ jobs:
           npx playwright install --with-deps chromium
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends gdal-bin
+      - name: Verify Git tag identity before build
+        run: git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' var GIT_COMMITTER_IDENT
       - name: Build one candidate from committed source
         shell: bash
         run: |
@@ -85,14 +87,6 @@ jobs:
           node scripts/record-test-results.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/tests"
           node scripts/record-browser-results.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE"
           node scripts/generate-image-notice-paths.js --image "$TILEO_IMAGE" --out-dir "$TILEO_EVIDENCE/image"
-      - name: Preserve failed candidate diagnostics
-        if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: tileo-candidate-FAILED-DIAGNOSTICS
-          path: release-evidence/v0.1.0
-          retention-days: 30
-          if-no-files-found: warn
       - name: Execute fail-closed negative controls
         run: |
           export TILEO_COMMIT="$GITHUB_SHA"
@@ -117,6 +111,8 @@ jobs:
           echo "### Candidate review subject" >> "$GITHUB_STEP_SUMMARY"
           echo 'Each reviewer must include the candidate/core digest below and their real decision: Engineering COMPARE_SCOPE=ACCEPT_EXCLUSION; Legal-IP RIGHTS=APPROVE EXCEPTIONS=EXC-001,EXC-002,EXC-003; Release Steward REVIEW=ACCEPT. Do not approve if the actual review rejects scope or rights.' >> "$GITHUB_STEP_SUMMARY"
           node -e "const fs=require('fs'),c=require('./release-evidence/v0.1.0/candidate.json'),crypto=require('crypto'),m=fs.readFileSync('./release-evidence/v0.1.0/core-evidence-manifest.json'); console.log('- Candidate: '+c.candidate_id+'\n- Commit: '+c.commit+'\n- Image: '+c.image_id+'\n- Core evidence SHA-256: '+crypto.createHash('sha256').update(m).digest('hex'))" >> "$GITHUB_STEP_SUMMARY"
+      - name: Rehearse asset assembly before protected reviews
+        run: node scripts/stage-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --closure /tmp/tileo-closure/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-rehearsal-assets
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: tileo-0.1.0-core-evidence
@@ -135,6 +131,14 @@ jobs:
           path: /tmp/tileo-closure
           retention-days: 30
           if-no-files-found: error
+      - name: Preserve failed candidate diagnostics
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tileo-candidate-FAILED-DIAGNOSTICS
+          path: release-evidence/v0.1.0
+          retention-days: 30
+          if-no-files-found: warn
 
   engineering:
     needs: candidate
@@ -240,21 +244,12 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-publish-guard --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json --negative-proof-run-id "$NEGATIVE_PROOF_RUN_ID"
+          node scripts/stage-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-release-assets
+          node scripts/validate-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --assets-dir /tmp/tileo-release-assets --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --output /tmp/tileo-staged-assets.json
           git -c user.name='github-actions[bot]' \
             -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
             tag --annotate v0.1.0 "$GITHUB_SHA" --message 'TileO 0.1.0'
           git push origin refs/tags/v0.1.0
-          mkdir -p /tmp/tileo-release-assets
-          cp /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz /tmp/tileo-release-assets/
-          cp "$TILEO_EVIDENCE/source/TileO-0.1.0-source.tar.gz" /tmp/tileo-release-assets/
-          cp "$TILEO_EVIDENCE/compliance/source/"*.tar.gz /tmp/tileo-release-assets/
-          cp "$TILEO_EVIDENCE/compliance/customer/THIRD-PARTY-NOTICES.md" /tmp/tileo-release-assets/
-          cp "$TILEO_EVIDENCE/compliance/customer/THIRD-PARTY-EXCEPTIONS.md" /tmp/tileo-release-assets/
-          cp "$TILEO_EVIDENCE/compliance/customer/SOURCE-ACCESS.md" /tmp/tileo-release-assets/
-          cp "$TILEO_EVIDENCE/sbom/sbom-image.spdx.json" /tmp/tileo-release-assets/
-          cp "$TILEO_EVIDENCE/sbom/sbom-image.cdx.json" /tmp/tileo-release-assets/
-          (cd /tmp/tileo-release-assets && sha256sum * > SHA256SUMS)
-          node scripts/validate-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --assets-dir /tmp/tileo-release-assets --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --output /tmp/tileo-staged-assets.json
           gh release create v0.1.0 /tmp/tileo-release-assets/* --verify-tag --title 'TileO 0.1.0' --notes-file "$TILEO_EVIDENCE/release/release-notes.md"
           node scripts/verify-public-source-access.js --candidate "$TILEO_EVIDENCE/candidate.json" --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-source-access
           echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
