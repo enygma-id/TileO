@@ -240,7 +240,9 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-publish-guard --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json --negative-proof-run-id "$NEGATIVE_PROOF_RUN_ID"
-          git tag --annotate v0.1.0 "$GITHUB_SHA" --message 'TileO 0.1.0'
+          git -c user.name='github-actions[bot]' \
+            -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            tag --annotate v0.1.0 "$GITHUB_SHA" --message 'TileO 0.1.0'
           git push origin refs/tags/v0.1.0
           mkdir -p /tmp/tileo-release-assets
           cp /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz /tmp/tileo-release-assets/
