@@ -12,7 +12,7 @@ Read:
 - [CLA.md](CLA.md)
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 - [SECURITY.md](SECURITY.md)
-- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+- [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)
 
 Do not submit a pull request containing source or assets you are not authorized to contribute.
 
@@ -62,7 +62,7 @@ A new dependency must be reviewed for:
 - compatibility with AGPL distribution; and
 - compatibility with any separate Enterprise distribution.
 
-Update [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) when a merged change affects the dependency inventory. Newly introduced non-permissive or unknown-license components are not automatically covered by the three [narrowly scoped exceptions](third-party/ENTERPRISE_EXCEPTIONS.md); propose an explicit review before merge.
+When a merged change affects the dependency inventory, update the recorded license evidence and regenerate the canonical [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) using `npm run notices`, then verify it with `node scripts/check-notice-parity.js`. Do not manually edit the generated notice corpus. Newly introduced non-permissive or unknown-license components are not automatically covered by the three [narrowly scoped exceptions](third-party/ENTERPRISE_EXCEPTIONS.md); propose an explicit review before merge.
 
 ## Security
 

@@ -205,7 +205,7 @@ COPY --from=build /app/dist /rootfs/app/dist
 COPY package.json package-lock.json API.md openapi.yaml /rootfs/app/
 COPY web /rootfs/app/web
 COPY scripts /rootfs/app/scripts
-COPY THIRD-PARTY-NOTICES.md THIRD_PARTY_NOTICES.md /rootfs/app/
+COPY THIRD-PARTY-NOTICES.md /rootfs/app/
 COPY third-party /rootfs/app/third-party
 
 # Setup users, permissions, and directories

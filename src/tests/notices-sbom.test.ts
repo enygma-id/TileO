@@ -21,6 +21,14 @@ test('THIRD-PARTY-NOTICES.md exists, is populated, and documents AGPL root and p
   assert.ok(content.includes('Tippecanoe'), 'Must document Tippecanoe');
 });
 
+test('Only canonical THIRD-PARTY-NOTICES.md exists at repository root', () => {
+  assert.equal(
+    fs.existsSync(path.join(ROOT_DIR, 'THIRD_PARTY_NOTICES.md')),
+    false,
+    'Legacy THIRD_PARTY_NOTICES.md must not be restored; use THIRD-PARTY-NOTICES.md'
+  );
+});
+
 test('Dual-license elections are formally recorded in notices', () => {
   const noticesPath = path.join(ROOT_DIR, 'THIRD-PARTY-NOTICES.md');
   const content = fs.readFileSync(noticesPath, 'utf8');

@@ -17,6 +17,6 @@ AI-assisted work may include exploring implementation alternatives, explaining l
 
 The historic founding contributions of **Erick Karya, Hanafi and Dony** are independently recorded in [FOUNDING_TEAM.md](FOUNDING_TEAM.md). AI assistance does not displace their recognition and does not change who actually wrote a particular commit. Original Community source remains under [AGPL-3.0-only](LICENSE) where declared; dataset inputs and third-party components retain their separately documented licenses.
 
-Contributors should be transparent about **material AI-assisted changes** when submitting pull requests, particularly when AI-suggested code depends on third-party works, introduces a new dependency or touches security-sensitive logic. See [CONTRIBUTING.md](CONTRIBUTING.md) and [third-party licensing records](THIRD_PARTY_NOTICES.md).
+Contributors should be transparent about **material AI-assisted changes** when submitting pull requests, particularly when AI-suggested code depends on third-party works, introduces a new dependency or touches security-sensitive logic. See [CONTRIBUTING.md](CONTRIBUTING.md) and [third-party licensing records](THIRD-PARTY-NOTICES.md).
 
 This acknowledgement documents responsible use; it is **not** a certification that every AI-assisted suggestion has passed independent verification.

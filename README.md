@@ -167,7 +167,7 @@ TileO provides source inspection, job management, artifact delivery, status endp
 
 ## Community and Enterprise
 
-**TileO Community Edition:** the Enygma-controlled original code published in this official repository is licensed under **GNU AGPL v3 only (`AGPL-3.0-only`)**, except for clearly identified third-party code or differently licensed files. Consult the complete [LICENSE](LICENSE), [NOTICE](NOTICE.md), and [third-party notices](THIRD_PARTY_NOTICES.md).
+**TileO Community Edition:** the Enygma-controlled original code published in this official repository is licensed under **GNU AGPL v3 only (`AGPL-3.0-only`)**, except for clearly identified third-party code or differently licensed files. Consult the complete [LICENSE](LICENSE), [NOTICE](NOTICE.md), and [third-party notices](THIRD-PARTY-NOTICES.md).
 
 **TileO Enterprise Edition:** Enygma offers a **separate commercial licensing path**, subject to a signed agreement and demonstrable rights over the code concerned. Enterprise is not an exception embedded into the AGPL, nor does it diminish AGPL rights already granted. No proprietary Enterprise source code is implicitly included in this Community repository. See [ENTERPRISE.md](ENTERPRISE.md) and [CLA.md](CLA.md).
 
@@ -206,7 +206,7 @@ See the [AI Acknowledgement](AI_ACKNOWLEDGEMENT.md) for scope and accountability
 | Project branding | [Logo assets and usage](assets/branding/README.md) |
 | Samples | [Sample catalogue](samples/README.md) · [TileO-Samples-01](samples/TileO-Samples-01/README.md) |
 | AI transparency | [AI Acknowledgement](AI_ACKNOWLEDGEMENT.md) |
-| Third-party licensing and provenance | [Notices](THIRD_PARTY_NOTICES.md) · [Inventory](third-party/DEPENDENCIES.md) · [Release compliance](third-party/RELEASE_GATE.md) |
+| Third-party licensing and provenance | [Notices](THIRD-PARTY-NOTICES.md) · [Inventory](third-party/DEPENDENCIES.md) · [Release compliance](third-party/RELEASE_GATE.md) |
 
 ## Citation
 
