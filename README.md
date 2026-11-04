@@ -32,6 +32,8 @@
 
 **Project history:** [Founding team and contributors](FOUNDING_TEAM.md).
 
+**Release status:** The published [v0.1.0 release notes](https://github.com/enygma-id/TileO/releases/tag/v0.1.0) describe a release candidate with final Engineering, Legal/IP, and Release Steward approvals pending. Its GitHub Release entry does not establish full production approval. See the [release process](docs/RELEASE_PROCESS.md) for the required candidate-specific evidence and authorization.
+
 ## Why TileO
 
 Traditional geospatial conversion frequently requires users to know low-level command-line flags, toolchains, tile container conventions, map projection rules, storage configuration, and format-specific limitations. TileO provides a coherent processing workflow spanning **source inspection → deliberate conversion choices → bounded processing → output validation → preview and distribution**.

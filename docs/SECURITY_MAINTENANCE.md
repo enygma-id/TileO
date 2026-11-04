@@ -73,6 +73,8 @@ gh attestation verify TileO-0.1.0-source.tar.gz \
 
 See [GitHub's attestation documentation](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations) and the [CLI verification policy](https://cli.github.com/manual/gh_attestation_verify). Adding workflow steps does not retroactively sign the published `v0.1.0` release. This workflow remains version-specific; a subsequent release needs its own versioned evidence and normal protected release preparation. Preserve existing release tags and artifacts.
 
+The published `v0.1.0` notes still describe a candidate with final approvals pending; see [its documented status](RELEASE_PROCESS.md#published-v010-status). Repository security improvements and signed provenance do not grant production authorization or resolve that pending approval state.
+
 ## Administrator follow-up
 
 Repository files cannot establish every Scorecard control. After merging, an administrator should:
