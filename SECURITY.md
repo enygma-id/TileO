@@ -4,7 +4,9 @@
 
 Do **not** report suspected vulnerabilities through a public GitHub issue, public discussion, pull request description, or other public channel.
 
-Use the repository's **GitHub Private Vulnerability Reporting / Security Advisory** mechanism when it is enabled. If that mechanism is unavailable, contact PT Enygma Solusi Negeri through an official Enygma security or business channel and clearly mark the report as security-sensitive.
+Use [GitHub Private Vulnerability Reporting](https://github.com/enygma-id/TileO/security/advisories/new) when the reporting form is available. The [repository security page](https://github.com/enygma-id/TileO/security) lists published advisories and the current reporting policy. If private reporting is disabled, contact PT Enygma Solusi Negeri through an established private business channel and clearly mark the report as security-sensitive. Never move exploit details to a public issue as a fallback.
+
+See [GitHub's instructions for privately reporting vulnerabilities](https://docs.github.com/en/code-security/security-advisories/working-with-repository-security-advisories/privately-reporting-a-security-vulnerability) for the reporting process, and [security maintenance](docs/SECURITY_MAINTENANCE.md) for automated checks and maintainer configuration.
 
 Do not include secrets in an initial public message.
 

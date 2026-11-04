@@ -2,8 +2,8 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "b12910b8363da6fbea47aeb7f59273406ccb0906303bc09235e6b0f1c7f923cb",
-  "package_count": 284,
+  "reference_lockfile_sha256": "ef37025714a4cba8e5c0af5f6a089884e5c28e1e03822615a445e136b25d098c",
+  "package_count": 286,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
   "generated_from": "Committed package-lock.json and exact-version upstream npm tarballs",
@@ -9413,14 +9413,76 @@
         ],
         "note": "corpus matches upstream tarball"
       }
+    },
+    {
+      "package_path": "node_modules/fast-check",
+      "name": "fast-check",
+      "version": "4.10.2",
+      "declared_license": "MIT",
+      "dev": true,
+      "optional": false,
+      "scope": "development",
+      "integrity": "sha512-iK2f+YrcmoeGqk6fA0ea2bptcu/itMIm4NfEozq6N25+aG6h7s5HZbB/k1aV7b5w5sFLMCbbtRUsTVR+BgC3xw==",
+      "resolved": "https://registry.npmjs.org/fast-check/-/fast-check-4.10.2.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-04",
+        "tarball_sha256": "da0089e325d00454033ad690d22af2e54d460fbe72a62b432c5d8d65c70ad0c7",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "b2bd24f5c975f659433271170b17e0a769b12ef8065bbca6dcd5511d57e94ce0",
+            "bytes": 1071
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/fast-check/4.10.2/LICENSE.txt",
+      "notice_sha256": "b2bd24f5c975f659433271170b17e0a769b12ef8065bbca6dcd5511d57e94ce0",
+      "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/pure-rand",
+      "name": "pure-rand",
+      "version": "8.4.2",
+      "declared_license": "MIT",
+      "dev": true,
+      "optional": false,
+      "scope": "development",
+      "integrity": "sha512-vvuOGgcuPJAirlHvuQw1TrOiw7ptaIXXmIbNuiNOY6lNGJJH49PQ1Kj4nd783nPdQhQdicgOjVI2yI/9BD6/Ng==",
+      "resolved": "https://registry.npmjs.org/pure-rand/-/pure-rand-8.4.2.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-04",
+        "tarball_sha256": "3ce449c758cb2ea0db7ff30a1b378d381d9e74681acec74e1e2591ea6aa381ca",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "e9d6a94ab01c6c9ab68c099d3ba8dd9f8aca60f2e2250c2302275405fca9e806",
+            "bytes": 1071
+          }
+        ],
+        "note": "corpus matches upstream tarball"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/pure-rand/8.4.2/LICENSE.txt",
+      "notice_sha256": "e9d6a94ab01c6c9ab68c099d3ba8dd9f8aca60f2e2250c2302275405fca9e806",
+      "notice_source": "package/LICENSE"
     }
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-10-28",
+    "verified_at": "2026-11-04",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
-    "package_count": 284,
-    "verified_upstream_tarball": 248,
+    "package_count": 286,
+    "verified_upstream_tarball": 250,
     "metadata_only_no_license_file": 36,
     "verification_failed": 0,
     "output": "third-party/npm-upstream-verification.csv",

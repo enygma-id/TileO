@@ -368,7 +368,9 @@ async function main() {
     manifest.project = manifest.project ?? 'TileO';
     manifest.reference_lockfile = 'package-lock.json';
     manifest.reference_lockfile_sha256 = lockSha;
-    manifest.package_count = results.length;
+    // A filtered update retains all other inventory entries; aggregate counts
+    // must describe that complete inventory, not only this update's selection.
+    manifest.package_count = manifest.packages.length;
     manifest.notice_source = 'THIRD-PARTY-NOTICES.md';
     manifest.generated_from = 'Committed package-lock.json and exact-version upstream npm tarballs';
     manifest.meaning = 'Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.';
@@ -376,10 +378,10 @@ async function main() {
       verifier: VERIFIER,
       verified_at: today,
       method: 'Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.',
-      package_count: results.length,
-      verified_upstream_tarball: verified,
-      metadata_only_no_license_file: metadataOnly,
-      verification_failed: failed,
+      package_count: manifest.packages.length,
+      verified_upstream_tarball: manifest.packages.filter(item => item.upstream_verification?.status === 'verified_upstream_tarball').length,
+      metadata_only_no_license_file: manifest.packages.filter(item => item.upstream_verification?.status === 'metadata_only_no_license_file').length,
+      verification_failed: manifest.packages.filter(item => item.upstream_verification?.status === 'verification_failed').length,
       output: 'third-party/npm-upstream-verification.csv',
       offline_check: 'Run `node scripts/verify-npm-notices.js` (no network) to compare the committed corpus with MANIFEST.json.',
     };

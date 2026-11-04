@@ -9,6 +9,7 @@ TileO has unit, native integration, browser, release-tooling, and independent ou
 | 3D | [Model tests](../src/tests/model3d.test.ts), [validation tests](../src/tests/model3d-validation.test.ts), and independent Cesium/Khronos checks |
 | Tile delivery | [Distribution tests](../src/tests/distribution.test.ts): MBTiles/PMTiles, XYZ/WMTS, downloads, and deletion |
 | Publication gate | [Output validation tests](../src/tests/output-validation.test.ts): strict failures and incomplete reports cannot be accepted |
+| Security inputs and release provenance | [Property-based tests](../tests/security-fuzz.test.js) and [signature policy rejection tests](../scripts/test-release-attestations.js); see [Security Maintenance](SECURITY_MAINTENANCE.md) for scope and hosted checks |
 | Browser | [Playwright tests](../src/browser): upload, preview, comparison, downloads, and error handling |
 | Release | Source-access, CA rebuild, final SBOM, notices, approval proof, and negative-control checks |
 

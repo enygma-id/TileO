@@ -4,14 +4,14 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `b12910b8363da6fbea47aeb7f59273406ccb0906303bc09235e6b0f1c7f923cb`
+Generated from committed license evidence · Lockfile SHA-256: `ef37025714a4cba8e5c0af5f6a089884e5c28e1e03822615a445e136b25d098c`
 
 ## Verification summary
 
 | Evidence set | Count | Method |
 | --- | ---: | --- |
-| npm entries in `package-lock.json` | 284 | Direct, transitive, development and platform-optional entries |
-| npm notices verified from exact tarball | 248 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
+| npm entries in `package-lock.json` | 286 | Direct, transitive, development and platform-optional entries |
+| npm notices verified from exact tarball | 250 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
 | npm metadata-only entries | 36 | Tarball has no license file; only `package.json` metadata retained |
 | npm runtime entries marked metadata-only | 10 | Review required before strict release |
 | Native runtime components | 28 | Pinned upstream license corpus |
@@ -11709,7 +11709,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ````
 
-### Development-only entries (34)
+### Development-only entries (36)
 
 These entries are part of the source build and test toolchain, not the runtime image. They are retained for reproducible source compliance.
 
@@ -12775,6 +12775,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
+#### fast-check (4.10.2)
+- **Declared License**: `MIT`
+- **Verification**: `VERIFIED_UPSTREAM`
+- **Notice**: [`third-party/licenses/npm/fast-check/4.10.2/LICENSE.txt`](third-party/licenses/npm/fast-check/4.10.2/LICENSE.txt) · SHA-256 `b2bd24f5c975f659433271170b17e0a769b12ef8065bbca6dcd5511d57e94ce0`
+
+````text
+MIT License
+
+Copyright (c) 2017 Nicolas DUBIEN
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+````
+
 #### playwright (1.64.0)
 - **Declared License**: `Apache-2.0`
 - **Verification**: `VERIFIED_UPSTREAM`
@@ -13211,6 +13240,35 @@ Copyright (c) Microsoft Corporation
 
 This software contains code derived from the Puppeteer project (https://github.com/puppeteer/puppeteer),
 available under the Apache 2.0 license (https://github.com/puppeteer/puppeteer/blob/master/LICENSE).
+````
+
+#### pure-rand (8.4.2)
+- **Declared License**: `MIT`
+- **Verification**: `VERIFIED_UPSTREAM`
+- **Notice**: [`third-party/licenses/npm/pure-rand/8.4.2/LICENSE.txt`](third-party/licenses/npm/pure-rand/8.4.2/LICENSE.txt) · SHA-256 `e9d6a94ab01c6c9ab68c099d3ba8dd9f8aca60f2e2250c2302275405fca9e806`
+
+````text
+MIT License
+
+Copyright (c) 2018 Nicolas DUBIEN
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ````
 
 #### typescript (5.9.3)

@@ -44,5 +44,6 @@ This index provides navigation to the public documentation maintained in the [Ti
 | Project management | [Governance](../GOVERNANCE.md) and [Roadmap](../ROADMAP.md) |
 | Contributions and conduct | [Contributing](../CONTRIBUTING.md) and [Code of Conduct](../CODE_OF_CONDUCT.md) |
 | Security disclosure | [Security](../SECURITY.md) |
+| Security checks, dependency updates, and release provenance | [Security Maintenance](SECURITY_MAINTENANCE.md) |
 | AI-assisted development transparency | [AI Acknowledgement](../AI_ACKNOWLEDGEMENT.md) |
 | Branding | [Brand Assets](../assets/branding/README.md) |
