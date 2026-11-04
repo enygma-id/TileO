@@ -2,7 +2,7 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **277 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `f7a87c9ff52af2502922f96a75c0250021d4f430f9cc98f4041095f82799081c`
+- `package-lock.json` SHA-256: `bab7dd5b7306551404efce92131a50ab88fc0a62ccec94c1d8ce1d0654e3d9d5`
 - Runtime entries: **216** · runtime-optional: **5** · development: **56**
 - Notice evidence: **241** verified from exact upstream tarballs · **36** metadata-only · **0** failed
 - Verification date: 2026-11-04 (scripts/verify-npm-notices.js@1)
@@ -144,7 +144,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@turf/invariant` | 5.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@turf/meta` | 5.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@turf/rewind` | 5.1.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `@types/better-sqlite3` | 7.6.13 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
+| `@types/better-sqlite3` | 9.6.0 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@types/brotli` | 1.3.5 | `MIT` | runtime-optional | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@types/crypto-js` | 4.2.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@types/geojson` | 7946.0.16 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |

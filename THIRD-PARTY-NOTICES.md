@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `f7a87c9ff52af2502922f96a75c0250021d4f430f9cc98f4041095f82799081c`
+Generated from committed license evidence · Lockfile SHA-256: `bab7dd5b7306551404efce92131a50ab88fc0a62ccec94c1d8ce1d0654e3d9d5`
 
 ## Verification summary
 
@@ -11517,10 +11517,10 @@ This software contains code derived from the Puppeteer project (https://github.c
 available under the Apache 2.0 license (https://github.com/puppeteer/puppeteer/blob/master/LICENSE).
 ````
 
-#### @types/better-sqlite3 (7.6.13)
+#### @types/better-sqlite3 (9.6.0)
 - **Declared License**: `MIT`
 - **Verification**: `VERIFIED_UPSTREAM`
-- **Notice**: [`third-party/licenses/npm/@types/better-sqlite3/7.6.13/LICENSE.txt`](third-party/licenses/npm/@types/better-sqlite3/7.6.13/LICENSE.txt) · SHA-256 `c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383`
+- **Notice**: [`third-party/licenses/npm/@types/better-sqlite3/9.6.0/LICENSE.txt`](third-party/licenses/npm/@types/better-sqlite3/9.6.0/LICENSE.txt) · SHA-256 `c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383`
 
 ````text
 MIT License
