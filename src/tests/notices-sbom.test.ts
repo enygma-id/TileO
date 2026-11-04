@@ -33,29 +33,25 @@ test('Dual-license elections are formally recorded in notices', () => {
   const noticesPath = path.join(ROOT_DIR, 'THIRD-PARTY-NOTICES.md');
   const content = fs.readFileSync(noticesPath, 'utf8');
 
-  // Check JSZip MIT election
-  assert.ok(
-    content.includes('`jszip@3.10.2`') && content.includes('**MIT**'),
-    'JSZip MIT election must be documented'
-  );
+  const lock = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package-lock.json'), 'utf8'));
+  const elections: Record<string, string> = { jszip: 'MIT', 'expand-template': 'MIT', rc: 'BSD-2-Clause', '@maplibre/mlt': 'MIT' };
+  const packages = Object.entries(lock.packages as Record<string, { version?: string; license?: string }>)
+    .filter(([key]) => key !== '')
+    .map(([key, meta]) => ({ name: key.split('node_modules/').at(-1)!, ...meta }));
+  const section = content.split('## Dual-License / Multi-License Elections')[1]?.split('## Native Runtime Components')[0];
+  assert.ok(section, 'Notices must contain the formal election table');
+  const rows = section.split('\n').filter(line => line.startsWith('| `'));
 
-  // Check expand-template MIT election
-  assert.ok(
-    content.includes('`expand-template@2.0.3`') && content.includes('**MIT**'),
-    'expand-template MIT election must be documented'
-  );
-
-  // Check rc BSD-2 election
-  assert.ok(
-    content.includes('`rc@1.2.8`') && content.includes('**BSD-2-Clause**'),
-    'rc BSD-2-Clause election must be documented'
-  );
-
-  // Check @maplibre/mlt MIT election
-  assert.ok(
-    content.includes('`@maplibre/mlt@1.3.0`') && content.includes('**MIT**'),
-    '@maplibre/mlt MIT election must be documented'
-  );
+  for (const pkg of packages.filter(pkg => /\bOR\b/.test(pkg.license ?? ''))) {
+    assert.ok(elections[pkg.name], `Alternative license options for ${pkg.name} require an explicit election`);
+    const row = rows.find(line => line.startsWith(`| \`${pkg.name}@${pkg.version}\` |`));
+    assert.ok(row?.includes(`| **${elections[pkg.name]}** |`), `${pkg.name}@${pkg.version} must document its own permissive election`);
+    const offered = row!.split('|')[2]!.trim().replaceAll('`', '').replace(/[()]/g, '');
+    assert.equal(offered, pkg.license!.replace(/[()]/g, ''), 'Election must describe the actual upstream options');
+  }
+  for (const row of rows) {
+    assert.ok(packages.some(pkg => row.startsWith(`| \`${pkg.name}@${pkg.version}\` |`)), 'Election rows must refer to an exact currently locked package');
+  }
 });
 
 test('Geospatial data separation and ODbL boundaries are formally declared', () => {

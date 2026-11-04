@@ -52,7 +52,7 @@
     "@mapbox/vector-tile": "^3.0.0",
     "@playwright/test": "^1.64.1",
     "@types/better-sqlite3": "^7.6.0",
-    "@types/node": "^26.6.6",
+    "@types/node": "^24.19.2",
     "@types/vt-pbf": "^3.1.1",
     "esbuild": "^0.28.2",
     "fast-check": "4.10.2",

@@ -143,9 +143,10 @@ function main() {
   lines.push('| Package | Upstream Offered Options | Formal TileO Election | Rationale |');
   lines.push('|---|---|---|---|');
   for (const [name, election] of ELECTIONS) {
-    const pkg = packages.find((candidate) => candidate.name === name);
-    const version = pkg ? pkg.version : 'version in lockfile';
-    lines.push(`| \`${name}@${version}\` | \`${election.offered}\` | **${election.license}** | Elects the permissive terms; copyleft alternatives are not selected or exercised. |`);
+    const versions = new Set(packages.filter(candidate => candidate.name === name).map(pkg => pkg.version));
+    for (const version of versions) {
+      lines.push(`| \`${name}@${version}\` | \`${election.offered}\` | **${election.license}** | Elects the permissive terms; copyleft alternatives are not selected or exercised. |`);
+    }
   }
   lines.push('');
   lines.push('---');

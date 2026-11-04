@@ -1,10 +1,10 @@
 # Third-Party NPM Dependency Inventory
 
-This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **286 non-root entries** (direct, transitive, development and platform-optional packages).
+This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **277 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `ef37025714a4cba8e5c0af5f6a089884e5c28e1e03822615a445e136b25d098c`
-- Runtime entries: **246** · runtime-optional: **4** · development: **36**
-- Notice evidence: **250** verified from exact upstream tarballs · **36** metadata-only · **0** failed
+- `package-lock.json` SHA-256: `7c6c0acc78c0ef96a31d1e5e59b8f620b387fed15b7b43c2e7ebe2b38a41127a`
+- Runtime entries: **216** · runtime-optional: **5** · development: **56**
+- Notice evidence: **241** verified from exact upstream tarballs · **36** metadata-only · **0** failed
 - Verification date: 2026-11-04 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
@@ -13,18 +13,16 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 
 | SPDX expression | Entries |
 | --- | ---: |
-| `(BSD-2-Clause OR MIT OR Apache-2.0)` | 1 |
 | `(MIT AND Zlib)` | 2 |
 | `(MIT OR Apache-2.0)` | 1 |
 | `(MIT OR GPL-3.0-or-later)` | 1 |
-| `(MIT OR WTFPL)` | 1 |
 | `0BSD` | 1 |
-| `Apache-2.0` | 15 |
+| `Apache-2.0` | 33 |
 | `BSD-2-Clause` | 2 |
 | `BSD-3-Clause` | 18 |
 | `CC0-1.0` | 1 |
-| `ISC` | 24 |
-| `MIT` | 218 |
+| `ISC` | 20 |
+| `MIT` | 197 |
 | `MIT AND BSD-3-Clause` | 1 |
 
 ## Complete package-level inventory
@@ -33,7 +31,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | --- | --- | --- | --- | --- | --- |
 | `@deck.gl/core` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@deck.gl/extensions` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `@deck.gl/geo-layers` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `@deck.gl/geo-layers` | 9.4.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@deck.gl/layers` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@deck.gl/maplibre` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@deck.gl/mesh-layers` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -136,7 +134,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@nodable/entities` | 3.1.0 | `MIT` | runtime | `metadata_only_no_license_file` | `package.json` |
 | `@petamoriken/float16` | 3.9.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@pinojs/redact` | 0.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `@playwright/test` | 1.64.0 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@playwright/test` | 1.64.1 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `@probe.gl/env` | 4.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@probe.gl/log` | 4.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@probe.gl/stats` | 4.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -155,6 +153,26 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@types/offscreencanvas` | 2019.7.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@types/pako` | 1.0.7 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@types/vt-pbf` | 3.1.1 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
+| `@typescript/typescript-aix-ppc64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-darwin-arm64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-darwin-x64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-freebsd-arm64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-freebsd-x64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-linux-arm` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-linux-arm64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-linux-loong64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-linux-mips64el` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-linux-ppc64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-linux-riscv64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-linux-s390x` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-linux-x64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-netbsd-arm64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-netbsd-x64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-openbsd-arm64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-openbsd-x64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-sunos-x64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-win32-arm64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@typescript/typescript-win32-x64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `@webgpu/types` | 0.1.74 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `a5-js` | 0.10.1 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `abstract-logging` | 2.0.1 | `MIT` | runtime | `metadata_only_no_license_file` | `package.json` |
@@ -166,32 +184,22 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `apache-arrow/node_modules/@types/node` | 25.9.9 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `atomic-sleep` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `avvio` | 9.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `base64-js` | 1.5.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `better-sqlite3` | 12.11.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `base64-js` | 1.5.1 | `MIT` | runtime-optional | `verified_upstream_tarball` | `LICENSE.txt` |
+| `better-sqlite3` | 13.0.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `bidi-js` | 1.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `bindings` | 1.5.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `bl` | 4.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `bl/node_modules/readable-stream` | 3.6.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `brotli` | 1.3.3 | `MIT` | runtime-optional | `metadata_only_no_license_file` | `package.json` |
 | `buf-compare` | 1.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `buffer` | 5.7.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `buffer-crc32` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `charenc` | 0.0.2 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `chownr` | 1.1.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `cookie` | 2.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `core-assert` | 0.2.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `core-util-is` | 1.0.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `crypt` | 0.0.2 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `decompress-response` | 6.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `deep-extend` | 0.6.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `deep-strict-equal` | 0.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `dequal` | 2.0.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `detect-libc` | 2.1.2 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `draco3d` | 1.5.7 | `Apache-2.0` | runtime | `metadata_only_no_license_file` | `package.json` |
 | `earcut` | 2.2.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `end-of-stream` | 1.4.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `esbuild` | 0.28.2 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
-| `expand-template` | 2.0.3 | `(MIT OR WTFPL)` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-check` | 4.10.2 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-decode-uri-component` | 1.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-deep-equal` | 3.1.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -203,20 +211,16 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `fastify` | 5.12.7 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fastq` | 1.20.3 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fflate` | 0.8.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `file-uri-to-path` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `find-my-way` | 9.10.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `flatbuffers` | 25.9.23 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `fs-constants` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `geojson-vt` | 5.0.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `geotiff` | 3.0.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `geotiff/node_modules/pako` | 2.2.0 | `(MIT AND Zlib)` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `github-from-package` | 0.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `gl-matrix` | 3.4.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `h3-js` | 4.5.0 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `ieee754` | 1.2.1 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `immediate` | 3.0.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `inherits` | 2.0.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `ini` | 1.3.8 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `ipaddr.js` | 2.5.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `is-buffer` | 1.1.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `is-error` | 2.2.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -240,15 +244,11 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `md5` | 2.3.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `meshoptimizer` | 1.3.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `mgrs` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `mimic-response` | 3.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `minimist` | 1.2.8 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `mjolnir.js` | 3.1.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `mkdirp-classic` | 0.5.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `murmurhash-js` | 1.0.0 | `MIT` | runtime | `metadata_only_no_license_file` | `package.json` |
-| `napi-build-utils` | 2.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `node-abi` | 3.98.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `node-addon-api` | 8.9.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `on-exit-leak-free` | 2.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `once` | 1.4.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pako` | 1.0.11 | `(MIT AND Zlib)` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `parse-headers` | 2.0.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `path-expression-matcher` | 1.6.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -256,22 +256,19 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `pino` | 10.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino-abstract-transport` | 3.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino-std-serializers` | 7.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `playwright` | 1.64.0 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
-| `playwright-core` | 1.64.0 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `playwright` | 1.64.1 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `playwright-core` | 1.64.1 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `pmtiles` | 4.5.0 | `BSD-3-Clause` | runtime | `metadata_only_no_license_file` | `package.json` |
 | `potpack` | 2.1.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `prebuild-install` | 7.1.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `process-nextick-args` | 2.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `process-warning` | 5.1.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `proj4` | 2.22.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `property-graph` | 4.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `protocol-buffers-schema` | 3.6.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `pump` | 3.0.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pure-rand` | 8.4.2 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
 | `quick-format-unescaped` | 4.0.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `quick-lru` | 6.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `quickselect` | 3.0.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `rc` | 1.2.8 | `(BSD-2-Clause OR MIT OR Apache-2.0)` | runtime | `verified_upstream_tarball` | `LICENSE.txt`<br>`LICENSE.BSD.txt`<br>`LICENSE.MIT.txt` |
 | `readable-stream` | 2.3.8 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `real-require` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `require-from-string` | 2.0.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -286,23 +283,16 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `semver` | 7.8.5 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `set-cookie-parser` | 3.1.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `setimmediate` | 1.0.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `simple-concat` | 1.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `simple-get` | 4.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `snappyjs` | 0.6.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `sonic-boom` | 4.2.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `split2` | 4.2.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `string_decoder` | 1.1.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `strip-json-comments` | 2.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `strnum` | 2.5.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `tar-fs` | 2.1.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `tar-stream` | 2.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `tar-stream/node_modules/readable-stream` | 3.6.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `thread-stream` | 4.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `tinyqueue` | 3.0.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `toad-cache` | 3.7.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `tslib` | 2.8.1 | `0BSD` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `tunnel-agent` | 0.6.0 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `typescript` | 5.9.3 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt` |
+| `typescript` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt`<br>`License-2.txt` |
 | `undici-types` | 7.24.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `util-deprecate` | 1.0.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `vt-pbf` | 3.1.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -310,7 +300,6 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `vt-pbf/node_modules/pbf` | 3.3.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `web-worker` | 1.5.0 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `wkt-parser` | 1.5.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `wrappy` | 1.0.2 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `xml-naming` | 0.3.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `xml-utils` | 1.10.2 | `CC0-1.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `yazl` | 3.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
