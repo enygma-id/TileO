@@ -2,7 +2,7 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "f7a87c9ff52af2502922f96a75c0250021d4f430f9cc98f4041095f82799081c",
+  "reference_lockfile_sha256": "bab7dd5b7306551404efce92131a50ab88fc0a62ccec94c1d8ce1d0654e3d9d5",
   "package_count": 277,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
@@ -3775,39 +3775,6 @@
             "stored": "LICENSE.txt",
             "sha256": "f9b32b82fd5a1d3a990526d86da97f42fb805d9f4d9f978125c4679b674fce44",
             "bytes": 1073
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/@types/better-sqlite3",
-      "name": "@types/better-sqlite3",
-      "version": "7.6.13",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "better-sqlite3/LICENSE",
-      "notice_sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
-      "notice_file": "third-party/licenses/npm/@types/better-sqlite3/7.6.13/LICENSE.txt",
-      "dev": true,
-      "optional": false,
-      "integrity": "sha512-NMv9ASNARoKksWtsq/SHakpYAYnhBrQgGD8zkLYk/jaK8jUGn08CfEdTRgYhMypUQAfzSP8W6gNLe0q19/t4VA==",
-      "resolved": "https://registry.npmjs.org/@types/better-sqlite3/-/better-sqlite3-7.6.13.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "development",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "276406b52dd6a5b464625db467e56f34a18f6d219533582ca5496cdd36444e55",
-        "package_json_license": null,
-        "files": [
-          {
-            "upstream": "better-sqlite3/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
-            "bytes": 1141
           }
         ],
         "note": "corpus matches upstream tarball"
@@ -9252,6 +9219,39 @@
             "stored": "LICENSE.txt",
             "sha256": "e499a2c2ba3b9faabe91fdfddf43e329439263264b7148e5548d0ec605cce9f2",
             "bytes": 1055
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/@types/better-sqlite3",
+      "name": "@types/better-sqlite3",
+      "version": "9.6.0",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "better-sqlite3/LICENSE",
+      "notice_sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "notice_file": "third-party/licenses/npm/@types/better-sqlite3/9.6.0/LICENSE.txt",
+      "dev": true,
+      "optional": false,
+      "integrity": "sha512-ZEEwBSgMu7GYJOynoagg5X9JbxfL6dTJDsgViJIqh67jV44kyOr9RXfmFjLK5rzC4MWssP06t9hu/JwGDnUbCg==",
+      "resolved": "https://registry.npmjs.org/@types/better-sqlite3/-/better-sqlite3-9.6.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "development",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-04",
+        "tarball_sha256": "979a7cf4276c316d6bd52096439f027c2cde4c597d6b0210fd4753d5f8e9bc71",
+        "package_json_license": null,
+        "files": [
+          {
+            "upstream": "better-sqlite3/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+            "bytes": 1141
           }
         ],
         "note": "corpus updated (1 mismatch)"
