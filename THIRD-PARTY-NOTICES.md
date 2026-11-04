@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `f1d6b3e4ee0ce854fbe3b76acc5997da64434651e5d9a884b38b9d2956304f5b`
+Generated from committed license evidence · Lockfile SHA-256: `9b85b4749253856c937c1d46891a1507ead46b269d5531e0ce6a9e5b975a5d4b`
 
 ## Verification summary
 
@@ -220,11 +220,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ````
 
-#### @deck.gl/maplibre (9.4.0)
+#### @deck.gl/maplibre (9.4.1)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `d0c2bc170807632a573e0dabfd61f42ba53f60d5be2502cf58552f5d39ce7fa3`
-- **Notice**: [`third-party/licenses/npm/@deck.gl/maplibre/9.4.0/LICENSE.txt`](third-party/licenses/npm/@deck.gl/maplibre/9.4.0/LICENSE.txt) · SHA-256 `e499a2c2ba3b9faabe91fdfddf43e329439263264b7148e5548d0ec605cce9f2`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `90fe4d7dff076ae186be9c65adc7770e30fe2bfec065f333ba60fc03df9badb1`
+- **Notice**: [`third-party/licenses/npm/@deck.gl/maplibre/9.4.1/LICENSE.txt`](third-party/licenses/npm/@deck.gl/maplibre/9.4.1/LICENSE.txt) · SHA-256 `e499a2c2ba3b9faabe91fdfddf43e329439263264b7148e5548d0ec605cce9f2`
 
 ````text
 Copyright Vis.gl contributors.
@@ -11517,10 +11517,10 @@ This software contains code derived from the Puppeteer project (https://github.c
 available under the Apache 2.0 license (https://github.com/puppeteer/puppeteer/blob/master/LICENSE).
 ````
 
-#### @types/better-sqlite3 (7.6.13)
+#### @types/better-sqlite3 (9.6.0)
 - **Declared License**: `MIT`
 - **Verification**: `VERIFIED_UPSTREAM`
-- **Notice**: [`third-party/licenses/npm/@types/better-sqlite3/7.6.13/LICENSE.txt`](third-party/licenses/npm/@types/better-sqlite3/7.6.13/LICENSE.txt) · SHA-256 `c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383`
+- **Notice**: [`third-party/licenses/npm/@types/better-sqlite3/9.6.0/LICENSE.txt`](third-party/licenses/npm/@types/better-sqlite3/9.6.0/LICENSE.txt) · SHA-256 `c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383`
 
 ````text
 MIT License
