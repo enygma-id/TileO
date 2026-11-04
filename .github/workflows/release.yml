@@ -113,19 +113,19 @@ jobs:
           node -e "const fs=require('fs'),c=require('./release-evidence/v0.1.0/candidate.json'),crypto=require('crypto'),m=fs.readFileSync('./release-evidence/v0.1.0/core-evidence-manifest.json'); console.log('- Candidate: '+c.candidate_id+'\n- Commit: '+c.commit+'\n- Image: '+c.image_id+'\n- Core evidence SHA-256: '+crypto.createHash('sha256').update(m).digest('hex'))" >> "$GITHUB_STEP_SUMMARY"
       - name: Rehearse asset assembly before protected reviews
         run: node scripts/stage-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --closure /tmp/tileo-closure/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-rehearsal-assets
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tileo-0.1.0-core-evidence
           path: release-evidence/v0.1.0
           retention-days: 30
           if-no-files-found: error
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tileo-0.1.0-candidate-image
           path: /tmp/tileo-export/tileo-0.1.0-image.tar.gz
           retention-days: 30
           if-no-files-found: error
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tileo-0.1.0-review-closure
           path: /tmp/tileo-closure
@@ -133,7 +133,7 @@ jobs:
           if-no-files-found: error
       - name: Preserve failed candidate diagnostics
         if: failure()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tileo-candidate-FAILED-DIAGNOSTICS
           path: release-evidence/v0.1.0
@@ -210,7 +210,7 @@ jobs:
         run: node scripts/run-approval-negative-controls.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-negative-proof
       - name: Upload successful protected negative proof
         if: ${{ success() && !inputs.publish }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tileo-approval-negative-proof
           path: /tmp/tileo-negative-proof
@@ -218,7 +218,7 @@ jobs:
           if-no-files-found: error
       - name: Preserve negative proof diagnostics
         if: ${{ failure() && !inputs.publish }}
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tileo-approval-negative-proof-FAILED-DIAGNOSTICS
           path: /tmp/tileo-negative-proof
@@ -231,7 +231,7 @@ jobs:
           test -n "$NEGATIVE_PROOF_RUN_ID"
           node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-authorization --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json --negative-proof-run-id "$NEGATIVE_PROOF_RUN_ID"
           node scripts/build-release-closure-package.js --evidence-dir "$TILEO_EVIDENCE" --authorization-dir /tmp/tileo-authorization --out-dir /tmp/tileo-final --final
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: inputs.publish
         with:
           name: tileo-0.1.0-authorized-closure
@@ -286,7 +286,7 @@ jobs:
             docker push "ghcr.io/${GITHUB_REPOSITORY,,}:latest"
           fi
           node scripts/verify-published-release.js --repo "$GITHUB_REPOSITORY" --tag v0.1.0 --candidate "$TILEO_EVIDENCE/candidate.json" --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-publication
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: inputs.publish
         with:
           name: tileo-0.1.0-publication-verification
@@ -295,7 +295,7 @@ jobs:
           if-no-files-found: error
       - name: Preserve publication attempt receipts even after partial failure
         if: always() && inputs.publish
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: tileo-0.1.0-publication-attempt
           path: |
