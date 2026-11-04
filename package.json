@@ -32,7 +32,7 @@
     "fflate": "0.8.3"
   },
   "dependencies": {
-    "@deck.gl/geo-layers": "^9.4.0",
+    "@deck.gl/geo-layers": "^9.4.1",
     "@deck.gl/maplibre": "^9.4.0",
     "@gltf-transform/core": "^4.5.1",
     "@gltf-transform/extensions": "^4.5.1",
