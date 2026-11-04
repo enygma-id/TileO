@@ -36,7 +36,7 @@
     "@deck.gl/maplibre": "^9.4.0",
     "@gltf-transform/core": "^4.5.1",
     "@gltf-transform/extensions": "^4.5.1",
-    "better-sqlite3": "12.11.1",
+    "better-sqlite3": "13.0.3",
     "fastify": "^5.12.7",
     "geojson-vt": "^5.0.4",
     "geotiff": "^3.0.5",
