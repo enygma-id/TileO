@@ -168,7 +168,7 @@ Third-party dependencies retain their own licenses. Before a dependency or binar
 - compatibility with AGPL distribution; and
 - compatibility with any separate Enterprise distribution where applicable.
 
-The project maintains [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) as the public inventory entry point.
+The project maintains [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) as the canonical generated third-party notice corpus. The supporting public dependency inventory, upstream license evidence, and release-compliance records are indexed in [third-party/README.md](third-party/README.md).
 
 ## 15. Security
 

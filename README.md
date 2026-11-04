@@ -14,6 +14,14 @@
     &nbsp;·&nbsp;
     <a href="#samples">Samples</a>
   </p>
+
+  <p>
+    <a href="https://doi.org/10.5281/zenodo.23799700" title="TileO DOI (all versions)"><img src="https://zenodo.org/badge/1428312673.svg" alt="DOI"></a>
+    &nbsp;
+    <a href="https://github.com/enygma-id/TileO/actions/workflows/ci-cd.yml" title="TileO CI (main branch)"><img src="https://github.com/enygma-id/TileO/actions/workflows/ci-cd.yml/badge.svg?branch=main" alt="CI status (main)"></a>
+    &nbsp;
+    <a href="https://scorecard.dev/viewer/?uri=github.com/enygma-id/TileO" title="TileO OpenSSF Security Scorecard"><img src="https://api.scorecard.dev/projects/github.com/enygma-id/TileO/badge" alt="OpenSSF Scorecard"></a>
+  </p>
 </div>
 
 # TileO
@@ -161,7 +169,7 @@ TileO provides source inspection, job management, artifact delivery, status endp
 
 ## Community and Enterprise
 
-**TileO Community Edition:** the Enygma-controlled original code published in this official repository is licensed under **GNU AGPL v3 only (`AGPL-3.0-only`)**, except for clearly identified third-party code or differently licensed files. Consult the complete [LICENSE](LICENSE), [NOTICE](NOTICE.md), and [third-party notices](THIRD_PARTY_NOTICES.md).
+**TileO Community Edition:** the Enygma-controlled original code published in this official repository is licensed under **GNU AGPL v3 only (`AGPL-3.0-only`)**, except for clearly identified third-party code or differently licensed files. Consult the complete [LICENSE](LICENSE), [NOTICE](NOTICE.md), and [third-party notices](THIRD-PARTY-NOTICES.md).
 
 **TileO Enterprise Edition:** Enygma offers a **separate commercial licensing path**, subject to a signed agreement and demonstrable rights over the code concerned. Enterprise is not an exception embedded into the AGPL, nor does it diminish AGPL rights already granted. No proprietary Enterprise source code is implicitly included in this Community repository. See [ENTERPRISE.md](ENTERPRISE.md) and [CLA.md](CLA.md).
 
@@ -200,7 +208,14 @@ See the [AI Acknowledgement](AI_ACKNOWLEDGEMENT.md) for scope and accountability
 | Project branding | [Logo assets and usage](assets/branding/README.md) |
 | Samples | [Sample catalogue](samples/README.md) · [TileO-Samples-01](samples/TileO-Samples-01/README.md) |
 | AI transparency | [AI Acknowledgement](AI_ACKNOWLEDGEMENT.md) |
-| Third-party licensing and provenance | [Notices](THIRD_PARTY_NOTICES.md) · [Inventory](third-party/DEPENDENCIES.md) · [Release compliance](third-party/RELEASE_GATE.md) |
+| Third-party licensing and provenance | [Notices](THIRD-PARTY-NOTICES.md) · [Inventory](third-party/DEPENDENCIES.md) · [Release compliance](third-party/RELEASE_GATE.md) |
+
+## Citation
+
+For academic or research use, cite the **specific TileO version** used. See [CITATION.cff](CITATION.cff) for the software citation metadata.
+
+- **TileO v0.1.0 (version-specific DOI):** https://doi.org/10.5281/zenodo.23799701
+- **TileO (all versions; concept DOI):** https://doi.org/10.5281/zenodo.23799700
 
 ## Contributing
 

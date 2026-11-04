@@ -1,22 +1,20 @@
-
 cff-version: 1.2.0
 message: "If you use TileO in research, publications, or software development, please cite this software."
-
 type: software
 title: "TileO"
-
+abstract: "TileO is a self-hosted, open-source geospatial processing and publication toolkit for inspecting, converting, validating, and distributing raster imagery, elevation data, vector datasets, and georeferenced 3D content. It supports workflows for Cloud Optimized GeoTIFF (COG), MBTiles, PMTiles, and 3D Tiles, with explicit geospatial metadata and semantics, traceable processing, output validation, browser previews, and an API-based job workflow."
+version: "0.1.0"
+date-released: 2026-10-30
+doi: "10.5281/zenodo.23799701"
 authors:
   - family-names: "Karya"
     given-names: "Erick"
     orcid: "https://orcid.org/0009-0003-0386-8948"
-
   - family-names: "Ariefianto"
     given-names: "Dony"
     orcid: "https://orcid.org/0009-0005-1285-0250"
-
 repository-code: "https://github.com/enygma-id/TileO"
 url: "https://tileo.org"
-
 keywords:
   - "3d-tiles"
   - "cloud-optimized-geotiff"
@@ -31,5 +29,8 @@ keywords:
   - "pmtiles"
   - "raster-tiles"
   - "vector-tiles"
-
 license: "AGPL-3.0-only"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23799700"
+    description: "Concept DOI for all TileO versions."

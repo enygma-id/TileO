@@ -87,4 +87,4 @@ See [Operations](OPERATIONS.md), [Testing](TESTING.md), [Security](../SECURITY.m
 
 ## Dependencies and distribution
 
-TileO invokes **GDAL** and **Tippecanoe**, and uses Node.js/TypeScript dependencies for geospatial formats, job handling, rendering and storage. Their licensing and redistribution requirements are **separate from the TileO project code license**. See [Third-Party Notices](../THIRD_PARTY_NOTICES.md), [Native Components](../third-party/NATIVE_COMPONENTS.md) and [Release Policy](RELEASE_POLICY.md).
+TileO invokes **GDAL** and **Tippecanoe**, and uses Node.js/TypeScript dependencies for geospatial formats, job handling, rendering and storage. Their licensing and redistribution requirements are **separate from the TileO project code license**. See [Third-Party Notices](../THIRD-PARTY-NOTICES.md), [Native Components](../third-party/NATIVE_COMPONENTS.md) and [Release Policy](RELEASE_POLICY.md).

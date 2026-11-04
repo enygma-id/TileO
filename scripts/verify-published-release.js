@@ -35,13 +35,17 @@ try {
   // All public asset bytes/checksums were already validated anonymously against the frozen core.
 
   const registryRef = `ghcr.io/${options.repo.toLowerCase()}:0.1.0`;
-  const raw = execFileSync('docker', ['buildx', 'imagetools', 'inspect', '--raw', registryRef], { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+  const anonymousConfig = fs.mkdtempSync(path.join(out, 'anonymous-docker-'));
+  fs.writeFileSync(path.join(anonymousConfig, 'config.json'), JSON.stringify({auths:{}}));
+  const anonymousEnv = {...process.env, DOCKER_CONFIG:anonymousConfig};
+  const raw = execFileSync('docker', ['buildx', 'imagetools', 'inspect', '--raw', registryRef], { env: anonymousEnv, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
   const manifest = JSON.parse(raw);
   if (manifest.schemaVersion !== 2 || !manifest.config?.digest || !Array.isArray(manifest.layers) || manifest.layers.length === 0) failures.push('GHCR manifest is not a single-platform OCI/Docker image manifest');
-  execFileSync('docker', ['pull', '--platform', candidate.platform, registryRef], { stdio: 'pipe' });
+  if (manifest.config?.digest !== candidate.image_id) failures.push('Registry config digest differs from approved image');
+  execFileSync('docker', ['pull', '--platform', candidate.platform, registryRef], { env: anonymousEnv, stdio: 'pipe' });
   const pulled = JSON.parse(execFileSync('docker', ['image', 'inspect', registryRef], { encoding: 'utf8' }))[0];
   if (pulled.Id !== candidate.image_id || `${pulled.Os}/${pulled.Architecture}` !== candidate.platform) failures.push('Pulled GHCR config image ID/platform does not match approved candidate');
-  registry = { reference: registryRef, config_digest: manifest.config?.digest ?? null, layer_digests: (manifest.layers ?? []).map((layer) => layer.digest), pulled_image_id: pulled.Id, platform: `${pulled.Os}/${pulled.Architecture}` };
+  registry = { access: 'anonymous', reference: registryRef, config_digest: manifest.config?.digest ?? null, layer_digests: (manifest.layers ?? []).map((layer) => layer.digest), pulled_image_id: pulled.Id, platform: `${pulled.Os}/${pulled.Architecture}` };
 } catch (error) { failures.push(`Cannot complete publication verification: ${error.message}`); }
 const report = { schema: 'tileo-publication-verification@1', checked_at: new Date().toISOString(), status: publicationStatus(sourceVerified, failures), repository: options.repo, tag: options.tag, candidate_id: candidate.candidate_id, commit: candidate.commit, image_id: candidate.image_id, release_url: release?.html_url ?? null, registry, failures };
 atomicWrite(path.join(out, 'publication-verification.json'), JSON.stringify(report, null, 2) + '\n');
