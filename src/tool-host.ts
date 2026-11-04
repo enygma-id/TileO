@@ -60,6 +60,8 @@ process.on('message', (message: {
     if (stopping) void killProcessTree(child?.pid, 'SIGKILL');
     clearInterval(memoryCheck); clearTimeout(hardStop);
     // Flush queued stdout/stderr before disconnecting short-lived tools.
-    if (process.connected) process.send?.({ type: 'exit', code, signal }, () => process.disconnect());
+    if (process.connected) process.send?.({ type: 'exit', code, signal }, () => {
+      if (process.connected) process.disconnect?.();
+    });
   });
 });

@@ -40,6 +40,10 @@ npm run validate:outputs -- --out-dir artifacts/security-output-conformance
 
 Use a fresh output directory for each conformance run. Validator overrides cross upstream version ranges; the full output matrix must pass before accepting an update. Keep these tools outside the production dependency tree and image, as described in [Output Validation](OUTPUT_VALIDATION.md).
 
+Node type declarations must track the supported runtime major in `package.json` (currently Node 24). Dependabot keeps `@types/node` major updates pending a deliberate runtime migration; its minor and patch updates remain enabled. Compiler updates still require typecheck, build, and runtime tests. IPC callbacks must recheck connection state before disconnecting because the channel can close while a send is queued.
+
+An automated dependency PR does not regenerate TileO's license evidence. Whenever the root lockfile changes, refresh the upstream manifest, redistribution notices, and dependency inventory together, and review the resulting license evidence before merging. A stale inventory can block unrelated workflow-update PRs that inherit the same `main` commit. Formal license-election rows and their tests refer to exact currently locked versions; removed dependencies must not leave placeholder elections.
+
 Root lockfile changes also require the existing upstream notice and license gates:
 
 ```bash
