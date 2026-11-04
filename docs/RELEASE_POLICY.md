@@ -12,6 +12,8 @@ TileO development, tagged releases and distributable images are separate milesto
 
 A prior test report is useful evidence but is **not** an automatic certification of later software builds or different machines. Passing one automated license scan also does not establish complete rights clearance.
 
+A production release claim requires authenticated Engineering, Legal/IP, and Release Steward approval for the same candidate and verified publication evidence. The presence of a GitHub Release, tag, or release badge alone does not establish those approvals. When published release notes still record pending authorization, describe the release as a candidate with approval pending until its records are reconciled through the [release process](RELEASE_PROCESS.md#published-v010-status).
+
 ## License boundaries
 
 TileO Community source is published under **AGPL-3.0-only**, except for clearly marked third-party code and other materials with their own licenses. Enterprise distribution requires a separate agreement and rights clearance. Samples use their [file-specific data licenses](../samples/TileO-Samples-01/LICENSE-CC-BY-4.0.md).

@@ -20,9 +20,15 @@ npm test
 npm run release:gate
 ```
 
-These commands are **development checks**, not a full image-compliance certificate. For the first public release `v0.1.0`, the release owner must use `.github/workflows/release.yml` to build one candidate, archive raw integration/browser output, validate the frozen core manifest and final-image SPDX/CycloneDX SBOMs, and confirm authentic GCC/Mozilla source fulfillment. Tagging, GitHub Release creation and GHCR push remain disabled until the exact candidate receives separate authenticated Engineering, Legal/IP and Release Steward approvals. See [source availability](../third-party/SOURCE_ACCESS.md) and [exceptions](../third-party/ENTERPRISE_EXCEPTIONS.md).
+These commands are **development checks**, not a full image-compliance certificate. The version-specific `v0.1.0` protected workflow requires the release owner to build one candidate, archive raw integration/browser output, validate the frozen core manifest and final-image SPDX/CycloneDX SBOMs, and confirm authentic GCC/Mozilla source fulfillment. Within that workflow, tagging, GitHub Release creation and GHCR push are gated on separate authenticated Engineering, Legal/IP and Release Steward approvals for the exact candidate. See [source availability](../third-party/SOURCE_ACCESS.md) and [exceptions](../third-party/ENTERPRISE_EXCEPTIONS.md).
 
 Some real-tool integration and browser tests require dedicated fixtures, installed executables or explicit environment configuration. Do not treat skipped tests as successful end-to-end validation. See [Testing](TESTING.md), [Verification](VERIFICATION.md) and [Tools & Prerequisites](TOOLS.md).
+
+## Published v0.1.0 status
+
+As reviewed on 2026-11-04, the public [v0.1.0 release notes](https://github.com/enygma-id/TileO/releases/tag/v0.1.0) describe a release candidate and state that publication, final URLs, and registry digests remain pending authenticated Engineering, Legal/IP, and Release Steward approval. A GitHub Release entry exists, while its notes still record pending authorization. Full production approval is therefore not established by that entry.
+
+Before changing this status, reconcile the release notes with authenticated approval records and publication verification for the same source commit, immutable image, and frozen core evidence. CI results, output conformance, and signature verification support that review but do not grant human authorization. Approval records must reflect actual decisions; preserve the existing tag and artifacts when correcting status documentation.
 
 ## Edition labeling
 
