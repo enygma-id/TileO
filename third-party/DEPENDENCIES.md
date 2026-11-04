@@ -2,7 +2,7 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **277 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `7c6c0acc78c0ef96a31d1e5e59b8f620b387fed15b7b43c2e7ebe2b38a41127a`
+- `package-lock.json` SHA-256: `f7a87c9ff52af2502922f96a75c0250021d4f430f9cc98f4041095f82799081c`
 - Runtime entries: **216** · runtime-optional: **5** · development: **56**
 - Notice evidence: **241** verified from exact upstream tarballs · **36** metadata-only · **0** failed
 - Verification date: 2026-11-04 (scripts/verify-npm-notices.js@1)
@@ -33,7 +33,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@deck.gl/extensions` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@deck.gl/geo-layers` | 9.4.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@deck.gl/layers` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `@deck.gl/maplibre` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `@deck.gl/maplibre` | 9.4.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@deck.gl/mesh-layers` | 9.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@esbuild/aix-ppc64` | 0.28.2 | `MIT` | development | `metadata_only_no_license_file` | `package.json` |
 | `@esbuild/android-arm` | 0.28.2 | `MIT` | development | `metadata_only_no_license_file` | `package.json` |

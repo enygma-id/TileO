@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `7c6c0acc78c0ef96a31d1e5e59b8f620b387fed15b7b43c2e7ebe2b38a41127a`
+Generated from committed license evidence · Lockfile SHA-256: `f7a87c9ff52af2502922f96a75c0250021d4f430f9cc98f4041095f82799081c`
 
 ## Verification summary
 
@@ -220,11 +220,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ````
 
-#### @deck.gl/maplibre (9.4.0)
+#### @deck.gl/maplibre (9.4.1)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `d0c2bc170807632a573e0dabfd61f42ba53f60d5be2502cf58552f5d39ce7fa3`
-- **Notice**: [`third-party/licenses/npm/@deck.gl/maplibre/9.4.0/LICENSE.txt`](third-party/licenses/npm/@deck.gl/maplibre/9.4.0/LICENSE.txt) · SHA-256 `e499a2c2ba3b9faabe91fdfddf43e329439263264b7148e5548d0ec605cce9f2`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `90fe4d7dff076ae186be9c65adc7770e30fe2bfec065f333ba60fc03df9badb1`
+- **Notice**: [`third-party/licenses/npm/@deck.gl/maplibre/9.4.1/LICENSE.txt`](third-party/licenses/npm/@deck.gl/maplibre/9.4.1/LICENSE.txt) · SHA-256 `e499a2c2ba3b9faabe91fdfddf43e329439263264b7148e5548d0ec605cce9f2`
 
 ````text
 Copyright Vis.gl contributors.
