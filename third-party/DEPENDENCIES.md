@@ -1,11 +1,11 @@
 # Third-Party NPM Dependency Inventory
 
-This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **284 non-root entries** (direct, transitive, development and platform-optional packages).
+This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **286 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `b12910b8363da6fbea47aeb7f59273406ccb0906303bc09235e6b0f1c7f923cb`
-- Runtime entries: **246** · runtime-optional: **4** · development: **34**
-- Notice evidence: **248** verified from exact upstream tarballs · **36** metadata-only · **0** failed
-- Verification date: 2026-10-28 (scripts/verify-npm-notices.js@1)
+- `package-lock.json` SHA-256: `ef37025714a4cba8e5c0af5f6a089884e5c28e1e03822615a445e136b25d098c`
+- Runtime entries: **246** · runtime-optional: **4** · development: **36**
+- Notice evidence: **250** verified from exact upstream tarballs · **36** metadata-only · **0** failed
+- Verification date: 2026-11-04 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
 
@@ -24,7 +24,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `BSD-3-Clause` | 18 |
 | `CC0-1.0` | 1 |
 | `ISC` | 24 |
-| `MIT` | 216 |
+| `MIT` | 218 |
 | `MIT AND BSD-3-Clause` | 1 |
 
 ## Complete package-level inventory
@@ -192,6 +192,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `end-of-stream` | 1.4.5 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `esbuild` | 0.28.2 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
 | `expand-template` | 2.0.3 | `(MIT OR WTFPL)` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `fast-check` | 4.10.2 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-decode-uri-component` | 1.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-deep-equal` | 3.1.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-json-stringify` | 7.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -266,6 +267,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `property-graph` | 4.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `protocol-buffers-schema` | 3.6.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pump` | 3.0.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `pure-rand` | 8.4.2 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
 | `quick-format-unescaped` | 4.0.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `quick-lru` | 6.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `quickselect` | 3.0.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |

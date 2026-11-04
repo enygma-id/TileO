@@ -185,6 +185,8 @@ jobs:
       actions: read
       contents: write
       packages: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with: { ref: "${{ github.sha }}", persist-credentials: true }
@@ -236,7 +238,7 @@ jobs:
           path: /tmp/tileo-final
           retention-days: 90
           if-no-files-found: error
-      - name: Publish exact authorized artifact
+      - name: Stage exact authorized artifact for signing
         if: inputs.publish
         env:
           GH_TOKEN: ${{ github.token }}
@@ -246,11 +248,35 @@ jobs:
           node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-publish-guard --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json --negative-proof-run-id "$NEGATIVE_PROOF_RUN_ID"
           node scripts/stage-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-release-assets
           node scripts/validate-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --assets-dir /tmp/tileo-release-assets --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --output /tmp/tileo-staged-assets.json
+      - name: Attest exact staged release assets
+        id: attest
+        if: inputs.publish
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: /tmp/tileo-release-assets/*
+      - name: Verify signed provenance before publication
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ATTESTATION_BUNDLE: ${{ steps.attest.outputs.bundle-path }}
+        run: |
+          mkdir -p /tmp/tileo-release-signatures
+          cp "$ATTESTATION_BUNDLE" /tmp/tileo-release-signatures/TileO-v0.1.0-provenance.sigstore.json
+          node scripts/verify-release-attestations.js --assets-dir /tmp/tileo-release-assets --bundle /tmp/tileo-release-signatures/TileO-v0.1.0-provenance.sigstore.json --candidate "$TILEO_EVIDENCE/candidate.json"
+      - name: Publish exact authorized artifact
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUSH_LATEST: ${{ inputs.push_latest }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          node scripts/certify-release-gate.js --image "$TILEO_IMAGE" --evidence-dir "$TILEO_EVIDENCE" --out-dir /tmp/tileo-final-publish-guard --manifest "$TILEO_EVIDENCE/core-evidence-manifest.json" --enforce-human-approval --approval-attestation /tmp/tileo-authorization/authorization.json --negative-proof-run-id "$NEGATIVE_PROOF_RUN_ID"
+          node scripts/validate-release-assets.js --evidence-dir "$TILEO_EVIDENCE" --assets-dir /tmp/tileo-release-assets --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --output /tmp/tileo-final-staged-assets.json
           git -c user.name='github-actions[bot]' \
             -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
             tag --annotate v0.1.0 "$GITHUB_SHA" --message 'TileO 0.1.0'
           git push origin refs/tags/v0.1.0
-          gh release create v0.1.0 /tmp/tileo-release-assets/* --verify-tag --title 'TileO 0.1.0' --notes-file "$TILEO_EVIDENCE/release/release-notes.md"
+          gh release create v0.1.0 /tmp/tileo-release-assets/* /tmp/tileo-release-signatures/*.sigstore.json --verify-tag --title 'TileO 0.1.0' --notes-file "$TILEO_EVIDENCE/release/release-notes.md"
           node scripts/verify-public-source-access.js --candidate "$TILEO_EVIDENCE/candidate.json" --closure /tmp/tileo-final/TileO-v0.1.0-Release-Closure.tar.gz --out-dir /tmp/tileo-source-access
           echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
           docker tag "$TILEO_IMAGE" "ghcr.io/${GITHUB_REPOSITORY,,}:0.1.0"
@@ -274,6 +300,8 @@ jobs:
           name: tileo-0.1.0-publication-attempt
           path: |
             /tmp/tileo-staged-assets.json
+            /tmp/tileo-final-staged-assets.json
+            /tmp/tileo-release-signatures/*.sigstore.json
             /tmp/tileo-source-access/*.json
             /tmp/tileo-publication/**/*.json
           if-no-files-found: warn

@@ -5,6 +5,8 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { atomicWrite, parseArgs, readJson, sha256File } from './lib/release-evidence.js';
 import { publicationStatus } from './lib/release-assets.js';
+import { publicDownload } from './lib/public-download.js';
+import { verifyReleaseAttestations } from './lib/release-attestations.js';
 
 let options;
 try { options = parseArgs(process.argv.slice(2), { '--repo': 'required', '--tag': 'required', '--candidate': 'required', '--out-dir': 'required', '--closure': 'required' }); }
@@ -21,6 +23,7 @@ const failures = [];
 let release = null;
 let registry = null;
 let sourceVerified = false;
+let attestation = null;
 try {
   execFileSync(process.execPath, [path.join(import.meta.dirname, 'verify-public-source-access.js'), '--candidate', options.candidate, '--closure', options.closure, '--out-dir', path.join(out, 'source-access')], { stdio: 'pipe' });
   sourceVerified = true;
@@ -33,6 +36,14 @@ try {
   const names = new Set((release.assets ?? []).map((asset) => asset.name));
   for (const name of requiredAssets) if (!names.has(name)) failures.push(`Missing GitHub Release asset: ${name}`);
   // All public asset bytes/checksums were already validated anonymously against the frozen core.
+  const signatureName = 'TileO-v0.1.0-provenance.sigstore.json';
+  if (!names.has(signatureName)) throw Error(`Missing signed release provenance: ${signatureName}`);
+  const bundle = path.join(out, signatureName);
+  const downloaded = await publicDownload(`https://github.com/${options.repo}/releases/download/${options.tag}/${signatureName}`, bundle);
+  const directories = fs.readdirSync(path.join(out, 'source-access'), { withFileTypes: true }).filter(entry => entry.isDirectory() && entry.name.startsWith('downloads-'));
+  if (directories.length !== 1) throw Error('Expected one verified public asset directory');
+  const assets = verifyReleaseAttestations(path.join(out, 'source-access', directories[0].name), bundle, candidate);
+  attestation = { bundle: downloaded, verified_assets: assets, signer_workflow: `${options.repo}/.github/workflows/release.yml`, source_commit: candidate.commit };
 
   const registryRef = `ghcr.io/${options.repo.toLowerCase()}:0.1.0`;
   const anonymousConfig = fs.mkdtempSync(path.join(out, 'anonymous-docker-'));
@@ -47,7 +58,7 @@ try {
   if (pulled.Id !== candidate.image_id || `${pulled.Os}/${pulled.Architecture}` !== candidate.platform) failures.push('Pulled GHCR config image ID/platform does not match approved candidate');
   registry = { access: 'anonymous', reference: registryRef, config_digest: manifest.config?.digest ?? null, layer_digests: (manifest.layers ?? []).map((layer) => layer.digest), pulled_image_id: pulled.Id, platform: `${pulled.Os}/${pulled.Architecture}` };
 } catch (error) { failures.push(`Cannot complete publication verification: ${error.message}`); }
-const report = { schema: 'tileo-publication-verification@1', checked_at: new Date().toISOString(), status: publicationStatus(sourceVerified, failures), repository: options.repo, tag: options.tag, candidate_id: candidate.candidate_id, commit: candidate.commit, image_id: candidate.image_id, release_url: release?.html_url ?? null, registry, failures };
+const report = { schema: 'tileo-publication-verification@1', checked_at: new Date().toISOString(), status: publicationStatus(sourceVerified, failures), repository: options.repo, tag: options.tag, candidate_id: candidate.candidate_id, commit: candidate.commit, image_id: candidate.image_id, release_url: release?.html_url ?? null, registry, attestation, failures };
 atomicWrite(path.join(out, 'publication-verification.json'), JSON.stringify(report, null, 2) + '\n');
 if (failures.length) { for (const failure of failures) console.error(failure); process.exit(1); }
 console.log('PUBLISHED_VERIFIED');

@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "description": "Isolated development validators; never installed in the TileO runtime image",
   "overrides": {
-    "sharp": "0.34.5"
+    "sharp": "0.35.5",
+    "minimatch": "11.0.4"
   },
   "dependencies": {
     "3d-tiles-validator": "0.6.1",
