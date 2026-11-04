@@ -19,6 +19,8 @@
     <a href="https://doi.org/10.5281/zenodo.23799700" title="TileO DOI (all versions)"><img src="https://zenodo.org/badge/1428312673.svg" alt="DOI"></a>
     &nbsp;
     <a href="https://github.com/enygma-id/TileO/actions/workflows/ci-cd.yml" title="TileO CI (main branch)"><img src="https://github.com/enygma-id/TileO/actions/workflows/ci-cd.yml/badge.svg?branch=main" alt="CI status (main)"></a>
+    &nbsp;
+    <a href="https://scorecard.dev/viewer/?uri=github.com/enygma-id/TileO" title="TileO OpenSSF Security Scorecard"><img src="https://api.scorecard.dev/projects/github.com/enygma-id/TileO/badge" alt="OpenSSF Scorecard"></a>
   </p>
 </div>
 
