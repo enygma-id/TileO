@@ -1,6 +1,7 @@
 .git
 .github
 node_modules
+tools/output-validation
 dist
 data
 *.log

@@ -186,20 +186,36 @@ async function wrapGlbAsB3dm(input: string, output: string, signal?: AbortSignal
   const featureJson = Buffer.from('{"BATCH_LENGTH":0}');
   const padding = Buffer.alloc((8 - ((28 + featureJson.length) % 8)) % 8, 0x20);
   const featureTable = Buffer.concat([featureJson, padding]);
-  const byteLength = 28 + featureTable.length + glbSize;
+  // Extend the JSON chunk rather than adding bytes after the embedded GLB.
+  // The latter would violate the GLB length/BIN padding constraints.
+  const glbPadding = (8 - glbSize % 8) % 8;
+  const byteLength = 28 + featureTable.length + glbSize + glbPadding;
   if (byteLength > 0xffffffff) throw new JobError('B3DM_LIMIT', 'A generated GLB tile is too large for the B3DM 32-bit byte-length field. Use 3D Tiles 1.1 output.');
   const header = Buffer.alloc(28);
   header.write('b3dm', 0); header.writeUInt32LE(1, 4); header.writeUInt32LE(byteLength, 8);
   header.writeUInt32LE(featureTable.length, 12);
   const content = async function* () {
     yield header; yield featureTable;
-    for await (const chunk of createReadStream(input)) { signal?.throwIfAborted(); yield chunk; }
+    if (glbPadding) {
+      const source = await open(input, 'r');
+      const glbHeader = Buffer.alloc(20);
+      try { await source.read(glbHeader, 0, 20, 0); } finally { await source.close(); }
+      const jsonLength = glbHeader.readUInt32LE(12);
+      glbHeader.writeUInt32LE(glbSize + glbPadding, 8);
+      glbHeader.writeUInt32LE(jsonLength + glbPadding, 12);
+      yield glbHeader;
+      for await (const chunk of createReadStream(input, { start: 20, end: 19 + jsonLength })) { signal?.throwIfAborted(); yield chunk; }
+      yield Buffer.alloc(glbPadding, 0x20);
+      for await (const chunk of createReadStream(input, { start: 20 + jsonLength })) { signal?.throwIfAborted(); yield chunk; }
+    } else {
+      for await (const chunk of createReadStream(input)) { signal?.throwIfAborted(); yield chunk; }
+    }
   };
   await pipeline(Readable.from(content()), createWriteStream(output, { flags: 'wx' }), { signal });
   const generated = await open(output, 'r');
   try {
     const check = Buffer.alloc(32 + featureTable.length);
-    if ((await generated.read(check, 0, check.length, 0)).bytesRead !== check.length || check.toString('ascii', 0, 4) !== 'b3dm' || check.readUInt32LE(4) !== 1 || check.readUInt32LE(8) !== byteLength || check.toString('ascii', 28 + featureTable.length, 32 + featureTable.length) !== 'glTF') throw new JobError('INVALID_B3DM', 'Generated B3DM content failed structural validation.');
+    if (byteLength % 8 || (await generated.read(check, 0, check.length, 0)).bytesRead !== check.length || check.toString('ascii', 0, 4) !== 'b3dm' || check.readUInt32LE(4) !== 1 || check.readUInt32LE(8) !== byteLength || check.toString('ascii', 28 + featureTable.length, 32 + featureTable.length) !== 'glTF') throw new JobError('INVALID_B3DM', 'Generated B3DM content failed structural validation.');
   } finally { await generated.close(); }
 }
 
@@ -214,8 +230,7 @@ async function buildB3dmPackage(directory: string, tileset: any, signal?: AbortS
       const glbUri = String(tile.content.uri);
       const b3dmUri = glbUri.replace(/\.glb$/, '.b3dm');
       await wrapGlbAsB3dm(join(directory, glbUri), join(legacyDirectory, b3dmUri), signal);
-      tile.content.url = b3dmUri;
-      delete tile.content.uri;
+      tile.content.uri = b3dmUri;
     }
     for (const child of tile.children ?? []) await convert(child);
   };

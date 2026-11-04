@@ -24,6 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
+      - run: npm run check:docs
       - run: node scripts/verify-npm-notices.js
       - run: node scripts/verify-native-licenses.js
       - run: node scripts/check-notice-parity.js
@@ -31,3 +32,32 @@ jobs:
       - name: Validate release tooling syntax
         run: |
           for file in scripts/*.js scripts/lib/*.js; do node --check "$file"; done
+
+  output-conformance:
+    name: Independent output conformance
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.13.1
+          cache: npm
+      - name: Install native conformance prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gdal-bin python3-gdal libtiff-tools openjdk-17-jre-headless
+          echo "JAVA=/usr/lib/jvm/java-17-openjdk-amd64/bin/java" >> "$GITHUB_ENV"
+          echo "PYTHON=/usr/bin/python3" >> "$GITHUB_ENV"
+      - run: npm ci
+      - run: npm run build
+      - run: npm run validators:setup
+      - name: Validate synthetic output matrix and WMTS
+        run: npm run validate:outputs -- --out-dir artifacts/output-conformance
+      - name: Preserve reports, including failures and skips
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: output-conformance-${{ github.sha }}
+          path: artifacts/output-conformance
+          if-no-files-found: warn

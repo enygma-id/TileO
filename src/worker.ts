@@ -10,6 +10,7 @@ import { raster } from './raster.js';
 import { vector, summarizeTippecanoeDrop, estimatedVectorCopies, resolveVectorPlan, suggestPreserveFloor, DENSE_FEATURE_THRESHOLD, PRESERVE_PER_TILE_BUDGET, type VectorBatchSummary } from './vector.js';
 import { validate } from './validate.js';
 import { run } from './process.js';
+import { validatePublication } from './output-validation.js';
 import { exportPmtiles } from './pmtiles.js';
 import { buildElevation, buildScientific } from './elevation.js';
 import { doctor } from './doctor.js';
@@ -95,9 +96,10 @@ async function execute(job: Job) {
       await check(); abort.signal.throwIfAborted();
       if (job.source?.kind === 's3' && job.source.readMode === 'remote') await assertS3SourceUnchanged(job.source, abort.signal, sealedLoader);
       if (job.source?.kind === 'url' && job.source.readMode === 'remote') await assertUrlSourceUnchanged(job.source, abort.signal);
-      jobs.update(job.id, 'Publishing elevation output', 95);
+      jobs.update(job.id, 'Validating output before publication', 95);
+      const validation = await validatePublication(staged, 'elevation', scratch, execution);
       await rename(staged, final);
-      published = jobs.finish(job.id, job.attempt, owner, outputName, result);
+      published = jobs.finish(job.id, job.attempt, owner, outputName, { ...result, validation });
       if (!published) throw new JobError('CANCELLED', 'Publication cancelled because the job or worker ownership changed.');
       return;
     }
@@ -106,9 +108,10 @@ async function execute(job: Job) {
       await check(); abort.signal.throwIfAborted();
       if (job.source?.kind === 's3' && job.source.readMode === 'remote') await assertS3SourceUnchanged(job.source, abort.signal, sealedLoader);
       if (job.source?.kind === 'url' && job.source.readMode === 'remote') await assertUrlSourceUnchanged(job.source, abort.signal);
-      jobs.update(job.id, 'Publishing scientific raster output', 95);
+      jobs.update(job.id, 'Validating output before publication', 95);
+      const validation = await validatePublication(staged, 'scientific', scratch, execution);
       await rename(staged, final);
-      published = jobs.finish(job.id, job.attempt, owner, outputName, result);
+      published = jobs.finish(job.id, job.attempt, owner, outputName, { ...result, validation });
       if (!published) throw new JobError('CANCELLED', 'Publication cancelled because the job or worker ownership changed.');
       return;
     }
@@ -130,9 +133,10 @@ async function execute(job: Job) {
       const result = resultFile.result;
       await check(); abort.signal.throwIfAborted();
       await writeFile(execution.log, `Validated self-contained GLB. ${result.primitives} mesh primitive(s), ${result.triangles} triangle(s).\nPlaced at ${result.latitude}, ${result.longitude}, ${result.height} m WGS84 ellipsoid height; anchor ${result.anchor}; heading ${result.heading}°, pitch ${result.pitch}°, roll ${result.roll}°; scale ${result.scale}.\nCreated and structurally validated 3D Tiles 1.1 package${result.formats.includes('b3dm') ? ' plus B3DM compatibility output' : ''}: ${result.tiles} tile(s), ${result.lodLevels} LOD level(s), strategy ${result.strategy}.\n`);
-      jobs.update(job.id, 'Publishing 3D Tiles', 95);
+      jobs.update(job.id, 'Validating output before publication', 95);
+      const validation = await validatePublication(staged, 'model3d', scratch, execution);
       await rename(staged, final);
-      published = jobs.finish(job.id, job.attempt, owner, outputName, result);
+      published = jobs.finish(job.id, job.attempt, owner, outputName, { ...result, validation });
       if (!published) throw new JobError('CANCELLED', 'Publication cancelled because the job or worker ownership changed.');
       return;
     }
@@ -204,8 +208,9 @@ async function execute(job: Job) {
     if (job.options.exportPmtiles) { jobs.update(job.id, 'Exporting and validating PMTiles', 96); await exportPmtiles(mbtiles, join(staged, 'tiles.pmtiles'), abort.signal); }
     abort.signal.throwIfAborted();
     const planSummary = info.kind === 'vector' ? (() => { const p = resolveVectorPlan(info, job.options); return { geometry: p.geometry, densityTier: p.densityTier, detail: p.detail, lowDetail: p.lowDetail, minimumDetail: p.minimumDetail, maxTileBytes: p.maxTileBytes, maxTileFeatures: p.maxTileFeatures, avgPerTileAtMin: p.avgPerTileAtMin }; })() : null;
+    const validation = await validatePublication(staged, info.kind, scratch, execution);
     await rename(staged, final);
-    published = jobs.finish(job.id, job.attempt, owner, outputName, { ...result, source: info, exportPmtiles: !!job.options.exportPmtiles, ...(planSummary ? { vectorPlan: planSummary } : {}), ...(batchSummary ? { batch: { ...batchSummary, peakScratchBytes } } : {}) });
+    published = jobs.finish(job.id, job.attempt, owner, outputName, { ...result, validation, source: info, exportPmtiles: !!job.options.exportPmtiles, ...(planSummary ? { vectorPlan: planSummary } : {}), ...(batchSummary ? { batch: { ...batchSummary, peakScratchBytes } } : {}) });
     if (!published) throw new JobError('CANCELLED', 'Publication cancelled because the job or worker ownership changed.');
     console.log(JSON.stringify({ event: 'job_completed', job: job.id, attempt: job.attempt, ...result }));
   } catch (error) {

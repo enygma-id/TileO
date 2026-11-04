@@ -14,6 +14,7 @@ import { JobError, parseOptions, type Job, type S3InputSource, type UrlInputSour
 import { ZipFile } from 'yazl';
 import { addGltfCompanion, model3dPackageInfo, model3dPackageReadme, readGltfCompanion } from './model3d-package.js';
 import { capabilities, tileMime, wmtsException } from './wmts.js';
+import { terrainGrid } from './elevation.js';
 import { inspect } from './inspect.js';
 import { sourcePreview } from './source-preview.js';
 import { run } from './process.js';
@@ -827,19 +828,41 @@ export async function createApp(jobs = new Jobs()) {
   app.get<{ Params: { id: string; z: string; x: string; y: string } }>('/api/jobs/:id/tiles/:z/:x/:y', async (req, reply) => sendTile(req.params.id, [req.params.z, req.params.x, req.params.y], reply));
   app.get<{ Params: { id: string }; Querystring: Record<string, string> }>('/api/jobs/:id/wmts', async (req, reply) => {
     const { job, path } = artifact(req.params.id);
-    const q = Object.fromEntries(Object.entries(req.query).map(([key, value]) => [key.toUpperCase(), value]));
-    const fail = (message: string, code?: string) => reply.code(400).type('application/xml').send(wmtsException(message, code));
+    const fail = (message: string, code = 'InvalidParameterValue', locator?: string) => reply.code(400).type('application/xml').send(wmtsException(message, code, locator));
+    const q: Record<string, string> = {};
+    for (const [key, raw] of Object.entries(req.query)) {
+      const name = key.toUpperCase();
+      for (const value of Array.isArray(raw) ? raw : [raw]) {
+        if (typeof value !== 'string') return fail('Invalid query parameter.', 'InvalidParameterValue', name.toLowerCase());
+        if (q[name] !== undefined && q[name] !== value) return fail('Conflicting repeated query parameter.', 'InvalidParameterValue', name.toLowerCase());
+        q[name] = value;
+      }
+    }
     if (job.input.endsWith('.glb') || job.options.pipeline === 'scientific' || (job.options.pipeline === 'elevation' && !['terrain-rgb', 'terrarium'].includes(job.options.elevationOutput!))) return fail('This job has no WMTS tiles.');
-    if (q.SERVICE?.toUpperCase() !== 'WMTS' || (q.VERSION && q.VERSION !== '1.0.0')) return fail('Use SERVICE=WMTS and VERSION=1.0.0.');
-    if (q.REQUEST?.toLowerCase() === 'getcapabilities') return reply.type('application/xml').send(capabilities(job, `${config.origin || `${req.protocol}://${req.headers.host}`}/api/jobs/${job.id}/wmts`));
-    if (q.REQUEST?.toLowerCase() !== 'gettile') return fail('Supported requests: GetCapabilities, GetTile.', 'OperationNotSupported');
-    if (q.LAYER !== job.id || q.STYLE !== 'default' || q.TILEMATRIXSET !== 'WebMercatorQuad') return fail('Invalid layer, style or matrix set.');
+    for (const name of ['SERVICE', 'REQUEST']) if (!q[name]) return fail(`Missing ${name}.`, 'MissingParameterValue', name.toLowerCase());
+    if (q.SERVICE!.toUpperCase() !== 'WMTS') return fail('Use SERVICE=WMTS.', 'InvalidParameterValue', 'service');
+    if (q.REQUEST!.toLowerCase() === 'getcapabilities') {
+      if (q.ACCEPTVERSIONS && !q.ACCEPTVERSIONS.split(',').includes('1.0.0')) return fail('Only version 1.0.0 is available.', 'VersionNegotiationFailed');
+      if (q.ACCEPTFORMATS && !q.ACCEPTFORMATS.split(',').some(format => ['application/xml', 'text/xml'].includes(format))) return fail('Use application/xml.', 'InvalidParameterValue', 'acceptformats');
+      const sections = q.SECTIONS?.split(',').map(section => section.toLowerCase() === 'all' ? 'All' : section) ?? ['All'];
+      if (sections.some(section => !['All', 'ServiceIdentification', 'ServiceProvider', 'OperationsMetadata', 'Contents', 'Themes'].includes(section))) return fail('Invalid capabilities section.', 'InvalidParameterValue', 'sections');
+      return reply.type('application/xml').send(capabilities(job, `${config.origin || `${req.protocol}://${req.headers.host}`}/api/jobs/${job.id}/wmts`, sections));
+    }
+    if (q.REQUEST!.toLowerCase() !== 'gettile') return fail('Supported requests: GetCapabilities, GetTile.', 'InvalidParameterValue', 'request');
+    for (const name of ['VERSION', 'LAYER', 'STYLE', 'FORMAT', 'TILEMATRIXSET', 'TILEMATRIX', 'TILEROW', 'TILECOL']) if (q[name] === undefined || q[name] === '') return fail(`Missing ${name}.`, 'MissingParameterValue', name.toLowerCase());
+    for (const [name, expected] of [['VERSION', '1.0.0'], ['LAYER', job.id], ['STYLE', 'default'], ['TILEMATRIXSET', 'WebMercatorQuad']]) if (q[name!] !== expected) return fail(`Invalid ${name}.`, 'InvalidParameterValue', name!.toLowerCase());
     try {
       const expected = tileMimeForFormat(job, resolveTileFormat(job, openTileDb(tileDbPath(job, path))));
-      if (q.FORMAT !== expected) return fail('Invalid layer, style, matrix set or format.');
+      if (q.FORMAT !== expected) return fail('Invalid tile format.', 'InvalidParameterValue', 'format');
     } catch { /* fall through to sendTile, which reports archive errors */ }
     const coords = [q.TILEMATRIX, q.TILECOL, q.TILEROW];
-    if (coords.some(v => v === undefined || !/^\d+$/.test(v)) || Number(q.TILEMATRIX) < job.options.minZoom || Number(q.TILEMATRIX) > job.options.maxZoom || Number(q.TILECOL) >= 2 ** Number(q.TILEMATRIX) || Number(q.TILEROW) >= 2 ** Number(q.TILEMATRIX)) return fail('Invalid tile coordinates.');
+    for (const name of ['TILEMATRIX', 'TILECOL', 'TILEROW']) if (!/^\d+$/.test(q[name]!) || !Number.isSafeInteger(Number(q[name]))) return fail('Invalid tile coordinate.', 'InvalidParameterValue', name.toLowerCase());
+    const z = Number(q.TILEMATRIX), x = Number(q.TILECOL), y = Number(q.TILEROW);
+    if (z < job.options.minZoom || z > job.options.maxZoom) return fail('Unknown tile matrix.', 'InvalidParameterValue', 'tilematrix');
+    let limits = { x0: 0, x1: 2 ** z - 1, y0: 0, y1: 2 ** z - 1 };
+    if (Array.isArray(job.metadata?.bounds)) { try { limits = terrainGrid(job.metadata.bounds as number[], z); } catch { /* Match the world limits advertised by capabilities(). */ } }
+    if (x < limits.x0 || x > limits.x1) return fail('Tile column is outside the advertised limits.', 'TileOutOfRange', 'tilecol');
+    if (y < limits.y0 || y > limits.y1) return fail('Tile row is outside the advertised limits.', 'TileOutOfRange', 'tilerow');
     return sendTile(job.id, coords as string[], reply);
   });
   // Small in-memory basemap cache: upstream OSM tiles are immutable per z/x/y.

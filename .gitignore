@@ -5,6 +5,8 @@ dist/
 .env
 .env.*
 !.env.example
+# Local release signing credentials must never enter a source contribution.
+tileo-release-operator.*.private-key.pem
 *.log
 test-results/
 TileO-main*-Audit*.md
@@ -22,3 +24,6 @@ release-evidence/
 /artifacts/
 .DS_Store
 Thumbs.db
+
+# Python helpers may create bytecode during local checks.
+__pycache__/

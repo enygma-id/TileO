@@ -21,7 +21,11 @@
     "release:candidate": "node scripts/prepare-release.js --version 0.1.0",
     "test": "npm run build && node --test dist/tests/*.test.js && node scripts/test-source-access.js && node scripts/test-ca-rebuild.js && node scripts/test-final-sbom.js && node scripts/test-approval-negative-proof.js",
     "test:browser": "playwright test",
-    "release:gate": "node scripts/release-gate.js"
+    "release:gate": "node scripts/release-gate.js",
+    "validators:setup": "node scripts/setup-output-validators.js",
+    "validate:output": "node scripts/validate-output.js",
+    "validate:outputs": "node scripts/validate-outputs.js",
+    "check:docs": "node scripts/check-documentation.js"
   },
   "overrides": {
     "@loaders.gl/textures": "^4.5.4",

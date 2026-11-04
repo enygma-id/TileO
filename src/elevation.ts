@@ -111,7 +111,7 @@ export async function buildElevation(input: string, output: string, options: Opt
   const work = { ...execution, env: environment };
   progress('Elevation: creating lossless COG', 10);
   const cog = join(output, 'elevation.tif');
-  const args = ['-of', 'COG', '-co', 'COMPRESS=DEFLATE', '-co', 'PREDICTOR=YES', '-co', 'BLOCKSIZE=512', '-co', 'BIGTIFF=IF_SAFER', '-co', 'RESAMPLING=AVERAGE', '-mo', `TILEO_ELEVATION_KIND=${options.elevationKind}`, '-mo', `TILEO_DECLARED_UNIT=${options.elevationUnit}`, '-mo', `TILEO_HEIGHT_REFERENCE=${options.heightReference}`];
+  const args = ['-of', 'COG', '-co', 'GEOTIFF_VERSION=1.1', '-co', 'COMPRESS=DEFLATE', '-co', 'PREDICTOR=YES', '-co', 'BLOCKSIZE=512', '-co', 'BIGTIFF=IF_SAFER', '-co', 'RESAMPLING=AVERAGE', '-mo', `TILEO_ELEVATION_KIND=${options.elevationKind}`, '-mo', `TILEO_DECLARED_UNIT=${options.elevationUnit}`, '-mo', `TILEO_HEIGHT_REFERENCE=${options.heightReference}`];
   if (options.sourceCrs) args.push('-a_srs', options.sourceCrs);
   await run('gdal_translate', [...args, input, cog], work);
   progress('Elevation: validating COG and source values', 45);
@@ -147,7 +147,7 @@ export async function buildScientific(input: string, output: string, options: Op
   const work = { ...execution, env: { ...(execution.env ?? toolEnvironment()), CPL_TMPDIR: output } };
   progress('Scientific raster: creating lossless COG', 15);
   const cog = join(output, 'scientific.tif');
-  const args = ['-of', 'COG', '-co', 'COMPRESS=DEFLATE', '-co', 'PREDICTOR=YES', '-co', 'BLOCKSIZE=512', '-co', 'BIGTIFF=IF_SAFER', '-co', 'RESAMPLING=AVERAGE'];
+  const args = ['-of', 'COG', '-co', 'GEOTIFF_VERSION=1.1', '-co', 'COMPRESS=DEFLATE', '-co', 'PREDICTOR=YES', '-co', 'BLOCKSIZE=512', '-co', 'BIGTIFF=IF_SAFER', '-co', 'RESAMPLING=AVERAGE'];
   if (options.sourceCrs) args.push('-a_srs', options.sourceCrs);
   await run('gdal_translate', [...args, input, cog], work);
   progress('Scientific raster: validating COG and source values', 65);

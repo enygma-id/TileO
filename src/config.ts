@@ -84,6 +84,8 @@ export const config = {
   production: process.env.NODE_ENV === 'production',
   repositoryUrl: process.env.TILEO_REPOSITORY_URL || 'https://github.com',
   data: resolve(process.env.TILEO_DATA_DIR ?? join(root, 'data')),
+  outputValidation: choice('TILEO_OUTPUT_VALIDATION', 'builtin', ['builtin', 'strict']),
+  validatorTools: resolve(process.env.TILEO_VALIDATOR_TOOLS_DIR ?? join(root, 'artifacts', 'output-validators')),
   host: process.env.TILEO_HOST ?? '127.0.0.1',
   port: integer('TILEO_PORT', 8090, 1, 65535),
   token: process.env.TILEO_API_TOKEN ?? '',
