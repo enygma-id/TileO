@@ -149,9 +149,9 @@ jobs:
         with: { ref: "${{ github.sha }}", persist-credentials: false }
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: 24.13.1 }
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with: { name: tileo-0.1.0-core-evidence, path: release-evidence/v0.1.0 }
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with: { name: tileo-0.1.0-candidate-image, path: /tmp/tileo-export }
       - run: |
           gunzip -c /tmp/tileo-export/tileo-0.1.0-image.tar.gz | docker load
@@ -166,9 +166,9 @@ jobs:
         with: { ref: "${{ github.sha }}", persist-credentials: false }
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: 24.13.1 }
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with: { name: tileo-0.1.0-core-evidence, path: release-evidence/v0.1.0 }
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with: { name: tileo-0.1.0-candidate-image, path: /tmp/tileo-export }
       - run: |
           gunzip -c /tmp/tileo-export/tileo-0.1.0-image.tar.gz | docker load
@@ -192,9 +192,9 @@ jobs:
         with: { ref: "${{ github.sha }}", persist-credentials: true }
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: 24.13.1 }
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with: { name: tileo-0.1.0-core-evidence, path: release-evidence/v0.1.0 }
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with: { name: tileo-0.1.0-candidate-image, path: /tmp/tileo-export }
       - name: Collect authenticated review history
         env:
