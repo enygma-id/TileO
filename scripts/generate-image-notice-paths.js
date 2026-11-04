@@ -94,7 +94,7 @@ for (const r of records) {
   let scope = 'runtime';
   let desc = '';
 
-  if (p.includes('THIRD-PARTY-NOTICES') || p.includes('THIRD_PARTY_NOTICES')) {
+  if (p.endsWith('/THIRD-PARTY-NOTICES.md')) {
     fileType = 'comprehensive_notice';
     scope = 'all_third_party';
     desc = 'Primary unified attribution document for all third-party components';

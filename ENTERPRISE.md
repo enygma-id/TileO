@@ -42,7 +42,7 @@ Third-party dependencies are **not** relicensed by Enygma merely because they ar
 
 Enterprise distributions must independently comply with all applicable third-party licenses, notices, source-offer requirements, attribution requirements, binary-linking conditions, and other obligations.
 
-See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 **Disclosed third-party exceptions.** A distributable TileO build may include the GCC runtime libraries (`libstdc++`, `libgcc`) and Mozilla-derived CA trust-store material under their own applicable licenses. These are not permissive-license components. Inclusion is conditional on exact-file verification, required notices, source access where applicable, and authorization for the specific release; see [third-party exceptions](third-party/ENTERPRISE_EXCEPTIONS.md) and [source-access policy](third-party/SOURCE_ACCESS.md). An Enterprise agreement does not extinguish recipients' third-party license rights.
 
