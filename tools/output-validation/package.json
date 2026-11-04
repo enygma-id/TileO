@@ -1,0 +1,14 @@
+{
+  "name": "tileo-independent-output-validators",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Isolated development validators; never installed in the TileO runtime image",
+  "overrides": {
+    "sharp": "0.34.5"
+  },
+  "dependencies": {
+    "3d-tiles-validator": "0.6.1",
+    "gltf-validator": "2.0.0-dev.3.10",
+    "@mapbox/vector-tile": "3.0.0"
+  }
+}

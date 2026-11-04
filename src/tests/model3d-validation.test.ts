@@ -90,3 +90,27 @@ test('isolated 3D converter writes result and structured error files', async () 
     await assert.rejects(delayed, error => error instanceof JobError && error.code === 'CANCELLED');
   } finally { await rm(dir, { recursive: true, force: true }); }
 });
+
+test('B3DM uses content.uri and aligns both tile and embedded GLB without trailing bytes', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'tileo-b3dm-alignment-'));
+  try {
+    for (const label of ['a', 'longer']) {
+      const source = join(dir, `${label}.glb`), output = join(dir, label);
+      await fixture(source, gltf => { gltf.asset.generator = label; });
+      await build3dTiles(source, output, { ...options, exportB3dm: true });
+      const tileset = JSON.parse(await readFile(join(output, 'legacy-b3dm/tileset.json'), 'utf8'));
+      assert.equal(tileset.root.content.uri, 'tiles/model.b3dm');
+      assert.equal(tileset.root.content.url, undefined);
+      const bytes = await readFile(join(output, 'legacy-b3dm', tileset.root.content.uri));
+      assert.equal(bytes.length % 8, 0);
+      assert.equal(bytes.readUInt32LE(8), bytes.length);
+      const offset = 28 + bytes.readUInt32LE(12) + bytes.readUInt32LE(16) + bytes.readUInt32LE(20) + bytes.readUInt32LE(24);
+      assert.equal(bytes.toString('ascii', offset, offset + 4), 'glTF');
+      assert.equal(bytes.readUInt32LE(offset + 8), bytes.length - offset);
+      const jsonLength = bytes.readUInt32LE(offset + 12);
+      const model = JSON.parse(bytes.toString('utf8', offset + 20, offset + 20 + jsonLength));
+      assert.equal(model.asset.generator, label);
+      assert.equal(bytes.toString('ascii', offset + 24 + jsonLength, offset + 28 + jsonLength), 'BIN\0');
+    }
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});

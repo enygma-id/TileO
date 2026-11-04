@@ -19,8 +19,11 @@ This index provides navigation to the public documentation maintained in the [Ti
 | HTTP endpoints and job lifecycle | [API](API.md), [Root API Reference](../API.md) and [OpenAPI](../openapi.yaml) |
 | API stability and compatibility | [API Contract](API_CONTRACT.md) |
 | Data formats, CRS and raster/3D semantics | [Formats and Semantics](FORMATS_AND_SEMANTICS.md) |
+| Complete output catalog | [Output Formats](OUTPUT_FORMATS.md) |
+| Independent validators, strict job validation, and OGC suites | [Output Validation](OUTPUT_VALIDATION.md) |
 | Remote object storage | [Storage](STORAGE.md) |
 | Test strategy and validation | [Testing](TESTING.md) and [Verification Guide](VERIFICATION.md) |
+| Test coverage and evidence interpretation | [Testing Coverage](TESTING_COVERAGE.md) |
 | Batch vector processing | [Vector Batching](VECTOR_BATCHING.md) |
 | Engineering decisions | [Architecture Decisions](DECISIONS.md) |
 
