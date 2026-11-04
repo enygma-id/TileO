@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `7c6c0acc78c0ef96a31d1e5e59b8f620b387fed15b7b43c2e7ebe2b38a41127a`
+Generated from committed license evidence · Lockfile SHA-256: `f1d6b3e4ee0ce854fbe3b76acc5997da64434651e5d9a884b38b9d2956304f5b`
 
 ## Verification summary
 
@@ -2894,11 +2894,11 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ````
 
-#### @maplibre/geojson-vt (6.1.2)
+#### @maplibre/geojson-vt (6.3.0)
 - **Declared License**: `ISC`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `8e73fc58113aae0accb5624e4b9ffffb78768411f7c34c309c400a9560b4cb68`
-- **Notice**: [`third-party/licenses/npm/@maplibre/geojson-vt/6.1.2/LICENSE.txt`](third-party/licenses/npm/@maplibre/geojson-vt/6.1.2/LICENSE.txt) · SHA-256 `9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `504ff00fedc73ab6d6aa359cea8c52242766fed013cd3b8d96277eb0d15fea45`
+- **Notice**: [`third-party/licenses/npm/@maplibre/geojson-vt/6.3.0/LICENSE.txt`](third-party/licenses/npm/@maplibre/geojson-vt/6.3.0/LICENSE.txt) · SHA-256 `9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3`
 
 ````text
 The MIT License (MIT)
@@ -3330,11 +3330,11 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ````
 
-#### @maplibre/vt-pbf (4.3.2)
+#### @maplibre/vt-pbf (4.3.3)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `837fe7a668cd0280af6a38b8e9ed81e299dd51f4571d4eb9f6f9de859e9f13f7`
-- **Notice**: [`third-party/licenses/npm/@maplibre/vt-pbf/4.3.2/LICENSE.txt`](third-party/licenses/npm/@maplibre/vt-pbf/4.3.2/LICENSE.txt) · SHA-256 `4c61c5753d4b021bc3b07f21d2a830506974ce200c19cfadf3d4a25e747fc853`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `56047a46d4f751c0fcff81b02616afb7960a5a7e19b154c54f1df4002e12baa8`
+- **Notice**: [`third-party/licenses/npm/@maplibre/vt-pbf/4.3.3/LICENSE.txt`](third-party/licenses/npm/@maplibre/vt-pbf/4.3.3/LICENSE.txt) · SHA-256 `4c61c5753d4b021bc3b07f21d2a830506974ce200c19cfadf3d4a25e747fc853`
 
 ````text
 The MIT License (MIT)
@@ -8178,11 +8178,11 @@ Apache License
 }
 ````
 
-#### maplibre-gl (6.12.0)
+#### maplibre-gl (6.16.0)
 - **Declared License**: `BSD-3-Clause`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `1a45dce625ea444b04dccd8e16e8bbfec5244a75f8aaa650edb3660d7062a0f0`
-- **Notice**: [`third-party/licenses/npm/maplibre-gl/6.12.0/LICENSE.txt`](third-party/licenses/npm/maplibre-gl/6.12.0/LICENSE.txt) · SHA-256 `ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `1504a18021fc6d9329a9dc7c949525822c8ae5e2fe3e3751df9262a13af5de4b`
+- **Notice**: [`third-party/licenses/npm/maplibre-gl/6.16.0/LICENSE.txt`](third-party/licenses/npm/maplibre-gl/6.16.0/LICENSE.txt) · SHA-256 `ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2`
 
 ````text
 Copyright (c) 2023, MapLibre contributors

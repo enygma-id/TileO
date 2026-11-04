@@ -2,7 +2,7 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "7c6c0acc78c0ef96a31d1e5e59b8f620b387fed15b7b43c2e7ebe2b38a41127a",
+  "reference_lockfile_sha256": "f1d6b3e4ee0ce854fbe3b76acc5997da64434651e5d9a884b38b9d2956304f5b",
   "package_count": 277,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
@@ -104,7 +104,7 @@
             "bytes": 1055
           }
         ],
-        "note": "corpus updated (1 mismatch)"
+        "note": "corpus matches upstream tarball"
       }
     },
     {
@@ -2952,16 +2952,16 @@
     {
       "package_path": "node_modules/@maplibre/geojson-vt",
       "name": "@maplibre/geojson-vt",
-      "version": "6.1.2",
+      "version": "6.3.0",
       "declared_license": "ISC",
       "notice_license": "ISC",
       "notice_source": "package/LICENSE",
       "notice_sha256": "9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3",
-      "notice_file": "third-party/licenses/npm/@maplibre/geojson-vt/6.1.2/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/@maplibre/geojson-vt/6.3.0/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-2ZYhobdAY+y4/P/z1xe0698165LywD0yDdWugdu3NRUrajgVWut+tLkcz7i/RJguMTURwK7gxwmwYMFJbgbQFw==",
-      "resolved": "https://registry.npmjs.org/@maplibre/geojson-vt/-/geojson-vt-6.1.2.tgz",
+      "integrity": "sha512-3Zw2jsU9pIJG3G2CQFbLjWj2MlAHodhD7cSY+15iywUuLmmkgzcKRnueVRZ4AcC/5wOtfhidcJAAzBpoBNs3Xg==",
+      "resolved": "https://registry.npmjs.org/@maplibre/geojson-vt/-/geojson-vt-6.3.0.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
@@ -2969,7 +2969,7 @@
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
         "verified_at": "2026-11-04",
-        "tarball_sha256": "8e73fc58113aae0accb5624e4b9ffffb78768411f7c34c309c400a9560b4cb68",
+        "tarball_sha256": "504ff00fedc73ab6d6aa359cea8c52242766fed013cd3b8d96277eb0d15fea45",
         "package_json_license": "ISC",
         "files": [
           {
@@ -2979,7 +2979,7 @@
             "bytes": 1909
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -3084,16 +3084,16 @@
     {
       "package_path": "node_modules/@maplibre/vt-pbf",
       "name": "@maplibre/vt-pbf",
-      "version": "4.3.2",
+      "version": "4.3.3",
       "declared_license": "MIT",
       "notice_license": "MIT",
       "notice_source": "package/LICENSE",
       "notice_sha256": "4c61c5753d4b021bc3b07f21d2a830506974ce200c19cfadf3d4a25e747fc853",
-      "notice_file": "third-party/licenses/npm/@maplibre/vt-pbf/4.3.2/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/@maplibre/vt-pbf/4.3.3/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-j6p0AdjvAR19Z3XaCysle7A4ZSo08tYOzxD0Y9NQylwPAkwJJeYub5b2eVucdeDh7erhv69DahoLOevDRERRUw==",
-      "resolved": "https://registry.npmjs.org/@maplibre/vt-pbf/-/vt-pbf-4.3.2.tgz",
+      "integrity": "sha512-dEe5XUd64RQbxNxy2OzIkJnwNDWjVmSXjCd0A7zLirm7QJ/WWbmtDFIkfsiM4yt1cplqzG6oSivRYeWx1SM1yg==",
+      "resolved": "https://registry.npmjs.org/@maplibre/vt-pbf/-/vt-pbf-4.3.3.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
@@ -3101,7 +3101,7 @@
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
         "verified_at": "2026-11-04",
-        "tarball_sha256": "837fe7a668cd0280af6a38b8e9ed81e299dd51f4571d4eb9f6f9de859e9f13f7",
+        "tarball_sha256": "56047a46d4f751c0fcff81b02616afb7960a5a7e19b154c54f1df4002e12baa8",
         "package_json_license": "MIT",
         "files": [
           {
@@ -3111,7 +3111,7 @@
             "bytes": 2785
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -3513,7 +3513,7 @@
             "bytes": 254
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       }
     },
     {
@@ -4136,7 +4136,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-aix-ppc64/7.0.2/LICENSE.txt",
@@ -4173,7 +4173,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-darwin-arm64/7.0.2/LICENSE.txt",
@@ -4210,7 +4210,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-darwin-x64/7.0.2/LICENSE.txt",
@@ -4247,7 +4247,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-freebsd-arm64/7.0.2/LICENSE.txt",
@@ -4284,7 +4284,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-freebsd-x64/7.0.2/LICENSE.txt",
@@ -4321,7 +4321,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-linux-arm/7.0.2/LICENSE.txt",
@@ -4358,7 +4358,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-linux-arm64/7.0.2/LICENSE.txt",
@@ -4395,7 +4395,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-linux-loong64/7.0.2/LICENSE.txt",
@@ -4432,7 +4432,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-linux-mips64el/7.0.2/LICENSE.txt",
@@ -4469,7 +4469,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-linux-ppc64/7.0.2/LICENSE.txt",
@@ -4506,7 +4506,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-linux-riscv64/7.0.2/LICENSE.txt",
@@ -4543,7 +4543,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-linux-s390x/7.0.2/LICENSE.txt",
@@ -4580,7 +4580,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-linux-x64/7.0.2/LICENSE.txt",
@@ -4617,7 +4617,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-netbsd-arm64/7.0.2/LICENSE.txt",
@@ -4654,7 +4654,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-netbsd-x64/7.0.2/LICENSE.txt",
@@ -4691,7 +4691,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-openbsd-arm64/7.0.2/LICENSE.txt",
@@ -4728,7 +4728,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-openbsd-x64/7.0.2/LICENSE.txt",
@@ -4765,7 +4765,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-sunos-x64/7.0.2/LICENSE.txt",
@@ -4802,7 +4802,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-win32-arm64/7.0.2/LICENSE.txt",
@@ -4839,7 +4839,7 @@
             "bytes": 48860
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "Apache-2.0",
       "notice_file": "third-party/licenses/npm/@typescript/typescript-win32-x64/7.0.2/LICENSE.txt",
@@ -5278,7 +5278,7 @@
             "bytes": 1078
           }
         ],
-        "note": "corpus updated (1 mismatch)"
+        "note": "corpus matches upstream tarball"
       }
     },
     {
@@ -7002,16 +7002,16 @@
     {
       "package_path": "node_modules/maplibre-gl",
       "name": "maplibre-gl",
-      "version": "6.12.0",
+      "version": "6.16.0",
       "declared_license": "BSD-3-Clause",
       "notice_license": "BSD-3-Clause",
       "notice_source": "package/LICENSE.txt",
       "notice_sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2",
-      "notice_file": "third-party/licenses/npm/maplibre-gl/6.12.0/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/maplibre-gl/6.16.0/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-DwgganVi2BhNxOpD7ob3lJC0dQQz4HfJfuQQV3XxCY3XdOzFrMqp9ylMXhRzryRsOnIezdZcklWXIIs/Q8JPjA==",
-      "resolved": "https://registry.npmjs.org/maplibre-gl/-/maplibre-gl-6.12.0.tgz",
+      "integrity": "sha512-gApO66EMtoDZuio680RUBvskR7ahFd/NNhLN4tBAs+Y7FeT4gQV8zVFgYVMRmFxQznOEzecW19w6xOd9XjZjiA==",
+      "resolved": "https://registry.npmjs.org/maplibre-gl/-/maplibre-gl-6.16.0.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
@@ -7019,7 +7019,7 @@
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
         "verified_at": "2026-11-04",
-        "tarball_sha256": "1a45dce625ea444b04dccd8e16e8bbfec5244a75f8aaa650edb3660d7062a0f0",
+        "tarball_sha256": "1504a18021fc6d9329a9dc7c949525822c8ae5e2fe3e3751df9262a13af5de4b",
         "package_json_license": "BSD-3-Clause",
         "files": [
           {
@@ -7029,7 +7029,7 @@
             "bytes": 5984
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -7320,7 +7320,7 @@
             "bytes": 1150
           }
         ],
-        "note": "corpus updated (1 mismatch)"
+        "note": "corpus matches upstream tarball"
       },
       "notice_license": "MIT",
       "notice_file": "third-party/licenses/npm/node-addon-api/8.9.2/LICENSE.txt",
@@ -7627,7 +7627,7 @@
             "bytes": 254
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       }
     },
     {
@@ -7666,7 +7666,7 @@
             "bytes": 254
           }
         ],
-        "note": "corpus updated (2 mismatch)"
+        "note": "corpus matches upstream tarball"
       }
     },
     {
@@ -8831,7 +8831,7 @@
             "bytes": 1095
           }
         ],
-        "note": "corpus updated (3 mismatch)"
+        "note": "corpus matches upstream tarball"
       }
     },
     {
