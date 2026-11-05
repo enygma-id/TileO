@@ -1,0 +1,39 @@
+# Directory-local configuration for immutable, superseded audit records only.
+# OSV applies this file to SBOMs in this directory, not to the active lockfiles.
+# Preserve the original SBOM bytes and license results. See README.md for how to
+# scan this historical inventory without these vulnerability-only overrides.
+
+[[PackageOverrides]]
+name = "fast-uri"
+version = "3.1.8"
+ecosystem = "npm"
+vulnerability.ignore = true
+reason = "Superseded 2026-10-22 SBOM only; active lockfile uses patched fast-uri 3.1.9/4.2.3 and is scanned independently."
+
+[[PackageOverrides]]
+name = "fast-uri"
+version = "4.2.2"
+ecosystem = "npm"
+vulnerability.ignore = true
+reason = "Superseded 2026-10-22 SBOM only; active lockfile uses patched fast-uri 3.1.9/4.2.3 and is scanned independently."
+
+[[PackageOverrides]]
+name = "fastify"
+version = "5.12.5"
+ecosystem = "npm"
+vulnerability.ignore = true
+reason = "Superseded 2026-10-22 SBOM only; active lockfile uses patched Fastify 5.12.7 and is scanned independently."
+
+[[PackageOverrides]]
+name = "fflate"
+version = "0.7.4"
+ecosystem = "npm"
+vulnerability.ignore = true
+reason = "Superseded 2026-10-22 SBOM only; active lockfile uses patched fflate 0.8.3 and is scanned independently."
+
+[[PackageOverrides]]
+name = "image-size"
+version = "0.7.5"
+ecosystem = "npm"
+vulnerability.ignore = true
+reason = "Superseded 2026-10-22 SBOM only; image-size is absent from both active lockfiles, which are scanned independently."

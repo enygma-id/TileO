@@ -31,6 +31,8 @@ The root lockfile already contained patched fast-uri 3.1.9/4.2.3, Fastify 5.12.7
 
 After remediation on 2026-11-04, both npm audits reported zero vulnerabilities. An OSV batch query covering 434 distinct exact package versions across the two lockfiles returned no affected versions. The 14-result output conformance matrix passed with the updated validator tree, including WMTS with 46 passed, zero failed, and 13 skipped checks. The skipped checks remain visible in the report and are not counted as passes.
 
+The 2026-11-05 follow-up reproduced the seven remaining Scorecard advisories with OSV Scanner 2.5.1, the scanner version used by Scorecard 5.6.0. All seven came from the immutable SPDX SBOM in the [superseded 2026-10-22 archive](history/superseded-baseline-20261022/README.md), which still records fast-uri 3.1.8/4.2.2, Fastify 5.12.5, fflate 0.7.4, and image-size 0.7.5. Both active lockfiles were identical to commit `39e847c644d1e5a19152356121ff2afed3c5da06` and had no OSV findings; fresh npm audits also returned zero vulnerabilities. Directory-local, exact-version overrides now classify these historical packages without changing the archived SBOMs, suppressing license checks, or exempting either active lockfile. A recursive repository scan then returned no findings. A negative control placing the same vulnerable versions in an active lockfile outside the archive still detected all seven advisories. The archive README explains how to reproduce its original findings.
+
 ```bash
 npm audit
 npm audit --prefix tools/output-validation
@@ -81,6 +83,23 @@ The published `v0.1.0` notes still describe a candidate with final approvals pen
 
 ## Administrator follow-up
 
+### Scorecard authentication and reruns
+
+The Scorecard workflow accepts a manual dispatch and runs only on `main`. It uses `SCORECARD_TOKEN` when configured and falls back to `GITHUB_TOKEN`, with a visible warning, when the secret is missing. Each published scan retains both SARIF and JSON results for 14 days in the `scorecard-results` artifact. The pinned Scorecard Action generates the JSON from the same scan when publishing; there is no second scan that could disagree with the SARIF.
+
+To make classic branch protection readable, the repository owner must create a fine-grained PAT limited to `enygma-id/TileO` with **Administration: Read-only** and the automatically granted **Metadata: Read-only**, then store it under **Settings → Secrets and variables → Actions → New repository secret** as `SCORECARD_TOKEN`. The workflow passes it only to the pinned Scorecard Action and its presence check; signing and publishing continue to use the default GitHub token. Follow the [official authentication guide](https://github.com/ossf/scorecard-action/blob/main/docs/authentication/fine-grained-auth-token.md), set an expiry, and renew the secret before expiry. The token supplies observation access; protection rules must also be configured and verified by an administrator.
+
+After merging workflow changes to `main`, an authorized maintainer can run:
+
+```sh
+gh workflow run scorecard.yml --repo enygma-id/TileO --ref main
+gh run list --repo enygma-id/TileO --workflow scorecard.yml --limit 5
+```
+
+On 2026-11-05, rerunning [the existing Scorecard run](https://github.com/enygma-id/TileO/actions/runs/41819281800) cleared the GitHub API 502: CI-Tests scored 10 and the public score became 7.6. That rerun used the unchanged `39e847c` commit, before the archive classification and authentication support described above. It does not certify the result of the new configuration.
+
+### Settings and human assessments
+
 Repository files cannot establish every Scorecard control. After merging, an administrator should:
 
 1. Confirm private vulnerability reporting is enabled under **Settings → Code security**, then test the [private reporting form](https://github.com/enygma-id/TileO/security/advisories/new). Keep its availability consistent with the reporting policy.
@@ -90,6 +109,8 @@ Repository files cannot establish every Scorecard control. After merging, an adm
 5. Complete a truthful [OpenSSF Best Practices assessment](https://www.bestpractices.dev/) if the project meets the criteria. Registration and human attestations are separate from adding repository files.
 
 At the 2026-11-04 review, the public reporting API returned `enabled: false` and the public branch-rules endpoint returned an empty ruleset list. The latter does not establish the state of classic branch protection; review both settings through an administrator account.
+
+On 2026-11-05, the authenticated account had maintain/push access but no admin access. GitHub marked `main` as protected, but the classic-protection endpoint returned HTTP 404 and the branch-rules endpoint returned an empty list; these responses do not establish the details or sufficiency of the existing protection. No Actions secrets were configured, and Dependabot reported no open alerts. Owner action is still needed to verify protection and add the read-only Scorecard secret. Review the actual successful CI job names when selecting required checks, including `verify`, `Independent output conformance`, `Audit application and independent validators`, the property-based security tests, CodeQL, and release gates. Preserve the release environment protections. Register and complete the OpenSSF Best Practices assessment as an accountable maintainer; repository changes cannot supply that assessment or approvals for a new release candidate.
 
 The Maintained check includes repository age and activity; the Contributors check reflects actual independent participation. These findings require real project history and participation. Do not create artificial activity or claim a badge to alter the score.
 
