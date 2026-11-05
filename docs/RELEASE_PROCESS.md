@@ -30,6 +30,8 @@ As reviewed on 2026-11-04, the public [v0.1.0 release notes](https://github.com/
 
 Before changing this status, reconcile the release notes with authenticated approval records and publication verification for the same source commit, immutable image, and frozen core evidence. CI results, output conformance, and signature verification support that review but do not grant human authorization. Approval records must reflect actual decisions; preserve the existing tag and artifacts when correcting status documentation.
 
+The 2026-11-05 Scorecard follow-up found Engineering, Legal/IP, and Release Steward approval records on [publication run 41028408757](https://github.com/enygma-id/TileO/actions/runs/41028408757), for `candidate-b4b240d0d3a2-01` and digest `80b622945fc6418f7d3438e5dfb43fbf2143bf569fedbaf4b630da41750bdee7`. Its final publication step failed; the currently published assets contain no signature or provenance bundle. Reconcile those approvals with the exact published payload and recovery evidence before treating the old release as verified. They do not authorize a changed source commit or a new candidate, and rerunning the current version-specific workflow must not overwrite the existing release or tag.
+
 ## Edition labeling
 
 Identify Community and Enterprise artifacts distinctly. The separate commercial licensing path applies only to code and rights explicitly covered by an executed agreement; public AGPL permissions already granted are not retroactively revoked.

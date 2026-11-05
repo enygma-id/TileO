@@ -1,18 +1,21 @@
-
 name: OpenSSF Scorecard
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   schedule:
     - cron: "30 1 * * 6"
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   analysis:
     name: Scorecard Analysis
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       security-events: write
@@ -24,19 +27,32 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Check branch protection authentication
+        env:
+          SCORECARD_TOKEN: ${{ secrets.SCORECARD_TOKEN }}
+        run: |
+          if [ -z "$SCORECARD_TOKEN" ]; then
+            echo "::warning::SCORECARD_TOKEN is missing; classic branch protection may be unreadable. See docs/SECURITY_MAINTENANCE.md."
+          fi
+
       - name: Run OpenSSF Scorecard
         uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
         with:
+          repo_token: ${{ secrets.SCORECARD_TOKEN || github.token }}
           results_file: results.sarif
           results_format: sarif
           publish_results: true
 
-      - name: Upload SARIF artifact
+      - name: Preserve SARIF and published JSON results
+        if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: scorecard-sarif
-          path: results.sarif
-          retention-days: 5
+          name: scorecard-results
+          path: |
+            results.sarif
+            results.json
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Upload to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
