@@ -27,14 +27,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Check branch protection authentication
-        env:
-          SCORECARD_TOKEN: ${{ secrets.SCORECARD_TOKEN }}
-        run: |
-          if [ -z "$SCORECARD_TOKEN" ]; then
-            echo "::warning::SCORECARD_TOKEN is missing; classic branch protection may be unreadable. See docs/SECURITY_MAINTENANCE.md."
-          fi
-
+      # Publication accepts approved actions only; keep shell diagnostics out of this job.
       - name: Run OpenSSF Scorecard
         uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
         with:

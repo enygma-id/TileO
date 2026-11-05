@@ -1,8 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { writeFile, rm, mkdtemp } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { createWriteStream } from 'node:fs';
+import { writeFile, rm, mkdtemp, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
+import { promisify } from 'node:util';
 import { scanGeoJsonFeatures } from '../spike-parser.js';
 
 test('scanGeoJsonFeatures handles single-line, escapes, attributes, and integers', async () => {
@@ -84,37 +89,56 @@ test('scanGeoJsonFeatures detects oversized features', async () => {
   }
 });
 
-test('scanGeoJsonFeatures maintains minimal memory footprint on large stream', async () => {
+test('scanGeoJsonFeatures keeps retained memory bounded throughout a large stream', async (t) => {
   const dir = await mkdtemp(join(tmpdir(), 'spike-geojson-scale-'));
   const file = join(dir, 'scale.geojson');
 
   try {
     const featureCount = 20000;
-    const writeStream = (await import('node:fs')).createWriteStream(file);
-    writeStream.write('{"type":"FeatureCollection","features":[');
-    for (let i = 0; i < featureCount; i++) {
-      const feat = JSON.stringify({
-        type: 'Feature',
-        id: i,
-        properties: { name: `Parcel_${i}`, value: i * 10, code: '00123' },
-        geometry: { type: 'Point', coordinates: [106.8 + (i % 100) * 0.001, -6.2 + Math.floor(i / 100) * 0.001] }
-      });
-      writeStream.write(i === 0 ? feat : ',' + feat);
-    }
-    writeStream.write(']}');
-    await new Promise(resolve => writeStream.end(resolve));
+    const memoryLimit = 25 * 1024 ** 2;
+    // Keep fixture allocation out of the measurement and honor writer backpressure.
+    await pipeline(Readable.from((function* () {
+      yield '{"type":"FeatureCollection","features":[';
+      const payload = 'x'.repeat(2048);
+      for (let i = 0; i < featureCount; i++) {
+        const feat = JSON.stringify({
+          type: 'Feature',
+          id: i,
+          properties: { name: `Parcel_${i}`, value: i * 10, code: '00123', payload },
+          geometry: { type: 'Point', coordinates: [106.8 + (i % 100) * 0.001, -6.2 + Math.floor(i / 100) * 0.001] }
+        });
+        yield i === 0 ? feat : ',' + feat;
+      }
+      yield ']}';
+    })()), createWriteStream(file));
+    // Reading the entire input must exceed the unchanged 25 MiB budget.
+    assert.ok((await stat(file)).size > memoryLimit * 1.5);
 
-    const initialHeap = process.memoryUsage().heapUsed;
-    let count = 0;
-    for await (const { raw } of scanGeoJsonFeatures(file)) {
-      count++;
-    }
-    const finalHeap = process.memoryUsage().heapUsed;
-    const heapDiffMb = (finalHeap - initialHeap) / (1024 * 1024);
-
-    assert.equal(count, featureCount);
-    // Heap diff should stay tiny (under 25 MB) even across 20k features
-    assert.ok(heapDiffMb < 25, `Heap grew too much: ${heapDiffMb.toFixed(2)} MB`);
+    // Isolate V8 state from other tests and collect before every sample. Sampling
+    // during iteration catches retained input/features that are freed at EOF.
+    const probe = `
+      import { scanGeoJsonFeatures } from ${JSON.stringify(new URL('../spike-parser.js', import.meta.url).href)};
+      function retainedBytes() {
+        global.gc();
+        const { heapUsed, arrayBuffers } = process.memoryUsage();
+        return heapUsed + arrayBuffers;
+      }
+      const initial = retainedBytes();
+      let count = 0, peak = initial;
+      for await (const _ of scanGeoJsonFeatures(process.argv[1])) {
+        count++;
+        if (count % 2000 === 0) peak = Math.max(peak, retainedBytes());
+      }
+      peak = Math.max(peak, retainedBytes());
+      console.log(JSON.stringify({ count, peakGrowthBytes: peak - initial }));
+    `;
+    const { stdout } = await promisify(execFile)(process.execPath,
+      ['--expose-gc', '--input-type=module', '-e', probe, file], { timeout: 30000 });
+    const result = JSON.parse(stdout) as { count: number; peakGrowthBytes: number };
+    assert.equal(result.count, featureCount);
+    const growthMb = result.peakGrowthBytes / 1024 ** 2;
+    t.diagnostic(`Peak retained heap + input buffers grew ${growthMb.toFixed(2)} MiB across ${featureCount} features.`);
+    assert.ok(result.peakGrowthBytes < memoryLimit, `Retained memory grew too much: ${growthMb.toFixed(2)} MiB`);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
