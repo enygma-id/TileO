@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 import { mkdir, readFile, writeFile, rename, mkdtemp, rm } from 'node:fs/promises';
+import { createWriteStream } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
+import { Readable } from 'node:stream';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { resolve, join } from 'node:path';
@@ -20,12 +23,15 @@ for (const [name, url, expected] of downloads) {
   if (!bytes || createHash('sha256').update(bytes).digest('hex') !== expected) {
     const response = await fetch(url, { signal: AbortSignal.timeout(120_000) });
     if (!response.ok) throw new Error(`Download failed: ${url}: ${response.status}`);
-    bytes = Buffer.from(await response.arrayBuffer());
-    if (createHash('sha256').update(bytes).digest('hex') !== expected) throw new Error(`Checksum mismatch: ${name}`);
     const temporary = await mkdtemp(join(tools, '.download-'));
     try {
       const staged = join(temporary, name);
-      await writeFile(staged, bytes, { flag: 'wx', mode: 0o600 }); // codeql[js/http-to-file-access] bytes are rejected unless their SHA-256 matches the pinned checksum of the official validator artifact; staged into a private mkdtemp directory with exclusive-create permissions and atomically renamed.
+      // Streamed to a private mkdtemp file with exclusive-create permissions; the written
+      // bytes are rejected unless their SHA-256 matches the pinned checksum of the official
+      // validator artifact, and only then is the file atomically renamed into place.
+      await pipeline(Readable.fromWeb(response.body), createWriteStream(staged, { flags: 'wx', mode: 0o600 }));
+      const written = await readFile(staged);
+      if (!written.length || createHash('sha256').update(written).digest('hex') !== expected) throw new Error(`Checksum mismatch: ${name}`);
       await rename(staged, path);
     } finally { await rm(temporary, { recursive: true, force: true }); }
   }

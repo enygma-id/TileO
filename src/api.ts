@@ -201,7 +201,9 @@ export async function createApp(jobs = new Jobs()) {
         const bearer = bearerToken(req.headers.authorization);
         const cookie = sessionCookie(req);
         const validToken = equalToken(bearer, config.token);
-        const validSession = cookie && jobs.db.prepare('SELECT 1 FROM sessions WHERE token=? AND expires>? AND auth_fingerprint=?').get(tokenHash(cookie), Date.now(), authFingerprint());
+        // Always executes; it cannot be guarded by request data because the
+        // decision must not depend on whether an attacker sent a cookie.
+        const validSession = jobs.db.prepare('SELECT 1 FROM sessions WHERE token=? AND expires>? AND auth_fingerprint=?').get(tokenHash(cookie ?? ''), Date.now(), authFingerprint()) !== undefined;
         if (!validToken && !validSession) return reply.code(401).send({ error: { code: 'AUTH_REQUIRED', message: 'Sign in with your access token.' } });
       }
     }
