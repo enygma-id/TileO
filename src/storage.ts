@@ -37,12 +37,14 @@ export async function validateRemoteUrl(value: string) {
   if (!/\.tiff?$/i.test(url.pathname)) throw new JobError('UNSUPPORTED_REMOTE_INPUT', 'Remote URL input accepts standalone .tif or .tiff files only.');
   const host = url.hostname.toLowerCase(), allowlisted = config.remoteUrlHosts.includes(host);
   if (!allowlisted) throw new JobError('STORAGE_HOST_DENIED', 'Remote URL host is not allowlisted. Configure TILEO_REMOTE_URL_HOSTS to permit this host.');
-  if (url.protocol !== 'https:' && !allowlisted) throw new JobError('INSECURE_STORAGE_URL', 'Remote URLs require HTTPS unless the exact host is allowlisted by TILEO_REMOTE_URL_HOSTS.');
-  if (!allowlisted) {
-    let addresses: { address: string }[];
-    try { addresses = await lookup(host, { all: true }); } catch { throw new JobError('STORAGE_HOST_UNAVAILABLE', 'The remote storage hostname could not be resolved.'); }
-    if (!addresses.length || addresses.some(item => privateAddress(item.address))) throw new JobError('STORAGE_HOST_DENIED', 'Private or local storage hosts must be explicitly allowlisted by the administrator.');
-  } else if (isIP(host) && privateAddress(host) && !config.remoteUrlHosts.includes(host)) throw new JobError('STORAGE_HOST_DENIED', 'This storage host is not allowed.');
+  if (url.protocol !== 'https:') throw new JobError('INSECURE_STORAGE_URL', 'Remote URLs require HTTPS.');
+  if (isIP(host)) {
+    if (privateAddress(host) && !allowlisted) throw new JobError('STORAGE_HOST_DENIED', 'This storage host is not allowed.');
+    return url;
+  }
+  let addresses: { address: string }[];
+  try { addresses = await lookup(host, { all: true }); } catch { throw new JobError('STORAGE_HOST_UNAVAILABLE', 'The remote storage hostname could not be resolved.'); }
+  if (!addresses.length || addresses.some(item => privateAddress(item.address))) throw new JobError('STORAGE_HOST_DENIED', 'Private or local storage hosts are not allowed for remote URL input.');
   return url;
 }
 
