@@ -43,6 +43,11 @@ function equalToken(supplied: string, expected: string): boolean {
   const a = Buffer.from(supplied), b = Buffer.from(expected);
   return a.length === b.length && timingSafeEqual(a, b);
 }
+// API route names that never require authentication; anything else under /api/ is
+// authenticated when TILEO_API_TOKEN is set. Kept as a constant set so the auth
+// decision cannot depend on arbitrary request data.
+const PUBLIC_API_ROUTES = new Set<string>(['/api/session']);
+
 function bearerToken(header: string | undefined): string {
   if (!header) return '';
   const space = header.indexOf(' ');
@@ -189,7 +194,8 @@ export async function createApp(jobs = new Jobs()) {
           .header('Access-Control-Max-Age', '600').code(204).send();
       }
     }
-    if (req.url.startsWith('/api/') && req.routeOptions.url !== '/api/session') {
+    // Default-deny: only the constant public route names skip authentication.
+    if (req.url.startsWith('/api/') && !PUBLIC_API_ROUTES.has(req.routeOptions.url ?? '')) {
       reply.header('Cache-Control', 'no-store');
       if (config.token) {
         const bearer = bearerToken(req.headers.authorization);

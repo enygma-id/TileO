@@ -14,7 +14,10 @@ test('HTTP uploads stream to disk, validate options and persist the queue', asyn
   const address = await app.listen({ host: '127.0.0.1', port: 0 });
   try {
     const home = await app.inject('/'); assert.equal(home.statusCode, 200); assert.match(home.body, /lang="en"/);
-    const docs = await app.inject('/docs'); assert.equal(docs.statusCode, 200); assert.match(docs.body, /TileO API reference/); assert.ok(!docs.body.includes('unpkg.com'));
+    const docs = await app.inject('/docs'); assert.equal(docs.statusCode, 200); assert.match(docs.body, /TileO API reference/);
+    // The API reference page must not reference the unpkg CDN, so compare parsed resource hostnames exactly.
+    const docsResourceHosts = [...docs.body.matchAll(/(?:src|href)="([^"]+)"/g)].flatMap((entry) => { try { return [new URL(entry[1] ?? '', 'https://tileo.invalid/').hostname]; } catch { return []; } });
+    assert.ok(!docsResourceHosts.includes('unpkg.com'), docs.body);
     assert.equal((await app.inject('/openapi.yaml')).statusCode, 200);
     const status = await app.inject('/api/status'); assert.equal(status.statusCode, 200); assert.equal(typeof status.json().version, 'string');
     const upload = await fetch(`${address}/api/jobs?filename=test.geojson`, { method: 'POST', headers: { 'content-type': 'application/octet-stream' }, body: '{"type":"FeatureCollection","features":[]}' });

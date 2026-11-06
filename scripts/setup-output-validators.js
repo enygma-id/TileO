@@ -25,10 +25,7 @@ for (const [name, url, expected] of downloads) {
     const temporary = await mkdtemp(join(tools, '.download-'));
     try {
       const staged = join(temporary, name);
-      // codeql[js/http-to-file-access] The bytes are rejected unless their SHA-256 matches the pinned checksum
-      // precomputed from the official validator artifact; the write is staged into a private mkdtemp directory
-      // with exclusive-create permissions and atomically renamed into place.
-      await writeFile(staged, bytes, { flag: 'wx', mode: 0o600 });
+      await writeFile(staged, bytes, { flag: 'wx', mode: 0o600 }); // codeql[js/http-to-file-access] bytes are rejected unless their SHA-256 matches the pinned checksum of the official validator artifact; staged into a private mkdtemp directory with exclusive-create permissions and atomically renamed.
       await rename(staged, path);
     } finally { await rm(temporary, { recursive: true, force: true }); }
   }

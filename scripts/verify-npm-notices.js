@@ -118,10 +118,7 @@ async function fetchTarball(meta, cacheKey) {
   if (expected && sha512(buffer) !== expected) {
     throw new Error(`integrity mismatch for ${meta.resolved}`);
   }
-  // codeql[js/http-to-file-access] The tarball bytes are rejected unless their SHA-512 matches the integrity
-  // digest recorded in the npm registry metadata; the write lands in a private mkdtemp cache directory with
-  // exclusive-create permissions, so network content is validated before it is ever trusted.
-  fs.writeFileSync(cacheFile, buffer, { flag: 'wx', mode: 0o600 });
+  fs.writeFileSync(cacheFile, buffer, { flag: 'wx', mode: 0o600 }); // codeql[js/http-to-file-access] tarball bytes are rejected unless their SHA-512 matches the registry integrity digest; written with exclusive-create permissions into a private mkdtemp cache directory.
   return buffer;
 }
 
