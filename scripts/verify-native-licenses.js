@@ -27,6 +27,16 @@ const CSV_FILE = path.join(ROOT, 'third-party', 'native-components.csv');
 const CACHE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-native-licenses-'));
 const VERIFIER = 'scripts/verify-native-licenses.js@1';
 const today = new Date().toISOString().slice(0, 10);
+const LICENSE_SOURCE_HOSTS = new Set([
+  'git.musl-libc.org',
+  'github.com',
+  'raw.githubusercontent.com',
+  'release-assets.githubusercontent.com',
+  'objects.githubusercontent.com',
+  'sqlite.org',
+  'www.sqlite.org',
+  'www.mozilla.org',
+]);
 
 const update = process.argv.includes('--update');
 
@@ -53,15 +63,54 @@ function readTar(buffer) {
   return entries;
 }
 
+function trustedLicenseSource(value) {
+  switch (value) {
+    case "https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.5.tar.gz": return "https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.5.tar.gz";
+    case "https://github.com/libexpat/libexpat/releases/download/R_2_6_4/expat-2.6.4.tar.gz": return "https://github.com/libexpat/libexpat/releases/download/R_2_6_4/expat-2.6.4.tar.gz";
+    case "https://raw.githubusercontent.com/AngusJohnson/Clipper2/main/LICENSE": return "https://raw.githubusercontent.com/AngusJohnson/Clipper2/main/LICENSE";
+    case "https://raw.githubusercontent.com/OSGeo/PROJ/9.6.2/COPYING": return "https://raw.githubusercontent.com/OSGeo/PROJ/9.6.2/COPYING";
+    case "https://raw.githubusercontent.com/OSGeo/gdal/v3.11.4/LICENSE.TXT": return "https://raw.githubusercontent.com/OSGeo/gdal/v3.11.4/LICENSE.TXT";
+    case "https://raw.githubusercontent.com/OSGeo/libgeotiff/1.7.4/libgeotiff/LICENSE": return "https://raw.githubusercontent.com/OSGeo/libgeotiff/1.7.4/libgeotiff/LICENSE";
+    case "https://raw.githubusercontent.com/curl/curl/curl-8_14_1/COPYING": return "https://raw.githubusercontent.com/curl/curl/curl-8_14_1/COPYING";
+    case "https://raw.githubusercontent.com/ebiggers/libdeflate/v1.23/COPYING": return "https://raw.githubusercontent.com/ebiggers/libdeflate/v1.23/COPYING";
+    case "https://raw.githubusercontent.com/felt/tippecanoe/2.79.0/LICENSE.md": return "https://raw.githubusercontent.com/felt/tippecanoe/2.79.0/LICENSE.md";
+    case "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING.RUNTIME": return "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING.RUNTIME";
+    case "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING3": return "https://raw.githubusercontent.com/gcc-mirror/gcc/releases/gcc-14.2.0/COPYING3";
+    case "https://raw.githubusercontent.com/google/flatbuffers/v25.2.10/LICENSE": return "https://raw.githubusercontent.com/google/flatbuffers/v25.2.10/LICENSE";
+    case "https://raw.githubusercontent.com/libjpeg-turbo/libjpeg-turbo/3.1.0/LICENSE.md": return "https://raw.githubusercontent.com/libjpeg-turbo/libjpeg-turbo/3.1.0/LICENSE.md";
+    case "https://raw.githubusercontent.com/libsdl-org/libtiff/v4.7.0/LICENSE.md": return "https://raw.githubusercontent.com/libsdl-org/libtiff/v4.7.0/LICENSE.md";
+    case "https://raw.githubusercontent.com/madler/zlib/v1.3.1/LICENSE": return "https://raw.githubusercontent.com/madler/zlib/v1.3.1/LICENSE";
+    case "https://raw.githubusercontent.com/mapbox/geometry.hpp/master/LICENSE": return "https://raw.githubusercontent.com/mapbox/geometry.hpp/master/LICENSE";
+    case "https://raw.githubusercontent.com/mapbox/protozero/master/LICENSE.md": return "https://raw.githubusercontent.com/mapbox/protozero/master/LICENSE.md";
+    case "https://raw.githubusercontent.com/mapbox/variant/master/LICENSE": return "https://raw.githubusercontent.com/mapbox/variant/master/LICENSE";
+    case "https://raw.githubusercontent.com/nghttp2/nghttp2/v1.64.0/COPYING": return "https://raw.githubusercontent.com/nghttp2/nghttp2/v1.64.0/COPYING";
+    case "https://raw.githubusercontent.com/nodejs/node/v24.13.1/LICENSE": return "https://raw.githubusercontent.com/nodejs/node/v24.13.1/LICENSE";
+    case "https://raw.githubusercontent.com/openssl/openssl/openssl-3.5.1/LICENSE.txt": return "https://raw.githubusercontent.com/openssl/openssl/openssl-3.5.1/LICENSE.txt";
+    case "https://raw.githubusercontent.com/pnggroup/libpng/v1.6.47/LICENSE": return "https://raw.githubusercontent.com/pnggroup/libpng/v1.6.47/LICENSE";
+    case "https://raw.githubusercontent.com/tukaani-project/xz/v5.8.1/COPYING": return "https://raw.githubusercontent.com/tukaani-project/xz/v5.8.1/COPYING";
+    case "https://raw.githubusercontent.com/uclouvain/openjpeg/v2.5.3/LICENSE": return "https://raw.githubusercontent.com/uclouvain/openjpeg/v2.5.3/LICENSE";
+    case "https://raw.githubusercontent.com/unicode-org/icu/release-77-1/LICENSE": return "https://raw.githubusercontent.com/unicode-org/icu/release-77-1/LICENSE";
+    case "https://raw.githubusercontent.com/webmproject/libwebp/v1.5.0/COPYING": return "https://raw.githubusercontent.com/webmproject/libwebp/v1.5.0/COPYING";
+    case "https://sqlite.org/copyright.html": return "https://sqlite.org/copyright.html";
+    case "https://www.mozilla.org/media/MPL/2.0/index.txt": return "https://www.mozilla.org/media/MPL/2.0/index.txt";
+    default: throw new Error('Native license source URL is not in the pinned source list.');
+  }
+}
+
+function trustedLicenseRedirect(value) {
+  const target = new URL(value);
+  if (target.protocol !== 'https:' || target.username || target.password || !LICENSE_SOURCE_HOSTS.has(target.hostname)) {
+    throw new Error(`Untrusted native license redirect: ${target.origin}`);
+  }
+  return target.href;
+}
 async function download(url, redirects = 0) {
-  const key = sha256(Buffer.from(url)).slice(0, 24);
+  const target = new URL(redirects === 0 ? url : trustedLicenseRedirect(url));
+  const key = sha256(Buffer.from(target.href)).slice(0, 24);
   const cacheFile = path.join(CACHE_DIR, key);
   try { return fs.readFileSync(cacheFile); } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const buffer = await new Promise((resolve, reject) => {
-    // codeql[js/file-access-to-http] The URL is an upstream license source recorded in the committed
-    // components manifest; the response is only cached after the license corpus checksums reproduced from it
-    // match the manifest, and no credentials are attached to this request.
-    const request = https.get(url, {
+    const request = https.get(target, {
       family: 4,
       headers: { 'user-agent': 'TileO-license-verifier/1 (+https://github.com/enygma-id/TileO)' },
     }, (response) => {
@@ -69,15 +118,15 @@ async function download(url, redirects = 0) {
       if ([301, 302, 303, 307, 308].includes(status) && response.headers.location) {
         response.resume();
         if (redirects >= 5) {
-          reject(new Error(`too many redirects for ${url}`));
+          reject(new Error(`too many redirects for ${target.href}`));
           return;
         }
-        resolve(download(new URL(response.headers.location, url).href, redirects + 1));
+        resolve(download(new URL(response.headers.location, target).href, redirects + 1));
         return;
       }
       if (status !== 200) {
         response.resume();
-        reject(new Error(`HTTP ${status} for ${url}`));
+        reject(new Error(`HTTP ${status} for ${target.href}`));
         return;
       }
       const chunks = [];
@@ -91,8 +140,8 @@ async function download(url, redirects = 0) {
   return buffer;
 }
 
-async function fetchLicense(file) {
-  const buffer = await download(file.url);
+async function fetchLicense(file, sourceUrl) {
+  const buffer = await download(sourceUrl);
   if (!file.archive_path) return buffer;
   if (!file.url.endsWith('.gz') && !file.url.endsWith('.tgz')) {
     throw new Error(`archive_path requires a .tar.gz URL: ${file.url}`);
@@ -118,9 +167,16 @@ async function main() {
 
     for (const file of component.license_files) {
       const target = path.join(dir, file.file);
+      let sourceUrl;
+      try {
+        sourceUrl = trustedLicenseSource(file.url);
+      } catch (error) {
+        problems.push(`${component.id}/${file.file}: ${error instanceof Error ? error.message : String(error)}`);
+        continue;
+      }
       if (update) {
         try {
-          const data = await fetchLicense(file);
+          const data = await fetchLicense(file, sourceUrl);
           fs.mkdirSync(dir, { recursive: true });
           fs.writeFileSync(target, data);
           file.sha256 = sha256(data);

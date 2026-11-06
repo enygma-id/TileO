@@ -34,7 +34,10 @@ test('sealed BYOC entries round-trip through AES-256-GCM', () => {
   const opened = openByocEntry(sealed);
   assert.equal(opened.accessKeyId, 'AKID');
   assert.equal(opened.secretAccessKey, 'shhh');
-  assert.throws(() => openSecrets({ ...sealSecrets('x'), data: 'ff' }), /could not be decrypted/);
+  const tampered = sealSecrets('x');
+  const invalidTag = Buffer.from(tampered.tag, 'hex');
+  invalidTag[0] = invalidTag[0]! ^ 1;
+  assert.throws(() => openSecrets({ ...tampered, tag: invalidTag.toString('hex') }), /could not be decrypted/);
 });
 
 test('BYOC target validation enforces HTTPS, naming, base paths, and the remote host allowlist', async () => {

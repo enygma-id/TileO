@@ -33,6 +33,8 @@ const CA = {
   '20261020-r0': {
     aportsCommit: '660f223b42ca35e7d2a76ce568e15c847b92d33d',
     aportsArchiveSha256: 'd8da92bbd76fc9f836c5e357ae75ddf90843a507e8059700ef7f16043500590a',
+    sourceName: 'ca-certificates-20261020.tar.bz2',
+    sourceUrl: 'https://distfiles.alpinelinux.org/distfiles/edge/ca-certificates-20261020.tar.bz2',
     sha512: 'd28eb01751b1a914ffb5d8cb99e662f0a35a95148c21dcf98de1ab3108b54db9714a99472d07715023867f4f76a21f2a79a2bc1c7e9876ce5167fdd865ad2dd7',
   },
 };
@@ -55,10 +57,7 @@ function run(command, commandArgs, options = {}) {
 function download(url, destination, expected, algorithm = 'sha512') {
   if (!fs.existsSync(destination) || digest(destination, algorithm) !== expected) {
     fs.rmSync(destination, { force: true });
-    // codeql[js/file-access-to-http] The URL originates from the committed release manifest, carries no
-    // credentials (curl runs without any auth file), and the downloaded artifact is only accepted when its
-    // SHA-512 matches the manifest entry, so file-derived request data is verified before any use.
-    execFileSync('curl', ['-fL', '--retry', '3', '-o', destination, url], { stdio: 'inherit' });
+    execFileSync('curl', ['-fL', '--retry', '3', '-o', destination, new URL(url).href], { stdio: 'inherit' });
   }
   const actual = digest(destination, algorithm);
   if (actual !== expected) throw new Error(`Upstream checksum mismatch for ${url}: ${actual}`);
@@ -149,7 +148,7 @@ try {
   if (target.gccPackage !== GCC.package || target.stdcxxPackage !== GCC.package) {
     throw new Error(`Unsupported GCC packages: libgcc=${target.gccPackage}, libstdc++=${target.stdcxxPackage}`);
   }
-  const ca = CA[target.caPackage];
+  const ca = target.caPackage === '20261020-r0' ? CA['20261020-r0'] : undefined;
   if (!ca) throw new Error(`Unsupported ca-certificates-bundle package: ${target.caPackage}`);
 
   const gccSource = path.join(cache, GCC.sourceName);
@@ -171,9 +170,8 @@ try {
   const gccArchiveSha256 = createArchive(gccStage, gccArchive);
   fs.rmSync(gccStage, { recursive: true, force: true });
 
-  const caVersion = target.caPackage.replace(/-r\d+$/, '');
-  const caSourceName = `ca-certificates-${caVersion}.tar.bz2`;
-  const caSourceUrl = `https://distfiles.alpinelinux.org/distfiles/edge/${caSourceName}`;
+  const caSourceName = ca.sourceName;
+  const caSourceUrl = ca.sourceUrl;
   const caSource = path.join(cache, caSourceName);
   download(caSourceUrl, caSource, ca.sha512);
   const caStage = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-ca-source-'));
