@@ -58,7 +58,7 @@ function download(url, destination, expected, algorithm = 'sha512') {
     // codeql[js/file-access-to-http] The URL originates from the committed release manifest, carries no
     // credentials (curl runs without any auth file), and the downloaded artifact is only accepted when its
     // SHA-512 matches the manifest entry, so file-derived request data is verified before any use.
-    execFileSync('curl', ['-fL', '--retry', '3', '-o', destination, url], { stdio: 'inherit' });
+    execFileSync('curl', ['-fL', '--retry', '3', '-o', destination, new URL(url).href], { stdio: 'inherit' });
   }
   const actual = digest(destination, algorithm);
   if (actual !== expected) throw new Error(`Upstream checksum mismatch for ${url}: ${actual}`);

@@ -61,7 +61,7 @@ async function download(url, redirects = 0) {
     // codeql[js/file-access-to-http] The URL is an upstream license source recorded in the committed
     // components manifest; the response is only cached after the license corpus checksums reproduced from it
     // match the manifest, and no credentials are attached to this request.
-    const request = https.get(url, {
+    const request = https.get(new URL(url), {
       family: 4,
       headers: { 'user-agent': 'TileO-license-verifier/1 (+https://github.com/enygma-id/TileO)' },
     }, (response) => {

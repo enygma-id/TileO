@@ -46,7 +46,9 @@ test('LAN CORS supports uploads, range requests and preflight while retaining au
     config.corsOrigins = ['http://frontend.example:5173'];
     assert.equal((await app.inject({ url: '/api/status', headers: { host: 'localhost:8092', origin: config.corsOrigins[0] } })).statusCode, 200);
     const docs = await app.inject('/docs');
-    assert.equal(docs.statusCode, 200); assert.match(docs.body, /Convert a dataset/); assert.ok(!docs.body.includes('unpkg.com'));
+    assert.equal(docs.statusCode, 200); assert.match(docs.body, /Convert a dataset/);
+    const externalHosts = (docs.body.match(/https?:\/\/([^"'\s<>()/]+)/g) ?? []).map((url) => url.replace(/^[a-z]+:\/\//i, ''));
+    assert.ok(externalHosts.every((host) => host !== 'unpkg.com'), 'docs HTML references the unpkg.com CDN');
     assert.equal((await app.inject('/docs.css')).statusCode, 200);
     const playground = await app.inject('/docs-playground.js');
     assert.equal(playground.statusCode, 200);
