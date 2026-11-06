@@ -1,11 +1,11 @@
 # Third-Party NPM Dependency Inventory
 
-This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **277 non-root entries** (direct, transitive, development and platform-optional packages).
+This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **281 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `9b85b4749253856c937c1d46891a1507ead46b269d5531e0ce6a9e5b975a5d4b`
-- Runtime entries: **216** · runtime-optional: **5** · development: **56**
-- Notice evidence: **241** verified from exact upstream tarballs · **36** metadata-only · **0** failed
-- Verification date: 2026-11-04 (scripts/verify-npm-notices.js@1)
+- `package-lock.json` SHA-256: `0f572b58d475e79974280b0963309e109c0fdae8075170b516660c268621bb00`
+- Runtime entries: **220** · runtime-optional: **5** · development: **56**
+- Notice evidence: **245** verified from exact upstream tarballs · **36** metadata-only · **0** failed
+- Verification date: 2026-11-06 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
 
@@ -22,7 +22,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `BSD-3-Clause` | 18 |
 | `CC0-1.0` | 1 |
 | `ISC` | 20 |
-| `MIT` | 197 |
+| `MIT` | 201 |
 | `MIT AND BSD-3-Clause` | 1 |
 
 ## Complete package-level inventory
@@ -68,6 +68,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@fastify/forwarded` | 3.1.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@fastify/merge-json-schemas` | 0.2.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@fastify/proxy-addr` | 5.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `@fastify/rate-limit` | 11.2.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@gltf-transform/core` | 4.5.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@gltf-transform/extensions` | 4.5.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@loaders.gl/3d-tiles` | 4.5.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -96,6 +97,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@loaders.gl/worker-utils` | 4.5.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@loaders.gl/xml` | 4.5.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@loaders.gl/zip` | 4.5.4 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `@lukeed/ms` | 2.0.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/core` | 9.4.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/engine` | 9.4.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@luma.gl/gltf` | 9.4.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -209,6 +211,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `fast-xml-builder` | 1.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-xml-parser` | 5.11.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fastify` | 5.12.7 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `fastify-plugin` | 6.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fastq` | 1.20.3 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fflate` | 0.8.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `find-my-way` | 9.10.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -221,6 +224,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `ieee754` | 1.2.1 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `immediate` | 3.0.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `inherits` | 2.0.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `ip-address` | 10.7.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `ipaddr.js` | 2.5.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `is-buffer` | 1.1.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `is-error` | 2.2.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
