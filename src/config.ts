@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isOsmBasemap } from './basemap-url.js';
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const appVersion = (JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as { version?: string }).version ?? '0.0.0';
@@ -81,6 +82,8 @@ function s3Connections() {
   });
 }
 export const config = {
+  apiRateMax: integer('TILEO_API_RATE_MAX', 6000, 1, 1000000),
+  remoteUrlAllowPrivate: process.env.TILEO_REMOTE_URL_ALLOW_PRIVATE === '1',
   production: process.env.NODE_ENV === 'production',
   repositoryUrl: process.env.TILEO_REPOSITORY_URL || 'https://github.com',
   data: resolve(process.env.TILEO_DATA_DIR ?? join(root, 'data')),
@@ -105,7 +108,7 @@ export const config = {
   logBytes: 8 * 1024 ** 2,
   basemapUrl: process.env.TILEO_BASEMAP_URL === 'osm' ? '/api/basemap/osm/{z}/{x}/{y}.png' : (process.env.TILEO_BASEMAP_URL ?? ''),
   basemapAttribution: process.env.TILEO_BASEMAP_ATTRIBUTION ?? (
-    (process.env.TILEO_BASEMAP_URL === 'osm' || process.env.TILEO_BASEMAP_URL?.includes('openstreetmap.org') || process.env.TILEO_BASEMAP_URL?.includes('/api/basemap/osm'))
+    (process.env.TILEO_BASEMAP_URL === 'osm' || isOsmBasemap(process.env.TILEO_BASEMAP_URL ?? '') || process.env.TILEO_BASEMAP_URL?.includes('/api/basemap/osm'))
       ? '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
       : ''
   ),

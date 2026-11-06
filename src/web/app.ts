@@ -1,3 +1,12 @@
+// Classification only; arbitrary operator basemap URLs remain supported.
+function isOsmBasemap(value: string): boolean {
+  if (value.toLowerCase() === 'osm' || value.startsWith('/api/basemap/osm/')) return true;
+  try {
+    const url = new URL(value);
+    return url.hostname === 'openstreetmap.org' || url.hostname.endsWith('.openstreetmap.org');
+  } catch { return false; }
+}
+
 import type { Job } from '../types.js';
 import { iconElement } from './icons.js';
 import { fitBoundsZoom, landingSampleBounds, landingSampleData, landingSampleText, type LandingSample } from './landing-sample.js';
@@ -1998,7 +2007,7 @@ function updateBasemapIndicator() {
   if (!label) return;
   const url = configuredBasemap.url?.trim() ?? '';
   const isNone = !url || url.toLowerCase() === 'none' || url.toLowerCase() === 'off';
-  const isOsm = !isNone && (url.toLowerCase() === 'osm' || url.includes('/api/basemap/osm') || url.includes('openstreetmap.org'));
+  const isOsm = !isNone && (isOsmBasemap(url));
   const isPmtiles = !isNone && (url.startsWith('pmtiles://') || url.includes('.pmtiles'));
 
   label.replaceChildren();
@@ -2020,7 +2029,7 @@ function updateBasemapIndicator() {
 async function buildMapStyle(customSources: Record<string, any> = {}, customLayers: any[] = []): Promise<any> {
   const url = (configuredBasemap.url || '').trim();
   const isNone = !url || url.toLowerCase() === 'none' || url.toLowerCase() === 'off';
-  const isOsm = !isNone && (url.toLowerCase() === 'osm' || url.includes('/api/basemap/osm') || url.includes('openstreetmap.org'));
+  const isOsm = !isNone && (isOsmBasemap(url));
   const isPmtiles = !isNone && (url.startsWith('pmtiles://') || url.includes('.pmtiles'));
 
   const backgroundLayer = {

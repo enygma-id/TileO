@@ -9,6 +9,9 @@ export async function publicDownload(url, destination, fetcher = fetch) {
   let response;
   for (let redirects = 0; redirects <= 8; redirects++) {
     if (new URL(url).protocol !== 'https:') throw Error('Public download requires HTTPS');
+    // codeql[js/file-access-to-http] The URL comes from the recorded candidate evidence, the request omits all
+    // credentials by design (this verifier must never authenticate), and the response is only trusted after
+    // the SHA-256 recorded in the evidence manifest is confirmed for the written file.
     response = await fetcher(url, { redirect: 'manual', credentials: 'omit', headers: { 'User-Agent': 'TileO-source-access-verifier' }, signal: AbortSignal.timeout(120000) });
     if ([301, 302, 303, 307, 308].includes(response.status)) {
       await response.body?.cancel();

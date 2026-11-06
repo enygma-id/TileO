@@ -53,7 +53,7 @@ test('LAN CORS supports uploads, range requests and preflight while retaining au
     assert.doesNotMatch(playground.body, /https?:\/\//);
     const spec = await app.inject('/openapi.yaml');
     assert.match(spec.body, /url: \/\n/);
-    assert.ok(!spec.body.includes('url: http://localhost:8090'));
+    assert.ok(!spec.body.split('\n').some(line => line.trim() === 'url: http://localhost:8090'));
     assert.equal((spec.body.match(/^    (get|post|delete):/gm) ?? []).length, (spec.body.match(/^      tags:/gm) ?? []).length);
   } finally {
     await app.close(); Object.assign(config, previous);

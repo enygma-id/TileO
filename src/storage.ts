@@ -3,9 +3,8 @@ import { createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { Readable } from 'node:stream';
 import { basename, join } from 'node:path';
-import { lookup } from 'node:dns/promises';
-import { isIP } from 'node:net';
 import { config, toolEnvironment } from './config.js';
+import { requestRemote, type RemoteTransport } from './remote-request.js';
 import { consumeByocCredentials, openByocEntry, resolveIamCredentials, type ByocTarget, type ConsumedByoc, type ResolvedS3Credentials } from './storage-auth.js';
 import { JobError, type S3InputSource, type UrlInputSource } from './types.js';
 
@@ -21,30 +20,15 @@ const hash = (value: string) => createHash('sha256').update(value).digest('hex')
 const hmac = (key: Buffer | string, value: string) => createHmac('sha256', key).update(value).digest();
 const encodePath = (value: string) => value.split('/').map(segment => encodeURIComponent(segment).replace(/[!'()*]/g, c => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)).join('/');
 
-function privateAddress(address: string) {
-  if (address === '::1' || address === '::' || address.startsWith('fc') || address.startsWith('fd') || address.startsWith('fe8') || address.startsWith('fe9') || address.startsWith('fea') || address.startsWith('feb')) return true;
-  const mapped = address.match(/^::ffff:(\d+\.\d+\.\d+\.\d+)$/i)?.[1];
-  const value = mapped ?? address;
-  const parts = value.split('.').map(Number);
-  return parts.length === 4 && (parts[0] === 10 || parts[0] === 127 || parts[0] === 0 || (parts[0] === 169 && parts[1] === 254) || (parts[0] === 172 && parts[1]! >= 16 && parts[1]! <= 31) || (parts[0] === 192 && parts[1] === 168) || (parts[0] === 100 && parts[1]! >= 64 && parts[1]! <= 127));
-}
-
 export async function validateRemoteUrl(value: string) {
   if (!value || value.length > 8192) throw new JobError('INVALID_STORAGE_URL', 'Enter a valid remote object URL.');
   let url: URL;
   try { url = new URL(value); } catch { throw new JobError('INVALID_STORAGE_URL', 'Enter a valid remote object URL.'); }
-  if (url.username || url.password || !['https:', 'http:'].includes(url.protocol)) throw new JobError('INVALID_STORAGE_URL', 'Use an HTTP(S) URL without embedded username or password.');
+  if (url.username || url.password || url.hash) throw new JobError('INVALID_STORAGE_URL', 'Remote URLs must not contain credentials or fragments.');
+  if (url.protocol !== 'https:' && !(config.remoteUrlAllowPrivate && url.protocol === 'http:')) throw new JobError('INSECURE_STORAGE_URL', 'Remote URLs require HTTPS.');
   if (!/\.tiff?$/i.test(url.pathname)) throw new JobError('UNSUPPORTED_REMOTE_INPUT', 'Remote URL input accepts standalone .tif or .tiff files only.');
-  const host = url.hostname.toLowerCase(), allowlisted = config.remoteUrlHosts.includes(host);
-  if (!allowlisted) throw new JobError('STORAGE_HOST_DENIED', 'Remote URL host is not allowlisted. Configure TILEO_REMOTE_URL_HOSTS to permit this host.');
-  if (url.protocol !== 'https:') throw new JobError('INSECURE_STORAGE_URL', 'Remote URLs require HTTPS.');
-  if (isIP(host)) {
-    if (privateAddress(host) && !allowlisted) throw new JobError('STORAGE_HOST_DENIED', 'This storage host is not allowed.');
-    return url;
-  }
-  let addresses: { address: string }[];
-  try { addresses = await lookup(host, { all: true }); } catch { throw new JobError('STORAGE_HOST_UNAVAILABLE', 'The remote storage hostname could not be resolved.'); }
-  if (!addresses.length || addresses.some(item => privateAddress(item.address))) throw new JobError('STORAGE_HOST_DENIED', 'Private or local storage hosts are not allowed for remote URL input.');
+  if (!config.remoteUrlHosts.includes(url.hostname.toLowerCase())) throw new JobError('STORAGE_HOST_DENIED', 'Remote URL host is not allowlisted. Configure TILEO_REMOTE_URL_HOSTS to permit this host.');
+  // DNS validation happens at socket creation in requestRemote, preventing rebinding.
   return url;
 }
 
@@ -58,7 +42,7 @@ export function publicRemoteUrl(value: string) {
   return url.toString();
 }
 
-export async function urlFetch(source: string | UrlInputSource, options: { method?: 'GET'; range?: string; etag?: string; signal?: AbortSignal } = {}) {
+export async function urlFetch(source: string | UrlInputSource, options: { method?: 'GET'; range?: string; etag?: string; signal?: AbortSignal; transport?: RemoteTransport } = {}) {
   const value = typeof source === 'string' ? source : source.url;
   const url = await validateRemoteUrl(value);
   const headers: Record<string, string> = {};
@@ -66,7 +50,7 @@ export async function urlFetch(source: string | UrlInputSource, options: { metho
   if (options.etag) headers['if-match'] = options.etag;
   let response: Response | undefined;
   for (let attempt = 0; attempt < 3; attempt++) {
-    response = await fetch(url, { method: 'GET', headers, signal: options.signal, redirect: 'error' });
+    response = await (options.transport ?? ((target, init) => requestRemote(target, config.remoteUrlHosts, config.remoteUrlAllowPrivate, init)))(url, { headers, signal: options.signal });
     if (![429, 500, 502, 503, 504].includes(response.status) || attempt === 2) break;
     await response.body?.cancel();
     await new Promise(resolve => setTimeout(resolve, 250 * 2 ** attempt));
@@ -79,9 +63,9 @@ export async function urlFetch(source: string | UrlInputSource, options: { metho
   return response;
 }
 
-export async function inspectUrlObject(input: { url: string; readMode?: 'auto' | 'remote' | 'stage' }, signal?: AbortSignal): Promise<UrlInspection> {
+export async function inspectUrlObject(input: { url: string; readMode?: 'auto' | 'remote' | 'stage' }, signal?: AbortSignal, transport?: RemoteTransport): Promise<UrlInspection> {
   const url = await validateRemoteUrl(input.url);
-  const range = await urlFetch(url.toString(), { range: 'bytes=0-16383', signal });
+  const range = await urlFetch(url.toString(), { range: 'bytes=0-16383', signal, transport });
   const match = /^bytes\s+0-\d+\/(\d+)$/i.exec(range.headers.get('content-range') ?? '');
   if (range.status !== 206 || !match) { await range.body?.cancel(); throw new JobError('STORAGE_RANGE_UNSUPPORTED', 'The URL must support HTTP byte ranges; the response body was not downloaded.'); }
   const size = Number(match[1]), etag = (range.headers.get('etag') ?? '').replace(/^"|"$/g, '');

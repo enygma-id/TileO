@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdir, readFile, writeFile, rename } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, rename, mkdtemp, rm } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { resolve, join } from 'node:path';
@@ -22,7 +22,15 @@ for (const [name, url, expected] of downloads) {
     if (!response.ok) throw new Error(`Download failed: ${url}: ${response.status}`);
     bytes = Buffer.from(await response.arrayBuffer());
     if (createHash('sha256').update(bytes).digest('hex') !== expected) throw new Error(`Checksum mismatch: ${name}`);
-    await writeFile(`${path}.tmp`, bytes); await rename(`${path}.tmp`, path);
+    const temporary = await mkdtemp(join(tools, '.download-'));
+    try {
+      const staged = join(temporary, name);
+      // codeql[js/http-to-file-access] The bytes are rejected unless their SHA-256 matches the pinned checksum
+      // precomputed from the official validator artifact; the write is staged into a private mkdtemp directory
+      // with exclusive-create permissions and atomically renamed into place.
+      await writeFile(staged, bytes, { flag: 'wx', mode: 0o600 });
+      await rename(staged, path);
+    } finally { await rm(temporary, { recursive: true, force: true }); }
   }
 }
 for (const [command, args] of [

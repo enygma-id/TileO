@@ -12,7 +12,9 @@ const out = path.resolve(o['out-dir']);
 if (out === evidence || out.startsWith(evidence + path.sep)) throw Error('Receipt must be outside core');
 fs.mkdirSync(out, { recursive: true });
 const receipt = path.join(out, 'source-access-verification.json');
-if (fs.existsSync(receipt)) throw Error('Receipt exists; select a new attempt directory');
+let receiptFd;
+try { receiptFd = fs.openSync(receipt, 'wx', 0o600); }
+catch (error) { if (error.code === 'EEXIST') throw Error('Receipt exists; select a new attempt directory'); throw error; }
 const directory = fs.mkdtempSync(path.join(out, 'downloads-'));
 const report = { schema: 'tileo-source-access-verification@1', checked_at: new Date().toISOString(), status: 'FAILED', candidate_id: c.candidate_id, commit: c.commit, image_id: c.image_id, repository: c.repository, tag: `v${c.version}`, core_evidence_sha256: sha256File(path.join(evidence, 'core-evidence-manifest.json')), downloads: [], failures: [] };
 try {
@@ -22,6 +24,6 @@ try {
   for (const name of ['gcc-runtime-corresponding-source.tar.gz', 'mozilla-ca-bundle-source.tar.gz']) execFileSync('tar', ['-tzf', path.join(directory, name)], { stdio: 'pipe', maxBuffer: 32 * 1024 * 1024 });
   report.status = 'SOURCE_ACCESS_VERIFIED';
 } catch (error) { report.failures.push(error.message); }
-fs.writeFileSync(receipt, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
+try { fs.writeFileSync(receiptFd, JSON.stringify(report, null, 2) + '\n'); } finally { fs.closeSync(receiptFd); }
 console.log(report.status, receipt);
 if (report.failures.length) { console.error(report.failures.join('\n')); process.exitCode = 1; }

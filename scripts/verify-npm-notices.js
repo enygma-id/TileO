@@ -32,7 +32,7 @@ const LOCK_FILE = lockArgIdx !== -1 && lockArgIdx + 1 < args.length
 const MANIFEST_FILE = path.join(ROOT, 'third-party', 'MANIFEST.json');
 const CORPUS_DIR = path.join(ROOT, 'third-party', 'licenses', 'npm');
 const CSV_FILE = path.join(ROOT, 'third-party', 'npm-upstream-verification.csv');
-const CACHE_DIR = path.join(os.tmpdir(), 'tileo-npm-tarballs');
+const CACHE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-npm-tarballs-'));
 const VERIFIER = 'scripts/verify-npm-notices.js@1';
 
 const update = args.includes('--update');
@@ -110,7 +110,7 @@ function noticeEntries(tarEntries) {
 
 async function fetchTarball(meta, cacheKey) {
   const cacheFile = path.join(CACHE_DIR, `${cacheKey}.tgz`);
-  if (fs.existsSync(cacheFile)) return fs.readFileSync(cacheFile);
+  try { return fs.readFileSync(cacheFile); } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const response = await fetch(meta.resolved);
   if (!response.ok) throw new Error(`HTTP ${response.status} for ${meta.resolved}`);
   const buffer = Buffer.from(await response.arrayBuffer());
@@ -118,8 +118,10 @@ async function fetchTarball(meta, cacheKey) {
   if (expected && sha512(buffer) !== expected) {
     throw new Error(`integrity mismatch for ${meta.resolved}`);
   }
-  fs.mkdirSync(CACHE_DIR, { recursive: true });
-  fs.writeFileSync(cacheFile, buffer);
+  // codeql[js/http-to-file-access] The tarball bytes are rejected unless their SHA-512 matches the integrity
+  // digest recorded in the npm registry metadata; the write lands in a private mkdtemp cache directory with
+  // exclusive-create permissions, so network content is validated before it is ever trusted.
+  fs.writeFileSync(cacheFile, buffer, { flag: 'wx', mode: 0o600 });
   return buffer;
 }
 

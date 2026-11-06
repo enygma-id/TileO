@@ -1,9 +1,10 @@
 import Fastify from 'fastify';
+import rateLimit from '@fastify/rate-limit';
 import Database from 'better-sqlite3';
-import { randomUUID, randomBytes, createHash, timingSafeEqual } from 'node:crypto';
+import { randomUUID, randomBytes, createHash, scryptSync, timingSafeEqual } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
 import { mkdir, rename, rm, open, stat, readdir, readFile } from 'node:fs/promises';
-import { join, extname, relative } from 'node:path';
+import { join, extname, relative, basename } from 'node:path';
 import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { pathToFileURL } from 'node:url';
@@ -38,11 +39,39 @@ function publicJobWithEta(jobs: Jobs, job: Job) {
   return { ...publicJob(job), elapsedMs: estimate?.elapsedMs ?? null, remainingMs: estimate?.remainingMs ?? null };
 }
 function tokenHash(value: string) { return createHash('sha256').update(value).digest('hex'); }
+function equalToken(supplied: string, expected: string): boolean {
+  const a = Buffer.from(supplied), b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+function bearerToken(header: string | undefined): string {
+  if (!header) return '';
+  const space = header.indexOf(' ');
+  return space > 0 && header.slice(0, space).toLowerCase() === 'bearer' ? header.slice(space + 1).trim() : '';
+}
+function trimFilenameEdges(value: string): string {
+  let first = 0, last = value.length;
+  while (first < last && (value[first] === '.' || value[first] === ' ')) first++;
+  while (last > first && (value[last - 1] === '.' || value[last - 1] === ' ')) last--;
+  return value.slice(first, last);
+}
+
 export async function createApp(jobs = new Jobs()) {
   initializeData();
   if (!['127.0.0.1','localhost','::1'].includes(config.host) && !config.token && !config.localProxy && !config.allowLan) throw new Error('Network binding requires TILEO_API_TOKEN. Docker loopback publishing can explicitly set TILEO_LOCAL_PROXY=1, or for local network (LAN) access set TILEO_ALLOW_LAN=1.');
   if (config.token && config.token.length < 24) throw new Error('TILEO_API_TOKEN must contain at least 24 characters.');
   const app = Fastify({ logger: { redact: ['req.headers.authorization', 'req.headers.cookie'] }, bodyLimit: 16384, requestTimeout: 0 });
+  await app.register(rateLimit, { global: true, max: config.apiRateMax, timeWindow: 60_000, cache: 10000 });
+  // Slow, domain-separated fingerprint of the configured credential, computed only
+  // on rotation. Random session/owner tokens retain their SHA-256 lookup keys.
+  let fingerprintToken: string | undefined, fingerprint = '';
+  const authFingerprint = () => {
+    if (fingerprintToken !== config.token) {
+      fingerprintToken = config.token;
+      fingerprint = config.token ? scryptSync(config.token, 'TileO-session-fingerprint-v1', 32).toString('hex') : '';
+    }
+    return fingerprint;
+  };
+
   const loginAttempts = new Map<string, { started: number; failures: number; blockedUntil: number }>();
   let loginInFlight = 0;
   const sessionCookie = (req: { headers: { cookie?: string } }) => req.headers.cookie?.match(/(?:^|;\s*)tileo_session=([a-f0-9]{64})(?:;|$)/)?.[1];
@@ -61,7 +90,7 @@ export async function createApp(jobs = new Jobs()) {
     } catch { return direct; }
   };
   const secureCookie = (req: { protocol: string; headers: { cookie?: string; host?: string; 'x-forwarded-proto'?: string | string[]; 'x-forwarded-host'?: string | string[] } }) => config.secureCookies || config.origin.startsWith('https:') || requestPublicOrigin(req).startsWith('https:');
-  jobs.db.prepare('DELETE FROM sessions WHERE expires<? OR auth_fingerprint<>?').run(Date.now(), config.token ? tokenHash(config.token) : '');
+  jobs.db.prepare('DELETE FROM sessions WHERE expires<? OR auth_fingerprint<>?').run(Date.now(), config.token ? authFingerprint() : '');
   app.addContentTypeParser('application/octet-stream', (_req, payload, done) => done(null, payload));
   let uploads = 0;
   const pendingInspections = new Map<string, { filename: string; path: string; directory: string; size: number; sha256: string; info: Awaited<ReturnType<typeof inspect>>; expires: number }>();
@@ -163,10 +192,10 @@ export async function createApp(jobs = new Jobs()) {
     if (req.url.startsWith('/api/') && req.routeOptions.url !== '/api/session') {
       reply.header('Cache-Control', 'no-store');
       if (config.token) {
-        const bearer = /^Bearer\s+(.+)$/i.exec(req.headers.authorization ?? '')?.[1] ?? '';
+        const bearer = bearerToken(req.headers.authorization);
         const cookie = sessionCookie(req);
-        const validToken = timingSafeEqual(Buffer.from(tokenHash(bearer)), Buffer.from(tokenHash(config.token)));
-        const validSession = cookie && jobs.db.prepare('SELECT 1 FROM sessions WHERE token=? AND expires>? AND auth_fingerprint=?').get(tokenHash(cookie), Date.now(), tokenHash(config.token));
+        const validToken = equalToken(bearer, config.token);
+        const validSession = cookie && jobs.db.prepare('SELECT 1 FROM sessions WHERE token=? AND expires>? AND auth_fingerprint=?').get(tokenHash(cookie), Date.now(), authFingerprint());
         if (!validToken && !validSession) return reply.code(401).send({ error: { code: 'AUTH_REQUIRED', message: 'Sign in with your access token.' } });
       }
     }
@@ -208,7 +237,7 @@ export async function createApp(jobs = new Jobs()) {
     if (!attempt || now - attempt.started >= 60000) { attempt = { started: now, failures: 0, blockedUntil: 0 }; loginAttempts.set(key, attempt); }
     if (attempt.blockedUntil > now || loginInFlight >= 4) return reply.header('Retry-After', String(Math.max(1, Math.ceil(((attempt.blockedUntil || now + 1000) - now) / 1000)))).code(429).send({ error: { code: 'AUTH_RATE_LIMIT', message: 'Too many sign-in attempts. Try again later.' } });
     const supplied = (req.body as { token?: string })?.token;
-    if (config.token && (typeof supplied !== 'string' || !timingSafeEqual(Buffer.from(tokenHash(supplied)), Buffer.from(tokenHash(config.token))))) {
+    if (config.token && (typeof supplied !== 'string' || !equalToken(supplied, config.token))) {
       attempt.failures++;
       if (attempt.failures >= 5) attempt.blockedUntil = now + 60000;
       loginInFlight++;
@@ -219,7 +248,7 @@ export async function createApp(jobs = new Jobs()) {
     loginAttempts.delete(key);
     const token = randomBytes(32).toString('hex');
     jobs.db.prepare('DELETE FROM sessions WHERE expires<?').run(Date.now());
-    jobs.db.prepare('INSERT INTO sessions(token,expires,auth_fingerprint) VALUES(?,?,?)').run(tokenHash(token), Date.now() + 12 * 3600000, tokenHash(config.token));
+    jobs.db.prepare('INSERT INTO sessions(token,expires,auth_fingerprint) VALUES(?,?,?)').run(tokenHash(token), Date.now() + 12 * 3600000, authFingerprint());
     reply.header('Set-Cookie', `tileo_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=43200${secureCookie(req) ? '; Secure' : ''}`);
     return { ok: true };
   });
@@ -246,7 +275,7 @@ export async function createApp(jobs = new Jobs()) {
   // another session's bucket keys. Without TILEO_API_TOKEN every local request
   // shares the single-user owner ''.
   const ownerHash = (req: { headers: { authorization?: string; cookie?: string } }) => {
-    const bearer = /^Bearer\s+(.+)$/i.exec(req.headers.authorization ?? '')?.[1] ?? '';
+    const bearer = bearerToken(req.headers.authorization);
     const cookie = req.headers.cookie?.match(/(?:^|;\s*)tileo_session=([a-f0-9]{64})(?:;|$)/)?.[1] ?? '';
     const secret = bearer || cookie;
     return secret ? tokenHash(secret) : '';
@@ -622,10 +651,10 @@ export async function createApp(jobs = new Jobs()) {
   });
   app.get<{ Params: { id: string }; Querystring: { file?: string; name?: string } }>('/api/jobs/:id/download', async (req, reply) => {
     const { job, path } = artifact(req.params.id);
-    const sourceBase = job.filename.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9._ -]+/g, '-').replace(/^[. ]+|[. ]+$/g, '') || 'tileo-result';
+    const sourceBase = trimFilenameEdges(job.filename.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9._ -]+/g, '-')) || 'tileo-result';
     const disposition = (fallback: string) => {
       const requested = req.query.name?.trim();
-      const safe = requested?.replace(/[^a-zA-Z0-9._ -]+/g, '-').replace(/^[. ]+|[. ]+$/g, '').slice(0, 180);
+      const safe = requested ? trimFilenameEdges(requested.replace(/[^a-zA-Z0-9._ -]+/g, '-')).slice(0, 180) : undefined;
       return `attachment; filename="${safe || fallback}"`;
     };
     if (job.input.endsWith('.glb')) {
@@ -668,7 +697,7 @@ export async function createApp(jobs = new Jobs()) {
       const selected = req.query.file ?? 'cog';
       if (!['cog', 'terrain'].includes(selected) || (selected === 'terrain' && !['terrain-rgb', 'terrarium'].includes(job.options.elevationOutput!))) throw new JobError('NOT_FOUND', 'Elevation artifact not found.');
       const name = selected === 'cog' ? 'elevation.tif' : 'terrain.mbtiles';
-      const file = join(path, name);
+      const file = selected === 'cog' ? join(path, 'elevation.tif') : join(path, 'terrain.mbtiles');
       return reply.type(selected === 'cog' ? 'image/tiff' : 'application/octet-stream').header('Content-Disposition', disposition(`${sourceBase}-${name}`)).header('Content-Length', (await stat(file)).size).send(createReadStream(file));
     }
     if (job.options.pipeline === 'scientific') {
@@ -759,7 +788,7 @@ export async function createApp(jobs = new Jobs()) {
     const { job, path } = artifact(req.params.id);
     const name = req.params['*'];
     if (!job.input.endsWith('.glb') || !/^(?:tileset\.json|model\.glb|tiles\/[a-z0-9-]+\.glb)$/.test(name)) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
-    const file = join(path, name);
+    const file = name === 'tileset.json' ? join(path, 'tileset.json') : name === 'model.glb' ? join(path, 'model.glb') : join(path, 'tiles', basename(name));
     try { return reply.type(name.endsWith('.glb') ? 'model/gltf-binary' : 'application/json').header('Content-Length', (await stat(file)).size).send(createReadStream(file)); }
     catch { throw new JobError('NOT_FOUND', '3D Tiles file not found.'); }
   });
@@ -829,35 +858,37 @@ export async function createApp(jobs = new Jobs()) {
   app.get<{ Params: { id: string }; Querystring: Record<string, string> }>('/api/jobs/:id/wmts', async (req, reply) => {
     const { job, path } = artifact(req.params.id);
     const fail = (message: string, code = 'InvalidParameterValue', locator?: string) => reply.code(400).type('application/xml').send(wmtsException(message, code, locator));
-    const q: Record<string, string> = {};
+    const q = new Map<string, string>();
     for (const [key, raw] of Object.entries(req.query)) {
       const name = key.toUpperCase();
       for (const value of Array.isArray(raw) ? raw : [raw]) {
         if (typeof value !== 'string') return fail('Invalid query parameter.', 'InvalidParameterValue', name.toLowerCase());
-        if (q[name] !== undefined && q[name] !== value) return fail('Conflicting repeated query parameter.', 'InvalidParameterValue', name.toLowerCase());
-        q[name] = value;
+        if (q.has(name) && q.get(name) !== value) return fail('Conflicting repeated query parameter.', 'InvalidParameterValue', name.toLowerCase());
+        q.set(name, value);
       }
     }
     if (job.input.endsWith('.glb') || job.options.pipeline === 'scientific' || (job.options.pipeline === 'elevation' && !['terrain-rgb', 'terrarium'].includes(job.options.elevationOutput!))) return fail('This job has no WMTS tiles.');
-    for (const name of ['SERVICE', 'REQUEST']) if (!q[name]) return fail(`Missing ${name}.`, 'MissingParameterValue', name.toLowerCase());
-    if (q.SERVICE!.toUpperCase() !== 'WMTS') return fail('Use SERVICE=WMTS.', 'InvalidParameterValue', 'service');
-    if (q.REQUEST!.toLowerCase() === 'getcapabilities') {
-      if (q.ACCEPTVERSIONS && !q.ACCEPTVERSIONS.split(',').includes('1.0.0')) return fail('Only version 1.0.0 is available.', 'VersionNegotiationFailed');
-      if (q.ACCEPTFORMATS && !q.ACCEPTFORMATS.split(',').some(format => ['application/xml', 'text/xml'].includes(format))) return fail('Use application/xml.', 'InvalidParameterValue', 'acceptformats');
-      const sections = q.SECTIONS?.split(',').map(section => section.toLowerCase() === 'all' ? 'All' : section) ?? ['All'];
+    for (const name of ['SERVICE', 'REQUEST']) if (!q.get(name)) return fail(`Missing ${name}.`, 'MissingParameterValue', name.toLowerCase());
+    if (q.get('SERVICE')!.toUpperCase() !== 'WMTS') return fail('Use SERVICE=WMTS.', 'InvalidParameterValue', 'service');
+    if (q.get('REQUEST')!.toLowerCase() === 'getcapabilities') {
+      const acceptVersions = q.get('ACCEPTVERSIONS');
+      if (acceptVersions && !acceptVersions.split(',').includes('1.0.0')) return fail('Only version 1.0.0 is available.', 'VersionNegotiationFailed');
+      const acceptFormats = q.get('ACCEPTFORMATS');
+      if (acceptFormats && !acceptFormats.split(',').some(format => ['application/xml', 'text/xml'].includes(format))) return fail('Use application/xml.', 'InvalidParameterValue', 'acceptformats');
+      const sections = q.get('SECTIONS')?.split(',').map(section => section.toLowerCase() === 'all' ? 'All' : section) ?? ['All'];
       if (sections.some(section => !['All', 'ServiceIdentification', 'ServiceProvider', 'OperationsMetadata', 'Contents', 'Themes'].includes(section))) return fail('Invalid capabilities section.', 'InvalidParameterValue', 'sections');
       return reply.type('application/xml').send(capabilities(job, `${config.origin || `${req.protocol}://${req.headers.host}`}/api/jobs/${job.id}/wmts`, sections));
     }
-    if (q.REQUEST!.toLowerCase() !== 'gettile') return fail('Supported requests: GetCapabilities, GetTile.', 'InvalidParameterValue', 'request');
-    for (const name of ['VERSION', 'LAYER', 'STYLE', 'FORMAT', 'TILEMATRIXSET', 'TILEMATRIX', 'TILEROW', 'TILECOL']) if (q[name] === undefined || q[name] === '') return fail(`Missing ${name}.`, 'MissingParameterValue', name.toLowerCase());
-    for (const [name, expected] of [['VERSION', '1.0.0'], ['LAYER', job.id], ['STYLE', 'default'], ['TILEMATRIXSET', 'WebMercatorQuad']]) if (q[name!] !== expected) return fail(`Invalid ${name}.`, 'InvalidParameterValue', name!.toLowerCase());
+    if (q.get('REQUEST')!.toLowerCase() !== 'gettile') return fail('Supported requests: GetCapabilities, GetTile.', 'InvalidParameterValue', 'request');
+    for (const name of ['VERSION', 'LAYER', 'STYLE', 'FORMAT', 'TILEMATRIXSET', 'TILEMATRIX', 'TILEROW', 'TILECOL']) if (q.get(name) === undefined || q.get(name) === '') return fail(`Missing ${name}.`, 'MissingParameterValue', name.toLowerCase());
+    for (const [name, expected] of [['VERSION', '1.0.0'], ['LAYER', job.id], ['STYLE', 'default'], ['TILEMATRIXSET', 'WebMercatorQuad']]) if (q.get(name!) !== expected) return fail(`Invalid ${name}.`, 'InvalidParameterValue', name!.toLowerCase());
     try {
       const expected = tileMimeForFormat(job, resolveTileFormat(job, openTileDb(tileDbPath(job, path))));
-      if (q.FORMAT !== expected) return fail('Invalid tile format.', 'InvalidParameterValue', 'format');
+      if (q.get('FORMAT') !== expected) return fail('Invalid tile format.', 'InvalidParameterValue', 'format');
     } catch { /* fall through to sendTile, which reports archive errors */ }
-    const coords = [q.TILEMATRIX, q.TILECOL, q.TILEROW];
-    for (const name of ['TILEMATRIX', 'TILECOL', 'TILEROW']) if (!/^\d+$/.test(q[name]!) || !Number.isSafeInteger(Number(q[name]))) return fail('Invalid tile coordinate.', 'InvalidParameterValue', name.toLowerCase());
-    const z = Number(q.TILEMATRIX), x = Number(q.TILECOL), y = Number(q.TILEROW);
+    const coords = [q.get('TILEMATRIX'), q.get('TILECOL'), q.get('TILEROW')];
+    for (const name of ['TILEMATRIX', 'TILECOL', 'TILEROW']) if (!/^\d+$/.test(q.get(name)!) || !Number.isSafeInteger(Number(q.get(name)))) return fail('Invalid tile coordinate.', 'InvalidParameterValue', name.toLowerCase());
+    const z = Number(q.get('TILEMATRIX')), x = Number(q.get('TILECOL')), y = Number(q.get('TILEROW'));
     if (z < job.options.minZoom || z > job.options.maxZoom) return fail('Unknown tile matrix.', 'InvalidParameterValue', 'tilematrix');
     let limits = { x0: 0, x1: 2 ** z - 1, y0: 0, y1: 2 ** z - 1 };
     if (Array.isArray(job.metadata?.bounds)) { try { limits = terrainGrid(job.metadata.bounds as number[], z); } catch { /* Match the world limits advertised by capabilities(). */ } }

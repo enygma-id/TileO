@@ -1,0 +1,10 @@
+# Scope CodeQL analysis to first-party sources.
+#
+# - `third-party/` holds kept upstream artifacts (license corpora, vendor and
+#   native package metadata) that are evidence intentionally committed verbatim
+#   and never executed as part of TileO. Analyzing third-party content there
+#   produced a DOM-XSS finding in the sqlite copyright document that cannot be
+#   remediated in this repository without modifying upstream evidence.
+paths-ignore:
+  - third-party
+  - '**/*.md'
