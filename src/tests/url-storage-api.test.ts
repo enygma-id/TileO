@@ -82,8 +82,8 @@ test('IAM role integration is disabled when TILEO_AWS_ACCOUNT_ID is unset', asyn
 
 test('standard non-COG GeoTIFF URLs are accepted and staged', { skip: process.env.TILEO_INTEGRATION !== '1' }, async () => {
   const directory = await mkdtemp(join(tmpdir(), 'tileo-url-stage-'));
-  const previous = { data: config.data, token: config.token, origin: config.origin, hosts: [...config.remoteUrlHosts] };
-  Object.assign(config, { data: directory, token: '', origin: '' });
+  const previous = { data: config.data, token: config.token, origin: config.origin, hosts: [...config.remoteUrlHosts], remoteUrlAllowPrivate: config.remoteUrlAllowPrivate };
+  Object.assign(config, { data: directory, token: '', origin: '', remoteUrlAllowPrivate: true });
   config.remoteUrlHosts.splice(0, config.remoteUrlHosts.length, '127.0.0.1');
   await mkdir(join(directory, 'input'), { recursive: true });
   await mkdir(join(directory, 'scratch'), { recursive: true });

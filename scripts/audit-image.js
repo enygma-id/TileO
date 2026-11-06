@@ -161,7 +161,7 @@ try {
 // 4. Audit OS Packages & Packaged Software (os-packages.csv)
 console.log('\n[4/8] Auditing packaged runtime software components...');
 const apkPackages = runCmd('docker', ['run', '--rm', '--entrypoint', 'node', IMAGE_TAG, '-e', "process.stdout.write(require('fs').readFileSync('/usr/local/share/tileo-build/apk-packages.txt','utf8'))"]);
-const apkVersion = (name) => apkPackages.match(new RegExp(`^${name.replace(/[+]/g, '\\+')}-(\\S+)\\s`, 'm'))?.[1] ?? (() => { throw new Error(`Missing image package metadata for ${name}`); })();
+const apkVersion = (name) => apkPackages.match(new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}-(\\S+)\\s`, 'm'))?.[1] ?? (() => { throw new Error(`Missing image package metadata for ${name}`); })();
 const RUNTIME_PACKAGED_SOFTWARE = [
   { package: 'musl', version: apkVersion('musl'), license: 'MIT', origin: 'Alpine Linux 3.21', files: '/lib/ld-musl-x86_64.so.1', evidence: 'third-party/licenses/native/musl/COPYING.txt' },
   { package: 'sqlite-libs', version: apkVersion('sqlite-libs'), license: 'Blessing (Public Domain)', origin: 'Alpine Linux 3.21', files: '/usr/lib/libsqlite3.so.0', evidence: 'third-party/licenses/native/sqlite/LICENSE.txt' },

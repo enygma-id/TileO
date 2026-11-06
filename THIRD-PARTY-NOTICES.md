@@ -4,14 +4,14 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `9b85b4749253856c937c1d46891a1507ead46b269d5531e0ce6a9e5b975a5d4b`
+Generated from committed license evidence · Lockfile SHA-256: `0f572b58d475e79974280b0963309e109c0fdae8075170b516660c268621bb00`
 
 ## Verification summary
 
 | Evidence set | Count | Method |
 | --- | ---: | --- |
-| npm entries in `package-lock.json` | 277 | Direct, transitive, development and platform-optional entries |
-| npm notices verified from exact tarball | 241 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
+| npm entries in `package-lock.json` | 281 | Direct, transitive, development and platform-optional entries |
+| npm notices verified from exact tarball | 245 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
 | npm metadata-only entries | 36 | Tarball has no license file; only `package.json` metadata retained |
 | npm runtime entries marked metadata-only | 10 | Review required before strict release |
 | Native runtime components | 28 | Pinned upstream license corpus |
@@ -106,7 +106,7 @@ The GCC runtime exception permits distributing `libstdc++`/`libgcc` with indepen
 
 Each entry names the exact locked version, the recorded license expression, the verification state and the SHA-256 of the stored upstream notice. Development-only entries are not shipped in the runtime image; platform-optional entries are shipped only on matching platforms.
 
-### Runtime and optional entries (221)
+### Runtime and optional entries (225)
 
 #### @deck.gl/core (9.4.0)
 - **Declared License**: `MIT`
@@ -468,6 +468,36 @@ MIT License
 
 Copyright (c) 2014-2016 Douglas Christopher Wilson
 Copyright (c) 2021-present The Fastify team <https://github.com/fastify/fastify#team>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+````
+
+#### @fastify/rate-limit (11.2.2)
+- **Declared License**: `MIT`
+- **Scope**: `runtime`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `8b3b33ed60110634b68f557efd1c910d17ae2d7ee31ce7d61ff92d55bad1bca9`
+- **Notice**: [`third-party/licenses/npm/@fastify/rate-limit/11.2.2/LICENSE.txt`](third-party/licenses/npm/@fastify/rate-limit/11.2.2/LICENSE.txt) · SHA-256 `d24d2e5bdc50e739dcc8c73f547e54fce61388ea77bb57cf836e0c6ece46f8e8`
+
+````text
+MIT License
+
+Copyright (c) 2018-present The Fastify team <https://github.com/fastify/fastify#team>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -1982,6 +2012,24 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
+````
+
+#### @lukeed/ms (2.0.2)
+- **Declared License**: `MIT`
+- **Scope**: `runtime`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `fed80c8ee4923ee7d5a08fe6e30ba9244c45da7e19f7592b72dee235eb65f7d4`
+- **Notice**: [`third-party/licenses/npm/@lukeed/ms/2.0.2/LICENSE.txt`](third-party/licenses/npm/@lukeed/ms/2.0.2/LICENSE.txt) · SHA-256 `9a9edad7baae52622bddf3c15b2ef8a33d2c89f2d25408ad13e8a7481c6b0c97`
+
+````text
+MIT License
+
+Copyright (c) Luke Edwards <luke.edwards05@gmail.com> (lukeed.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ````
 
 #### @luma.gl/core (9.4.2)
@@ -6109,6 +6157,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
+#### fastify-plugin (6.0.1)
+- **Declared License**: `MIT`
+- **Scope**: `runtime`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `6e3616cd2b7c29d8409f2ff0eced9e4c382d591786dfa4a33d9bee1b08b9596b`
+- **Notice**: [`third-party/licenses/npm/fastify-plugin/6.0.1/LICENSE.txt`](third-party/licenses/npm/fastify-plugin/6.0.1/LICENSE.txt) · SHA-256 `ba9677e5a34c2738c26b36bb478f95e0369cac48fbe68a01a91fd5c7972f2043`
+
+````text
+MIT License
+
+Copyright (c) 2017-present The Fastify team <https://github.com/fastify/fastify#team>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+````
+
 #### fastq (1.20.3)
 - **Declared License**: `ISC`
 - **Scope**: `runtime`
@@ -6811,6 +6889,34 @@ INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
 LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
+````
+
+#### ip-address (10.7.6)
+- **Declared License**: `MIT`
+- **Scope**: `runtime`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `d593a65a5ffa85e704ffd4b2c7220d2c5c3ff879264416f694b2a15d124be7ca`
+- **Notice**: [`third-party/licenses/npm/ip-address/10.7.6/LICENSE.txt`](third-party/licenses/npm/ip-address/10.7.6/LICENSE.txt) · SHA-256 `f8d791359a50cbcac82c29cb7b0b1b889b28be76fdd35b8ee33f0f7c8704702a`
+
+````text
+Copyright (C) 2011 by Beau Gunderson
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 ````
 
 #### ipaddr.js (2.5.0)

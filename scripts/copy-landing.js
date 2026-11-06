@@ -81,7 +81,8 @@ export function buildSingleHtml(html, script, css, domain = '', token = '', conf
     /<script\s+type=["']module["']\s+src=["'][^"']*landing-map\.js["']\s*><\/script>/i,
     `${cdnSetup}\n  <script type="module">\n${script}\n  </script>`
   );
-  output = output.replace(/<script\s+src=["'][^"']*landing-config\.js["']\s*><\/script>/i, '');
+  const landingConfigTag = /<script\s+src=["'][^"']*landing-config\.js["']\s*><\/script>/i.exec(output);
+  if (landingConfigTag) output = output.slice(0, landingConfigTag.index) + output.slice(landingConfigTag.index + landingConfigTag[0].length);
 
   return output;
 }

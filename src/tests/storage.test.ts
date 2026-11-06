@@ -55,7 +55,7 @@ test('S3 registry hides credentials, enforces scope, and stages with object iden
       return new Response(tiffHeader, { status: 206, headers: { 'content-range': `bytes 0-${tiffHeader.length - 1}/${tiffHeader.length}`, etag: '"url-etag"', 'content-type': 'image/tiff' } });
     }) as typeof fetch;
     const signed = 'https://storage.test/cog/public.tif?X-Amz-Signature=top-secret&X-Amz-Expires=3600';
-    const urlInspection = await inspectUrlObject({ url: signed, readMode: 'auto' });
+    const urlInspection = await inspectUrlObject({ url: signed, readMode: 'auto' }, undefined, (url, options) => globalThis.fetch(url, options));
     assert.equal(urlInspection.source.kind, 'url');
     assert.equal(urlInspection.source.auth, 'presigned');
     assert.equal(urlInspection.source.readMode, 'stage');

@@ -2,8 +2,8 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "9b85b4749253856c937c1d46891a1507ead46b269d5531e0ce6a9e5b975a5d4b",
-  "package_count": 277,
+  "reference_lockfile_sha256": "0f572b58d475e79974280b0963309e109c0fdae8075170b516660c268621bb00",
+  "package_count": 281,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
   "generated_from": "Committed package-lock.json and exact-version upstream npm tarballs",
@@ -9256,14 +9256,138 @@
         ],
         "note": "corpus matches upstream tarball"
       }
+    },
+    {
+      "package_path": "node_modules/@fastify/rate-limit",
+      "name": "@fastify/rate-limit",
+      "version": "11.2.2",
+      "declared_license": "MIT",
+      "dev": false,
+      "optional": false,
+      "scope": "runtime",
+      "integrity": "sha512-Ynxk9BU82Y5Ux7NOk9NqyZpTMdFes8EY8quXrN6ePDsbtG4G9Afb3l9mD8Vw2nv0hXg0iFjV+gkdABReFPlShw==",
+      "resolved": "https://registry.npmjs.org/@fastify/rate-limit/-/rate-limit-11.2.2.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-06",
+        "tarball_sha256": "8b3b33ed60110634b68f557efd1c910d17ae2d7ee31ce7d61ff92d55bad1bca9",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "d24d2e5bdc50e739dcc8c73f547e54fce61388ea77bb57cf836e0c6ece46f8e8",
+            "bytes": 1123
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/@fastify/rate-limit/11.2.2/LICENSE.txt",
+      "notice_sha256": "d24d2e5bdc50e739dcc8c73f547e54fce61388ea77bb57cf836e0c6ece46f8e8",
+      "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/@lukeed/ms",
+      "name": "@lukeed/ms",
+      "version": "2.0.2",
+      "declared_license": "MIT",
+      "dev": false,
+      "optional": false,
+      "scope": "runtime",
+      "integrity": "sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==",
+      "resolved": "https://registry.npmjs.org/@lukeed/ms/-/ms-2.0.2.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-06",
+        "tarball_sha256": "fed80c8ee4923ee7d5a08fe6e30ba9244c45da7e19f7592b72dee235eb65f7d4",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/license",
+            "stored": "LICENSE.txt",
+            "sha256": "9a9edad7baae52622bddf3c15b2ef8a33d2c89f2d25408ad13e8a7481c6b0c97",
+            "bytes": 1104
+          }
+        ],
+        "note": "corpus matches upstream tarball"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/@lukeed/ms/2.0.2/LICENSE.txt",
+      "notice_sha256": "9a9edad7baae52622bddf3c15b2ef8a33d2c89f2d25408ad13e8a7481c6b0c97",
+      "notice_source": "package/license"
+    },
+    {
+      "package_path": "node_modules/fastify-plugin",
+      "name": "fastify-plugin",
+      "version": "6.0.1",
+      "declared_license": "MIT",
+      "dev": false,
+      "optional": false,
+      "scope": "runtime",
+      "integrity": "sha512-4wW4RxSmvPXLrh5mgQEiu43qU3bw44N2ss4FTkTkQIbprUhE+/s43QX0j/ttcztdWK7PEkHqVthdc5GdEGDvjA==",
+      "resolved": "https://registry.npmjs.org/fastify-plugin/-/fastify-plugin-6.0.1.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-06",
+        "tarball_sha256": "6e3616cd2b7c29d8409f2ff0eced9e4c382d591786dfa4a33d9bee1b08b9596b",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "ba9677e5a34c2738c26b36bb478f95e0369cac48fbe68a01a91fd5c7972f2043",
+            "bytes": 1123
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/fastify-plugin/6.0.1/LICENSE.txt",
+      "notice_sha256": "ba9677e5a34c2738c26b36bb478f95e0369cac48fbe68a01a91fd5c7972f2043",
+      "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/ip-address",
+      "name": "ip-address",
+      "version": "10.7.6",
+      "declared_license": "MIT",
+      "dev": false,
+      "optional": false,
+      "scope": "runtime",
+      "integrity": "sha512-00LYkM6byILa9eQIx6qoaXCM40xTLd56AZ4vyaPW3YTyb49VZYPo5xsiAq4tuQ54GH4R7gVdYScJ1B7B77PuTg==",
+      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.6.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-06",
+        "tarball_sha256": "d593a65a5ffa85e704ffd4b2c7220d2c5c3ff879264416f694b2a15d124be7ca",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "f8d791359a50cbcac82c29cb7b0b1b889b28be76fdd35b8ee33f0f7c8704702a",
+            "bytes": 1061
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/ip-address/10.7.6/LICENSE.txt",
+      "notice_sha256": "f8d791359a50cbcac82c29cb7b0b1b889b28be76fdd35b8ee33f0f7c8704702a",
+      "notice_source": "package/LICENSE"
     }
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-04",
+    "verified_at": "2026-11-06",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
-    "package_count": 277,
-    "verified_upstream_tarball": 241,
+    "package_count": 281,
+    "verified_upstream_tarball": 245,
     "metadata_only_no_license_file": 36,
     "verification_failed": 0,
     "output": "third-party/npm-upstream-verification.csv",

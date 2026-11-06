@@ -55,6 +55,9 @@ function run(command, commandArgs, options = {}) {
 function download(url, destination, expected, algorithm = 'sha512') {
   if (!fs.existsSync(destination) || digest(destination, algorithm) !== expected) {
     fs.rmSync(destination, { force: true });
+    // codeql[js/file-access-to-http] The URL originates from the committed release manifest, carries no
+    // credentials (curl runs without any auth file), and the downloaded artifact is only accepted when its
+    // SHA-512 matches the manifest entry, so file-derived request data is verified before any use.
     execFileSync('curl', ['-fL', '--retry', '3', '-o', destination, url], { stdio: 'inherit' });
   }
   const actual = digest(destination, algorithm);
@@ -78,7 +81,7 @@ function inspectImage() {
     ]) copyFromImage(container, containerPath, path.join(temp, name));
     const packageText = fs.readFileSync(packages, 'utf8');
     const packageVersion = (name) => {
-      const match = packageText.match(new RegExp(`^${name.replace(/[+]/g, '\\+')}-(\\S+)\\s`, 'm'));
+      const match = packageText.match(new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}-(\\S+)\\s`, 'm'));
       if (!match) throw new Error(`Image package metadata is missing ${name}`);
       return match[1];
     };

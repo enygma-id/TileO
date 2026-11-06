@@ -21,6 +21,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { gunzipSync } from 'node:zlib';
 import { fileURLToPath } from 'node:url';
+import { pipeline } from 'node:stream/promises';
+import { Readable } from 'node:stream';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -32,7 +34,7 @@ const LOCK_FILE = lockArgIdx !== -1 && lockArgIdx + 1 < args.length
 const MANIFEST_FILE = path.join(ROOT, 'third-party', 'MANIFEST.json');
 const CORPUS_DIR = path.join(ROOT, 'third-party', 'licenses', 'npm');
 const CSV_FILE = path.join(ROOT, 'third-party', 'npm-upstream-verification.csv');
-const CACHE_DIR = path.join(os.tmpdir(), 'tileo-npm-tarballs');
+const CACHE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-npm-tarballs-'));
 const VERIFIER = 'scripts/verify-npm-notices.js@1';
 
 const update = args.includes('--update');
@@ -110,16 +112,19 @@ function noticeEntries(tarEntries) {
 
 async function fetchTarball(meta, cacheKey) {
   const cacheFile = path.join(CACHE_DIR, `${cacheKey}.tgz`);
-  if (fs.existsSync(cacheFile)) return fs.readFileSync(cacheFile);
+  try { return fs.readFileSync(cacheFile); } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const response = await fetch(meta.resolved);
   if (!response.ok) throw new Error(`HTTP ${response.status} for ${meta.resolved}`);
-  const buffer = Buffer.from(await response.arrayBuffer());
+  // Streamed with exclusive-create permissions into the private mkdtemp cache
+  // directory; the stored tarball is read back and rejected unless its SHA-512
+  // matches the registry integrity digest, otherwise it is removed.
+  await pipeline(Readable.fromWeb(response.body), fs.createWriteStream(cacheFile, { flags: 'wx', mode: 0o600 }));
+  const buffer = fs.readFileSync(cacheFile);
   const expected = integrityDigest(meta.integrity);
   if (expected && sha512(buffer) !== expected) {
+    fs.rmSync(cacheFile, { force: true });
     throw new Error(`integrity mismatch for ${meta.resolved}`);
   }
-  fs.mkdirSync(CACHE_DIR, { recursive: true });
-  fs.writeFileSync(cacheFile, buffer);
   return buffer;
 }
 

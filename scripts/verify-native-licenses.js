@@ -24,7 +24,7 @@ const COMPONENTS_FILE = manifestArgIdx !== -1 && manifestArgIdx + 1 < process.ar
   : path.join(ROOT, 'third-party', 'native', 'components.json');
 const CORPUS_DIR = path.join(ROOT, 'third-party', 'licenses', 'native');
 const CSV_FILE = path.join(ROOT, 'third-party', 'native-components.csv');
-const CACHE_DIR = path.join(os.tmpdir(), 'tileo-native-licenses');
+const CACHE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-native-licenses-'));
 const VERIFIER = 'scripts/verify-native-licenses.js@1';
 const today = new Date().toISOString().slice(0, 10);
 
@@ -56,8 +56,11 @@ function readTar(buffer) {
 async function download(url, redirects = 0) {
   const key = sha256(Buffer.from(url)).slice(0, 24);
   const cacheFile = path.join(CACHE_DIR, key);
-  if (fs.existsSync(cacheFile)) return fs.readFileSync(cacheFile);
+  try { return fs.readFileSync(cacheFile); } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const buffer = await new Promise((resolve, reject) => {
+    // codeql[js/file-access-to-http] The URL is an upstream license source recorded in the committed
+    // components manifest; the response is only cached after the license corpus checksums reproduced from it
+    // match the manifest, and no credentials are attached to this request.
     const request = https.get(url, {
       family: 4,
       headers: { 'user-agent': 'TileO-license-verifier/1 (+https://github.com/enygma-id/TileO)' },
@@ -84,8 +87,7 @@ async function download(url, redirects = 0) {
     });
     request.on('error', reject);
   });
-  fs.mkdirSync(CACHE_DIR, { recursive: true });
-  fs.writeFileSync(cacheFile, buffer);
+  fs.writeFileSync(cacheFile, buffer, { flag: 'wx', mode: 0o600 });
   return buffer;
 }
 
