@@ -36,6 +36,7 @@ export async function validateRemoteUrl(value: string) {
   if (url.username || url.password || !['https:', 'http:'].includes(url.protocol)) throw new JobError('INVALID_STORAGE_URL', 'Use an HTTP(S) URL without embedded username or password.');
   if (!/\.tiff?$/i.test(url.pathname)) throw new JobError('UNSUPPORTED_REMOTE_INPUT', 'Remote URL input accepts standalone .tif or .tiff files only.');
   const host = url.hostname.toLowerCase(), allowlisted = config.remoteUrlHosts.includes(host);
+  if (!allowlisted) throw new JobError('STORAGE_HOST_DENIED', 'Remote URL host is not allowlisted. Configure TILEO_REMOTE_URL_HOSTS to permit this host.');
   if (url.protocol !== 'https:' && !allowlisted) throw new JobError('INSECURE_STORAGE_URL', 'Remote URLs require HTTPS unless the exact host is allowlisted by TILEO_REMOTE_URL_HOSTS.');
   if (!allowlisted) {
     let addresses: { address: string }[];
