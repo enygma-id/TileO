@@ -27,6 +27,16 @@ const CSV_FILE = path.join(ROOT, 'third-party', 'native-components.csv');
 const CACHE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'tileo-native-licenses-'));
 const VERIFIER = 'scripts/verify-native-licenses.js@1';
 const today = new Date().toISOString().slice(0, 10);
+const LICENSE_SOURCE_HOSTS = new Set([
+  'git.musl-libc.org',
+  'github.com',
+  'raw.githubusercontent.com',
+  'release-assets.githubusercontent.com',
+  'objects.githubusercontent.com',
+  'sqlite.org',
+  'www.sqlite.org',
+  'www.mozilla.org',
+]);
 
 const update = process.argv.includes('--update');
 
@@ -54,14 +64,15 @@ function readTar(buffer) {
 }
 
 async function download(url, redirects = 0) {
+  const target = new URL(url);
+  if (target.protocol !== 'https:' || target.username || target.password || !LICENSE_SOURCE_HOSTS.has(target.hostname)) {
+    throw new Error(`Untrusted native license source URL: ${target.origin}`);
+  }
   const key = sha256(Buffer.from(url)).slice(0, 24);
   const cacheFile = path.join(CACHE_DIR, key);
   try { return fs.readFileSync(cacheFile); } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const buffer = await new Promise((resolve, reject) => {
-    // codeql[js/file-access-to-http] The URL is an upstream license source recorded in the committed
-    // components manifest; the response is only cached after the license corpus checksums reproduced from it
-    // match the manifest, and no credentials are attached to this request.
-    const request = https.get(new URL(url), {
+    const request = https.get(target, {
       family: 4,
       headers: { 'user-agent': 'TileO-license-verifier/1 (+https://github.com/enygma-id/TileO)' },
     }, (response) => {
@@ -72,7 +83,7 @@ async function download(url, redirects = 0) {
           reject(new Error(`too many redirects for ${url}`));
           return;
         }
-        resolve(download(new URL(response.headers.location, url).href, redirects + 1));
+        resolve(download(new URL(response.headers.location, target).href, redirects + 1));
         return;
       }
       if (status !== 200) {
