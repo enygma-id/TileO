@@ -224,7 +224,7 @@ export async function restoreIdProperty(path: string, signal?: AbortSignal): Pro
   return restored;
 }
 
-export function tippecanoeArgs(output: string, scratch: string, options: Options, inspection?: Inspection) {
+export function tippecanoeArgs(output: string, scratch: string, options: Options, inspection?: Inspection, inputPath = join(scratch, 'features.geojsonl')) {
   const plan = resolveVectorPlan(inspection ?? { kind: 'vector', crs: null } as Inspection, options);
   const preserve = options.vectorPreset === 'preserve';
   const attributes: string[] =
@@ -235,7 +235,12 @@ export function tippecanoeArgs(output: string, scratch: string, options: Options
       : [];
   return [
     '-o', output, '-Z', String(options.minZoom), '-z', String(options.maxZoom),
-    '-l', 'features', '-P', '--no-progress-indicator', '--temporary-directory', scratch,
+    // -P splits input at newlines and requires independent feature records.
+    // A formatted FeatureCollection can be split inside geometry or metadata:
+    // Tippecanoe then reports parse errors but may still exit 0 with lost data.
+    // Only newline-delimited GeoJSON is safe to read in parallel.
+    '-l', 'features', ...(extname(inputPath).toLowerCase() === '.geojsonl' ? ['-P'] : []),
+    '--no-progress-indicator', '--temporary-directory', scratch,
     `--full-detail=${plan.detail}`, `--low-detail=${plan.lowDetail}`,
     `--minimum-detail=${plan.minimumDetail}`,
     '--detect-shared-borders',
@@ -418,7 +423,7 @@ export async function vector(input: string, output: string, scratch: string, ins
       if (direct) progress('Vector: feeding source directly to Tippecanoe (exact attribute names preserved)', 20);
       const file = direct ? input : await ensureNormalized();
       progress('Vector: generating tiles with Tippecanoe', 45);
-      await run('tippecanoe', [...tippecanoeArgs(output, scratch, options, inspection), file], execution);
+      await run('tippecanoe', [...tippecanoeArgs(output, scratch, options, inspection, file), file], execution);
       progress('Vector: tiles generated with Tippecanoe', 85);
     } finally {
       // Stream producer/consumer overlap. File delivery excludes normalization
