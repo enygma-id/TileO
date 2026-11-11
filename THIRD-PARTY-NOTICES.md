@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `afb6386723e47ce366d0d241f307dfc59431d6d15bbc5a55e80854324f0ff7d3`
+Generated from committed license evidence · Lockfile SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
 
 ## Verification summary
 
@@ -2990,11 +2990,11 @@ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ````
 
-#### @maplibre/maplibre-gl-style-spec (26.4.4)
+#### @maplibre/maplibre-gl-style-spec (26.5.1)
 - **Declared License**: `ISC`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `a91a2c7553837daaef41893f9ffe8d3feac046ae68b9340cc626715e7eada7ac`
-- **Notice**: [`third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.4.4/LICENSE.txt`](third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.4.4/LICENSE.txt) · SHA-256 `bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `679236f10c80e27df5ca10eac67bc18cde99fcedc6f8e60dc569ede64c21e766`
+- **Notice**: [`third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.5.1/LICENSE.txt`](third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.5.1/LICENSE.txt) · SHA-256 `bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890`
 
 ````text
 Copyright (c) 2020, MapLibre contributors
@@ -8284,11 +8284,11 @@ Apache License
 }
 ````
 
-#### maplibre-gl (6.16.0)
+#### maplibre-gl (6.17.0)
 - **Declared License**: `BSD-3-Clause`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `1504a18021fc6d9329a9dc7c949525822c8ae5e2fe3e3751df9262a13af5de4b`
-- **Notice**: [`third-party/licenses/npm/maplibre-gl/6.16.0/LICENSE.txt`](third-party/licenses/npm/maplibre-gl/6.16.0/LICENSE.txt) · SHA-256 `ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `587807d8d6c99349022e027fa310c16cfaa55392131f6263df080306db6809b0`
+- **Notice**: [`third-party/licenses/npm/maplibre-gl/6.17.0/LICENSE.txt`](third-party/licenses/npm/maplibre-gl/6.17.0/LICENSE.txt) · SHA-256 `ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2`
 
 ````text
 Copyright (c) 2023, MapLibre contributors

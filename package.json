@@ -41,7 +41,7 @@
     "fastify": "^5.12.8",
     "geojson-vt": "^5.0.4",
     "geotiff": "^3.0.5",
-    "maplibre-gl": "6.16.0",
+    "maplibre-gl": "6.17.0",
     "meshoptimizer": "^1.3.0",
     "pbf": "^5.1.2",
     "pmtiles": "^4.5.0",

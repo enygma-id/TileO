@@ -2,7 +2,7 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **281 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `afb6386723e47ce366d0d241f307dfc59431d6d15bbc5a55e80854324f0ff7d3`
+- `package-lock.json` SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
 - Runtime entries: **220** · runtime-optional: **5** · development: **56**
 - Notice evidence: **245** verified from exact upstream tarballs · **36** metadata-only · **0** failed
 - Verification date: 2026-11-11 (scripts/verify-npm-notices.js@1)
@@ -121,7 +121,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@mapbox/vector-tile` | 3.0.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@mapbox/vector-tile/node_modules/@mapbox/point-geometry` | 1.1.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@maplibre/geojson-vt` | 6.3.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `@maplibre/maplibre-gl-style-spec` | 26.4.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `@maplibre/maplibre-gl-style-spec` | 26.5.1 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@maplibre/mlt` | 1.3.0 | `(MIT OR Apache-2.0)` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@maplibre/mlt/node_modules/@mapbox/point-geometry` | 1.1.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@maplibre/vt-pbf` | 4.3.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -242,7 +242,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `light-my-request` | 6.8.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `long` | 3.2.0 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `lz4js` | 0.2.0 | `ISC` | runtime-optional | `metadata_only_no_license_file` | `package.json` |
-| `maplibre-gl` | 6.16.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `maplibre-gl` | 6.17.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `maplibre-gl/node_modules/@mapbox/point-geometry` | 1.1.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `maplibre-gl/node_modules/earcut` | 3.2.4 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `md5` | 2.3.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
