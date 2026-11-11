@@ -6,6 +6,8 @@ export function show3dTiles(map: Map, id: string, onError: (message: string) => 
   const layer = new Tile3DLayer({
     id: 'preview-3d-tiles',
     data: `/api/jobs/${id}/${source ? 'source-tileset.json' : '3d/tileset.json'}`,
+    loadOptions: { tileset: { maximumMemoryUsage: 128, maximumScreenSpaceError: 32,
+      throttleRequests: true, maxRequests: 2, memoryAdjustedScreenSpaceError: true } },
     onTilesetLoad: tileset => {
       if (source) return;
       if (!tileset.cartographicCenter) return;
