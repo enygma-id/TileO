@@ -2,7 +2,7 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **281 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `b3b8af7c3fe3b88dfe17238d3808b128a0a2c37657b63e60ea6cec9fff37e863`
+- `package-lock.json` SHA-256: `afb6386723e47ce366d0d241f307dfc59431d6d15bbc5a55e80854324f0ff7d3`
 - Runtime entries: **220** · runtime-optional: **5** · development: **56**
 - Notice evidence: **245** verified from exact upstream tarballs · **36** metadata-only · **0** failed
 - Verification date: 2026-11-11 (scripts/verify-npm-notices.js@1)
@@ -136,7 +136,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@nodable/entities` | 3.1.0 | `MIT` | runtime | `metadata_only_no_license_file` | `package.json` |
 | `@petamoriken/float16` | 3.9.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@pinojs/redact` | 0.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `@playwright/test` | 1.64.1 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `@playwright/test` | 1.65.0 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `@probe.gl/env` | 4.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@probe.gl/log` | 4.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@probe.gl/stats` | 4.1.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -260,8 +260,8 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `pino` | 10.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino-abstract-transport` | 3.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino-std-serializers` | 7.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `playwright` | 1.64.1 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
-| `playwright-core` | 1.64.1 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `playwright` | 1.65.0 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
+| `playwright-core` | 1.65.0 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `pmtiles` | 4.5.0 | `BSD-3-Clause` | runtime | `metadata_only_no_license_file` | `package.json` |
 | `potpack` | 2.1.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `process-nextick-args` | 2.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
