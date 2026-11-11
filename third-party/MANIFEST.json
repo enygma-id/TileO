@@ -2,7 +2,7 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "0f572b58d475e79974280b0963309e109c0fdae8075170b516660c268621bb00",
+  "reference_lockfile_sha256": "56ad06b9a586570da9fb65286c67f0438e0782bbdb22019eb77214a579525f3b",
   "package_count": 281,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
@@ -2983,39 +2983,6 @@
       }
     },
     {
-      "package_path": "node_modules/@maplibre/maplibre-gl-style-spec",
-      "name": "@maplibre/maplibre-gl-style-spec",
-      "version": "26.4.4",
-      "declared_license": "ISC",
-      "notice_license": "ISC",
-      "notice_source": "package/LICENSE.txt",
-      "notice_sha256": "bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890",
-      "notice_file": "third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.4.4/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-hG4RZR4PBd/+6A3ODdZ3AnQRF106ZQk1y3bhwDg8bH/A4Oz2tnRUJVVWs9BZa6gXZ1d3UKe89C+Mm+olGBELvA==",
-      "resolved": "https://registry.npmjs.org/@maplibre/maplibre-gl-style-spec/-/maplibre-gl-style-spec-26.4.4.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "a91a2c7553837daaef41893f9ffe8d3feac046ae68b9340cc626715e7eada7ac",
-        "package_json_license": "ISC",
-        "files": [
-          {
-            "upstream": "package/LICENSE.txt",
-            "stored": "LICENSE.txt",
-            "sha256": "bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890",
-            "bytes": 5984
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/@maplibre/mlt",
       "name": "@maplibre/mlt",
       "version": "1.3.0",
@@ -5973,39 +5940,6 @@
       }
     },
     {
-      "package_path": "node_modules/fast-xml-parser",
-      "name": "fast-xml-parser",
-      "version": "5.11.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
-      "notice_file": "third-party/licenses/npm/fast-xml-parser/5.11.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-R9iDuNrQYeQut46cn2r2wHKn4HYzVDvDm5J1wW+koZewykv0yuO2HChTYeZtrULyHIDM9cj9TUXloCsueCQUog==",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "d8a04c1838235165f66fa2bc8ed6fcc1adfccae6bda34e24e0b2eadd74601321",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
-            "bytes": 1073
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/fastify",
       "name": "fastify",
       "version": "5.12.7",
@@ -6538,39 +6472,6 @@
       }
     },
     {
-      "package_path": "node_modules/is-unsafe",
-      "name": "is-unsafe",
-      "version": "2.0.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
-      "notice_file": "third-party/licenses/npm/is-unsafe/2.0.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "d1dd08942d20c78f5156911f77e60a173c87a4f575eca285fbecf2c6bc36db2b",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
-            "bytes": 1077
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/isarray",
       "name": "isarray",
       "version": "1.0.0",
@@ -6997,105 +6898,6 @@
           }
         ],
         "note": "tarball has no LICENSE/COPYING/NOTICE file; package.json metadata retained"
-      }
-    },
-    {
-      "package_path": "node_modules/maplibre-gl",
-      "name": "maplibre-gl",
-      "version": "6.16.0",
-      "declared_license": "BSD-3-Clause",
-      "notice_license": "BSD-3-Clause",
-      "notice_source": "package/LICENSE.txt",
-      "notice_sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2",
-      "notice_file": "third-party/licenses/npm/maplibre-gl/6.16.0/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-gApO66EMtoDZuio680RUBvskR7ahFd/NNhLN4tBAs+Y7FeT4gQV8zVFgYVMRmFxQznOEzecW19w6xOd9XjZjiA==",
-      "resolved": "https://registry.npmjs.org/maplibre-gl/-/maplibre-gl-6.16.0.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "1504a18021fc6d9329a9dc7c949525822c8ae5e2fe3e3751df9262a13af5de4b",
-        "package_json_license": "BSD-3-Clause",
-        "files": [
-          {
-            "upstream": "package/LICENSE.txt",
-            "stored": "LICENSE.txt",
-            "sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2",
-            "bytes": 5984
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/maplibre-gl/node_modules/@mapbox/point-geometry",
-      "name": "maplibre-gl/node_modules/@mapbox/point-geometry",
-      "version": "1.1.0",
-      "declared_license": "ISC",
-      "notice_license": "ISC",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "0c0ede0036a425ff8b2d49341ea9aa8eccbeeae1ac4eb59874c9dd8bcf5186d3",
-      "notice_file": "third-party/licenses/npm/maplibre-gl/node_modules/@mapbox/point-geometry/1.1.0/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-YGcBz1cg4ATXDCM/71L9xveh4dynfGmcLDqufR+nQQy3fKwsAZsWd/x4621/6uJaeB9mwOHE6hPeDgXz9uViUQ==",
-      "resolved": "https://registry.npmjs.org/@mapbox/point-geometry/-/point-geometry-1.1.0.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "9bf202082ba414ef99d82ca466445bfeddff3631922cfa74f9b4ce5caafde038",
-        "package_json_license": "ISC",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "0c0ede0036a425ff8b2d49341ea9aa8eccbeeae1ac4eb59874c9dd8bcf5186d3",
-            "bytes": 725
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/maplibre-gl/node_modules/earcut",
-      "name": "maplibre-gl/node_modules/earcut",
-      "version": "3.2.4",
-      "declared_license": "ISC",
-      "notice_license": "ISC",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "0b348fff56384b43dbb37593906904e56d0f9deb51eae590d4dc6d427fbf1808",
-      "notice_file": "third-party/licenses/npm/maplibre-gl/node_modules/earcut/3.2.4/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-FHc6yNpnTORB0tM5kmZ03iD2mDuNakDE2lvf4Hw1XkfxtEHIGVi01B/GqUSwx+NcC1WGjidAfpTXzeALtPtfpg==",
-      "resolved": "https://registry.npmjs.org/earcut/-/earcut-3.2.4.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "2f63624cc056e4f2f8109a84d10fff3daeea37581af14af0f612ff387cc2534a",
-        "package_json_license": "ISC",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "0b348fff56384b43dbb37593906904e56d0f9deb51eae590d4dc6d427fbf1808",
-            "bytes": 738
-          }
-        ],
-        "note": "corpus matches upstream tarball"
       }
     },
     {
@@ -9380,11 +9182,209 @@
       "notice_file": "third-party/licenses/npm/ip-address/10.7.6/LICENSE.txt",
       "notice_sha256": "f8d791359a50cbcac82c29cb7b0b1b889b28be76fdd35b8ee33f0f7c8704702a",
       "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/@maplibre/maplibre-gl-style-spec",
+      "name": "@maplibre/maplibre-gl-style-spec",
+      "version": "26.5.1",
+      "declared_license": "ISC",
+      "notice_license": "ISC",
+      "notice_source": "package/LICENSE.txt",
+      "notice_sha256": "bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890",
+      "notice_file": "third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.5.1/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-9ufQ5LR+Ldn87SILPVyRNz4wVm/sBrM2ZRv9VfjLRKYKIGAcvC1VFw/DEkJLAHqfMV8m03zDz1DUNTIUj/GvdA==",
+      "resolved": "https://registry.npmjs.org/@maplibre/maplibre-gl-style-spec/-/maplibre-gl-style-spec-26.5.1.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "679236f10c80e27df5ca10eac67bc18cde99fcedc6f8e60dc569ede64c21e766",
+        "package_json_license": "ISC",
+        "files": [
+          {
+            "upstream": "package/LICENSE.txt",
+            "stored": "LICENSE.txt",
+            "sha256": "bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890",
+            "bytes": 5984
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/fast-xml-parser",
+      "name": "fast-xml-parser",
+      "version": "5.12.0",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
+      "notice_file": "third-party/licenses/npm/fast-xml-parser/5.12.0/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-/pXxRBtwxY9w8z7YbgsvIPPcPvFDsTbIkWwTQJhzNJPokj+TbN6ftmcv4j/pEQDvOCNnKGDzuk5Bo2oogIOiFg==",
+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "104218e11e0bb8e2708211c76b649082d940c45149ccd1b4f7da4aafeb397aec",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
+            "bytes": 1073
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/is-unsafe",
+      "name": "is-unsafe",
+      "version": "2.0.3",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
+      "notice_file": "third-party/licenses/npm/is-unsafe/2.0.3/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "e3e2374d34a8999f03f2ed9aa85c143ef143b259fe130032812ad15583f28a35",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
+            "bytes": 1077
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/maplibre-gl",
+      "name": "maplibre-gl",
+      "version": "6.17.0",
+      "declared_license": "BSD-3-Clause",
+      "notice_license": "BSD-3-Clause",
+      "notice_source": "package/LICENSE.txt",
+      "notice_sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2",
+      "notice_file": "third-party/licenses/npm/maplibre-gl/6.17.0/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-2chIZwpLGenoUQOcnm9Pk4SLbA8ppNFq8jlpXiq9vcYm3Y1wJ3fc82FL0GLwBaPYJCLzPv/mC46KEupVov75rQ==",
+      "resolved": "https://registry.npmjs.org/maplibre-gl/-/maplibre-gl-6.17.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "587807d8d6c99349022e027fa310c16cfaa55392131f6263df080306db6809b0",
+        "package_json_license": "BSD-3-Clause",
+        "files": [
+          {
+            "upstream": "package/LICENSE.txt",
+            "stored": "LICENSE.txt",
+            "sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2",
+            "bytes": 5984
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/maplibre-gl/node_modules/@mapbox/point-geometry",
+      "name": "maplibre-gl/node_modules/@mapbox/point-geometry",
+      "version": "1.1.0",
+      "declared_license": "ISC",
+      "notice_license": "ISC",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "0c0ede0036a425ff8b2d49341ea9aa8eccbeeae1ac4eb59874c9dd8bcf5186d3",
+      "notice_file": "third-party/licenses/npm/maplibre-gl/node_modules/@mapbox/point-geometry/1.1.0/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-YGcBz1cg4ATXDCM/71L9xveh4dynfGmcLDqufR+nQQy3fKwsAZsWd/x4621/6uJaeB9mwOHE6hPeDgXz9uViUQ==",
+      "resolved": "https://registry.npmjs.org/@mapbox/point-geometry/-/point-geometry-1.1.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "9bf202082ba414ef99d82ca466445bfeddff3631922cfa74f9b4ce5caafde038",
+        "package_json_license": "ISC",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "0c0ede0036a425ff8b2d49341ea9aa8eccbeeae1ac4eb59874c9dd8bcf5186d3",
+            "bytes": 725
+          }
+        ],
+        "note": "corpus matches upstream tarball"
+      }
+    },
+    {
+      "package_path": "node_modules/maplibre-gl/node_modules/earcut",
+      "name": "maplibre-gl/node_modules/earcut",
+      "version": "3.2.4",
+      "declared_license": "ISC",
+      "notice_license": "ISC",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "0b348fff56384b43dbb37593906904e56d0f9deb51eae590d4dc6d427fbf1808",
+      "notice_file": "third-party/licenses/npm/maplibre-gl/node_modules/earcut/3.2.4/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-FHc6yNpnTORB0tM5kmZ03iD2mDuNakDE2lvf4Hw1XkfxtEHIGVi01B/GqUSwx+NcC1WGjidAfpTXzeALtPtfpg==",
+      "resolved": "https://registry.npmjs.org/earcut/-/earcut-3.2.4.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "2f63624cc056e4f2f8109a84d10fff3daeea37581af14af0f612ff387cc2534a",
+        "package_json_license": "ISC",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "0b348fff56384b43dbb37593906904e56d0f9deb51eae590d4dc6d427fbf1808",
+            "bytes": 738
+          }
+        ],
+        "note": "corpus matches upstream tarball"
+      }
     }
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-06",
+    "verified_at": "2026-11-11",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
     "package_count": 281,
     "verified_upstream_tarball": 245,
