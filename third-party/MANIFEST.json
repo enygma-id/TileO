@@ -2,7 +2,7 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "0f572b58d475e79974280b0963309e109c0fdae8075170b516660c268621bb00",
+  "reference_lockfile_sha256": "e577e6f0e9968c7908c7cc3eabd5f6cdfd95f169392c099efa78f10689c11bfa",
   "package_count": 281,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
@@ -3478,45 +3478,6 @@
       }
     },
     {
-      "package_path": "node_modules/@playwright/test",
-      "name": "@playwright/test",
-      "version": "1.64.1",
-      "declared_license": "Apache-2.0",
-      "notice_license": "Apache-2.0",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
-      "notice_file": "third-party/licenses/npm/@playwright/test/1.64.1/LICENSE.txt",
-      "dev": true,
-      "optional": false,
-      "integrity": "sha512-IaYGml/nSOiZWROfPtuIL7neuu9qDOZ3TNvNljUIrhDMxiGTgPjzj/g9p9RxpS2tSepPDRY+UwAaEeiKtUvIAg==",
-      "resolved": "https://registry.npmjs.org/@playwright/test/-/test-1.64.1.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "development",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "9bc8fb4bf5c8f395c1c6b6999e5480607a5aaaead17e9fe6e58181002b4086e3",
-        "package_json_license": "Apache-2.0",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
-            "bytes": 11601
-          },
-          {
-            "upstream": "package/NOTICE",
-            "stored": "NOTICE.txt",
-            "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
-            "bytes": 254
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/@probe.gl/env",
       "name": "@probe.gl/env",
       "version": "4.1.2",
@@ -5973,39 +5934,6 @@
       }
     },
     {
-      "package_path": "node_modules/fast-xml-parser",
-      "name": "fast-xml-parser",
-      "version": "5.11.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
-      "notice_file": "third-party/licenses/npm/fast-xml-parser/5.11.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-R9iDuNrQYeQut46cn2r2wHKn4HYzVDvDm5J1wW+koZewykv0yuO2HChTYeZtrULyHIDM9cj9TUXloCsueCQUog==",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "d8a04c1838235165f66fa2bc8ed6fcc1adfccae6bda34e24e0b2eadd74601321",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
-            "bytes": 1073
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/fastify",
       "name": "fastify",
       "version": "5.12.7",
@@ -6532,39 +6460,6 @@
             "stored": "LICENSE.txt",
             "sha256": "aa0723af232be8bf3b2f937f788909c1596d3ac613c4b3ce9403bbc00034e518",
             "bytes": 1053
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/is-unsafe",
-      "name": "is-unsafe",
-      "version": "2.0.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
-      "notice_file": "third-party/licenses/npm/is-unsafe/2.0.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "d1dd08942d20c78f5156911f77e60a173c87a4f575eca285fbecf2c6bc36db2b",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
-            "bytes": 1077
           }
         ],
         "note": "corpus matches upstream tarball"
@@ -7586,84 +7481,6 @@
             "stored": "LICENSE.txt",
             "sha256": "6206673d24786f09656f7a480b7c50af289e9690963aaa135af5b626de5250df",
             "bytes": 1084
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/playwright",
-      "name": "playwright",
-      "version": "1.64.1",
-      "declared_license": "Apache-2.0",
-      "notice_license": "Apache-2.0",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
-      "notice_file": "third-party/licenses/npm/playwright/1.64.1/LICENSE.txt",
-      "dev": true,
-      "optional": false,
-      "integrity": "sha512-HCrVhHr5QQuwYoswEUGTb7gGp522yflbv/ST8nF4sFWGuLjQCt17Q/EubpGGSNKYn1tsTCPZxqHhHCfVURu7UA==",
-      "resolved": "https://registry.npmjs.org/playwright/-/playwright-1.64.1.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "development",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "36ba838d2d55c44fafcff89f919b5d7bc829209318076578ee2bc7cb5687fd57",
-        "package_json_license": "Apache-2.0",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
-            "bytes": 11601
-          },
-          {
-            "upstream": "package/NOTICE",
-            "stored": "NOTICE.txt",
-            "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
-            "bytes": 254
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/playwright-core",
-      "name": "playwright-core",
-      "version": "1.64.1",
-      "declared_license": "Apache-2.0",
-      "notice_license": "Apache-2.0",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
-      "notice_file": "third-party/licenses/npm/playwright-core/1.64.1/LICENSE.txt",
-      "dev": true,
-      "optional": false,
-      "integrity": "sha512-BC4s8y6SEVA6Q1rSxZTto8hI1KUI3xXlHGZgvGqP4IqPdI/a6FX9H29IDNz7vKo9l21b6LfYosScPL6M3xxyDQ==",
-      "resolved": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.64.1.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "development",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "3af03703c967c95037454f2283f709d53ce804a4776d4219d319f5bbcc2a0185",
-        "package_json_license": "Apache-2.0",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
-            "bytes": 11601
-          },
-          {
-            "upstream": "package/NOTICE",
-            "stored": "NOTICE.txt",
-            "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
-            "bytes": 254
           }
         ],
         "note": "corpus matches upstream tarball"
@@ -9380,11 +9197,194 @@
       "notice_file": "third-party/licenses/npm/ip-address/10.7.6/LICENSE.txt",
       "notice_sha256": "f8d791359a50cbcac82c29cb7b0b1b889b28be76fdd35b8ee33f0f7c8704702a",
       "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/@playwright/test",
+      "name": "@playwright/test",
+      "version": "1.65.0",
+      "declared_license": "Apache-2.0",
+      "notice_license": "Apache-2.0",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+      "notice_file": "third-party/licenses/npm/@playwright/test/1.65.0/LICENSE.txt",
+      "dev": true,
+      "optional": false,
+      "integrity": "sha512-iGURLGuKDLakSEl7Pgfv8h7f+XLT+V861Wfhz0zlEl5nyFuKUopdkFBPKqTllTUp06aOwPuH8iuUEb3yp3MpbQ==",
+      "resolved": "https://registry.npmjs.org/@playwright/test/-/test-1.65.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "development",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "2f8c414b270504d18743ff7aab16ad686c0e6eedfe55697c8e9c98b3dc093523",
+        "package_json_license": "Apache-2.0",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+            "bytes": 11601
+          },
+          {
+            "upstream": "package/NOTICE",
+            "stored": "NOTICE.txt",
+            "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+            "bytes": 254
+          }
+        ],
+        "note": "corpus updated (2 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/fast-xml-parser",
+      "name": "fast-xml-parser",
+      "version": "5.12.0",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
+      "notice_file": "third-party/licenses/npm/fast-xml-parser/5.12.0/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-/pXxRBtwxY9w8z7YbgsvIPPcPvFDsTbIkWwTQJhzNJPokj+TbN6ftmcv4j/pEQDvOCNnKGDzuk5Bo2oogIOiFg==",
+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "104218e11e0bb8e2708211c76b649082d940c45149ccd1b4f7da4aafeb397aec",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
+            "bytes": 1073
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/is-unsafe",
+      "name": "is-unsafe",
+      "version": "2.0.3",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
+      "notice_file": "third-party/licenses/npm/is-unsafe/2.0.3/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "e3e2374d34a8999f03f2ed9aa85c143ef143b259fe130032812ad15583f28a35",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
+            "bytes": 1077
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/playwright",
+      "name": "playwright",
+      "version": "1.65.0",
+      "declared_license": "Apache-2.0",
+      "notice_license": "Apache-2.0",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+      "notice_file": "third-party/licenses/npm/playwright/1.65.0/LICENSE.txt",
+      "dev": true,
+      "optional": false,
+      "integrity": "sha512-F3AMWcR44qMBt4kq+6Kb6mX7bjGXshktKFOPULd7reED6ZJWevjbNRqysP7q+AATE9kdPEZBibex1BYsvpVoeA==",
+      "resolved": "https://registry.npmjs.org/playwright/-/playwright-1.65.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "development",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "5c535e6d0b00411c7b926f2f39aeaa80b9daa9ccfa2dd5c21db718cd8808aa42",
+        "package_json_license": "Apache-2.0",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+            "bytes": 11601
+          },
+          {
+            "upstream": "package/NOTICE",
+            "stored": "NOTICE.txt",
+            "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+            "bytes": 254
+          }
+        ],
+        "note": "corpus updated (2 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/playwright-core",
+      "name": "playwright-core",
+      "version": "1.65.0",
+      "declared_license": "Apache-2.0",
+      "notice_license": "Apache-2.0",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+      "notice_file": "third-party/licenses/npm/playwright-core/1.65.0/LICENSE.txt",
+      "dev": true,
+      "optional": false,
+      "integrity": "sha512-vNSKgH6YqtN7cdT/L334zo0a+YwkrpicyrHJlWWPIm/Q+Nn2SWInil01oT0mbu96U4GgoRtCYQD9CzJQgju+lA==",
+      "resolved": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.65.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "development",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "315247c55a793ca760b2f05bdcee0e6a53fd65b1f22d1d3de8323c8c9395add3",
+        "package_json_license": "Apache-2.0",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb",
+            "bytes": 11601
+          },
+          {
+            "upstream": "package/NOTICE",
+            "stored": "NOTICE.txt",
+            "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d",
+            "bytes": 254
+          }
+        ],
+        "note": "corpus matches upstream tarball"
+      }
     }
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-06",
+    "verified_at": "2026-11-11",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
     "package_count": 281,
     "verified_upstream_tarball": 245,
