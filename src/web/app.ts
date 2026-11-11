@@ -8,6 +8,7 @@ function isOsmBasemap(value: string): boolean {
 }
 
 import type { Job } from '../types.js';
+import { glbJsonSizeError } from '../glb-limits.js';
 import { iconElement } from './icons.js';
 import { fitBoundsZoom, landingSampleBounds, landingSampleData, landingSampleText, type LandingSample } from './landing-sample.js';
 import { propertiesHtml } from './popup.js';
@@ -279,8 +280,10 @@ function metadataCoordinates(value: unknown, inheritedCrs = ''): { latitude: num
 
 async function readModelLocation(file: File): Promise<{ location?: { latitude: number; longitude: number; height?: number }; warning?: string; error?: string }> {
   const header = new DataView(await file.slice(0, 20).arrayBuffer());
-  if (header.byteLength < 20 || header.getUint32(0, true) !== 0x46546c67 || header.getUint32(4, true) !== 2 || header.getUint32(8, true) !== file.size || header.getUint32(12, true) > Math.min(16 * 1024 ** 2, file.size - 20) || header.getUint32(16, true) !== 0x4e4f534a) return { error: 'GLB header or JSON metadata is invalid.' };
+  if (header.byteLength < 20 || header.getUint32(0, true) !== 0x46546c67 || header.getUint32(4, true) !== 2 || header.getUint32(8, true) !== file.size || header.getUint32(12, true) < 2 || header.getUint32(12, true) > file.size - 20 || header.getUint32(16, true) !== 0x4e4f534a) return { error: 'GLB header or JSON metadata is invalid.' };
   const jsonSize = header.getUint32(12, true);
+  const sizeError = glbJsonSizeError(jsonSize);
+  if (sizeError) return { error: sizeError };
   const json = JSON.parse(new TextDecoder().decode(await file.slice(20, 20 + jsonSize).arrayBuffer()));
   const gltf = json as { extras?: unknown; asset?: { extras?: unknown }; extensions?: { CESIUM_RTC?: { center?: unknown } }; extensionsUsed?: string[]; nodes?: { skin?: number; extensions?: Record<string, unknown> }[]; skins?: unknown[]; meshes?: { primitives?: { targets?: unknown[] }[] }[] };
   if (gltf.extensionsUsed?.includes('KHR_draco_mesh_compression')) return { error: 'Draco-compressed GLB is not supported. Export with Meshopt or uncompressed geometry.' };
