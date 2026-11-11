@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `0f572b58d475e79974280b0963309e109c0fdae8075170b516660c268621bb00`
+Generated from committed license evidence · Lockfile SHA-256: `b3b8af7c3fe3b88dfe17238d3808b128a0a2c37657b63e60ea6cec9fff37e863`
 
 ## Verification summary
 
@@ -6097,11 +6097,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
-#### fast-xml-parser (5.11.2)
+#### fast-xml-parser (5.12.0)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `d8a04c1838235165f66fa2bc8ed6fcc1adfccae6bda34e24e0b2eadd74601321`
-- **Notice**: [`third-party/licenses/npm/fast-xml-parser/5.11.2/LICENSE.txt`](third-party/licenses/npm/fast-xml-parser/5.11.2/LICENSE.txt) · SHA-256 `7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `104218e11e0bb8e2708211c76b649082d940c45149ccd1b4f7da4aafeb397aec`
+- **Notice**: [`third-party/licenses/npm/fast-xml-parser/5.12.0/LICENSE.txt`](third-party/licenses/npm/fast-xml-parser/5.12.0/LICENSE.txt) · SHA-256 `7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745`
 
 ````text
 MIT License
@@ -6127,11 +6127,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
-#### fastify (5.12.7)
+#### fastify (5.12.8)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `edc1716d83378350b767a4105b690041f8a2a523d930500ba9d1b36c7ca67dfe`
-- **Notice**: [`third-party/licenses/npm/fastify/5.12.7/LICENSE.txt`](third-party/licenses/npm/fastify/5.12.7/LICENSE.txt) · SHA-256 `23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `459048aabd9311309f4f95b36e8ca065e3a4613ded292bcf50442926931e4748`
+- **Notice**: [`third-party/licenses/npm/fastify/5.12.8/LICENSE.txt`](third-party/licenses/npm/fastify/5.12.8/LICENSE.txt) · SHA-256 `23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2`
 
 ````text
 MIT License
@@ -7005,11 +7005,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ````
 
-#### is-unsafe (2.0.2)
+#### is-unsafe (2.0.3)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `d1dd08942d20c78f5156911f77e60a173c87a4f575eca285fbecf2c6bc36db2b`
-- **Notice**: [`third-party/licenses/npm/is-unsafe/2.0.2/LICENSE.txt`](third-party/licenses/npm/is-unsafe/2.0.2/LICENSE.txt) · SHA-256 `8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `e3e2374d34a8999f03f2ed9aa85c143ef143b259fe130032812ad15583f28a35`
+- **Notice**: [`third-party/licenses/npm/is-unsafe/2.0.3/LICENSE.txt`](third-party/licenses/npm/is-unsafe/2.0.3/LICENSE.txt) · SHA-256 `8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07`
 
 ````text
 MIT License

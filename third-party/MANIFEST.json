@@ -2,7 +2,7 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "0f572b58d475e79974280b0963309e109c0fdae8075170b516660c268621bb00",
+  "reference_lockfile_sha256": "b3b8af7c3fe3b88dfe17238d3808b128a0a2c37657b63e60ea6cec9fff37e863",
   "package_count": 281,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
@@ -5973,72 +5973,6 @@
       }
     },
     {
-      "package_path": "node_modules/fast-xml-parser",
-      "name": "fast-xml-parser",
-      "version": "5.11.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
-      "notice_file": "third-party/licenses/npm/fast-xml-parser/5.11.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-R9iDuNrQYeQut46cn2r2wHKn4HYzVDvDm5J1wW+koZewykv0yuO2HChTYeZtrULyHIDM9cj9TUXloCsueCQUog==",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "d8a04c1838235165f66fa2bc8ed6fcc1adfccae6bda34e24e0b2eadd74601321",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
-            "bytes": 1073
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/fastify",
-      "name": "fastify",
-      "version": "5.12.7",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2",
-      "notice_file": "third-party/licenses/npm/fastify/5.12.7/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-v4pEPsTRPuqlDIYiQFB+BHjVN4SdHX9u0ABk0ZDUKbbdY1vsNryUd1j4Z+jQEZajvYIVk047Kimva9/AJ79GYw==",
-      "resolved": "https://registry.npmjs.org/fastify/-/fastify-5.12.7.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "edc1716d83378350b767a4105b690041f8a2a523d930500ba9d1b36c7ca67dfe",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2",
-            "bytes": 1123
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/fastq",
       "name": "fastq",
       "version": "1.20.3",
@@ -6532,39 +6466,6 @@
             "stored": "LICENSE.txt",
             "sha256": "aa0723af232be8bf3b2f937f788909c1596d3ac613c4b3ce9403bbc00034e518",
             "bytes": 1053
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/is-unsafe",
-      "name": "is-unsafe",
-      "version": "2.0.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
-      "notice_file": "third-party/licenses/npm/is-unsafe/2.0.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "d1dd08942d20c78f5156911f77e60a173c87a4f575eca285fbecf2c6bc36db2b",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
-            "bytes": 1077
           }
         ],
         "note": "corpus matches upstream tarball"
@@ -9320,37 +9221,6 @@
       "notice_source": "package/license"
     },
     {
-      "package_path": "node_modules/fastify-plugin",
-      "name": "fastify-plugin",
-      "version": "6.0.1",
-      "declared_license": "MIT",
-      "dev": false,
-      "optional": false,
-      "scope": "runtime",
-      "integrity": "sha512-4wW4RxSmvPXLrh5mgQEiu43qU3bw44N2ss4FTkTkQIbprUhE+/s43QX0j/ttcztdWK7PEkHqVthdc5GdEGDvjA==",
-      "resolved": "https://registry.npmjs.org/fastify-plugin/-/fastify-plugin-6.0.1.tgz",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-06",
-        "tarball_sha256": "6e3616cd2b7c29d8409f2ff0eced9e4c382d591786dfa4a33d9bee1b08b9596b",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "ba9677e5a34c2738c26b36bb478f95e0369cac48fbe68a01a91fd5c7972f2043",
-            "bytes": 1123
-          }
-        ],
-        "note": "corpus updated (1 mismatch)"
-      },
-      "notice_license": "MIT",
-      "notice_file": "third-party/licenses/npm/fastify-plugin/6.0.1/LICENSE.txt",
-      "notice_sha256": "ba9677e5a34c2738c26b36bb478f95e0369cac48fbe68a01a91fd5c7972f2043",
-      "notice_source": "package/LICENSE"
-    },
-    {
       "package_path": "node_modules/ip-address",
       "name": "ip-address",
       "version": "10.7.6",
@@ -9380,11 +9250,141 @@
       "notice_file": "third-party/licenses/npm/ip-address/10.7.6/LICENSE.txt",
       "notice_sha256": "f8d791359a50cbcac82c29cb7b0b1b889b28be76fdd35b8ee33f0f7c8704702a",
       "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/fast-xml-parser",
+      "name": "fast-xml-parser",
+      "version": "5.12.0",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
+      "notice_file": "third-party/licenses/npm/fast-xml-parser/5.12.0/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-/pXxRBtwxY9w8z7YbgsvIPPcPvFDsTbIkWwTQJhzNJPokj+TbN6ftmcv4j/pEQDvOCNnKGDzuk5Bo2oogIOiFg==",
+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "104218e11e0bb8e2708211c76b649082d940c45149ccd1b4f7da4aafeb397aec",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
+            "bytes": 1073
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/fastify",
+      "name": "fastify",
+      "version": "5.12.8",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2",
+      "notice_file": "third-party/licenses/npm/fastify/5.12.8/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-moP8exb2sCHLUbJkwp+I6C0padhy4D8lp0SdmzY7HhSdZuqm7O/u3o2aq7u8okaQ//33QDzj3G/u+FsSdB8Qzw==",
+      "resolved": "https://registry.npmjs.org/fastify/-/fastify-5.12.8.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "459048aabd9311309f4f95b36e8ca065e3a4613ded292bcf50442926931e4748",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2",
+            "bytes": 1123
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/fastify-plugin",
+      "name": "fastify-plugin",
+      "version": "6.0.1",
+      "declared_license": "MIT",
+      "dev": false,
+      "optional": false,
+      "scope": "runtime",
+      "integrity": "sha512-4wW4RxSmvPXLrh5mgQEiu43qU3bw44N2ss4FTkTkQIbprUhE+/s43QX0j/ttcztdWK7PEkHqVthdc5GdEGDvjA==",
+      "resolved": "https://registry.npmjs.org/fastify-plugin/-/fastify-plugin-6.0.1.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "6e3616cd2b7c29d8409f2ff0eced9e4c382d591786dfa4a33d9bee1b08b9596b",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "ba9677e5a34c2738c26b36bb478f95e0369cac48fbe68a01a91fd5c7972f2043",
+            "bytes": 1123
+          }
+        ],
+        "note": "corpus matches upstream tarball"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/fastify-plugin/6.0.1/LICENSE.txt",
+      "notice_sha256": "ba9677e5a34c2738c26b36bb478f95e0369cac48fbe68a01a91fd5c7972f2043",
+      "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/is-unsafe",
+      "name": "is-unsafe",
+      "version": "2.0.3",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
+      "notice_file": "third-party/licenses/npm/is-unsafe/2.0.3/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "e3e2374d34a8999f03f2ed9aa85c143ef143b259fe130032812ad15583f28a35",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
+            "bytes": 1077
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
     }
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-06",
+    "verified_at": "2026-11-11",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
     "package_count": 281,
     "verified_upstream_tarball": 245,
