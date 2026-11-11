@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `e577e6f0e9968c7908c7cc3eabd5f6cdfd95f169392c099efa78f10689c11bfa`
+Generated from committed license evidence · Lockfile SHA-256: `afb6386723e47ce366d0d241f307dfc59431d6d15bbc5a55e80854324f0ff7d3`
 
 ## Verification summary
 
@@ -6127,11 +6127,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
-#### fastify (5.12.7)
+#### fastify (5.12.8)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `edc1716d83378350b767a4105b690041f8a2a523d930500ba9d1b36c7ca67dfe`
-- **Notice**: [`third-party/licenses/npm/fastify/5.12.7/LICENSE.txt`](third-party/licenses/npm/fastify/5.12.7/LICENSE.txt) · SHA-256 `23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `459048aabd9311309f4f95b36e8ca065e3a4613ded292bcf50442926931e4748`
+- **Notice**: [`third-party/licenses/npm/fastify/5.12.8/LICENSE.txt`](third-party/licenses/npm/fastify/5.12.8/LICENSE.txt) · SHA-256 `23c91863859171455a536380991b4160fee4e19e2d8dc353ecf7143cc4e53ca2`
 
 ````text
 MIT License
