@@ -8,6 +8,8 @@ import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { cloneDocument, prune, simplifyPrimitive, weld } from './gltf-ops.js';
 import { MeshoptDecoder, MeshoptEncoder, MeshoptSimplifier } from 'meshoptimizer';
 import { JobError, type Options } from './types.js';
+import { glbJsonSizeError } from './glb-limits.js';
+import { batchStaticMeshes, prepareCoarseNormals, restoreFlatNormals } from './model3d-batch.js';
 
 type Glb = { asset?: { version?: string }; extensionsUsed?: string[]; extensionsRequired?: string[]; buffers?: { uri?: string; byteLength?: number }[]; bufferViews?: { buffer?: number; byteOffset?: number; byteLength?: number; byteStride?: number }[]; images?: { uri?: string }[]; accessors?: { bufferView?: number; byteOffset?: number; componentType?: number; count?: number; type?: string; min?: number[]; max?: number[] }[]; meshes?: { primitives?: { attributes?: { POSITION?: number }; indices?: number; mode?: number; targets?: unknown[] }[] }[]; nodes?: { mesh?: number; children?: number[]; matrix?: number[]; translation?: number[]; rotation?: number[]; scale?: number[]; skin?: number; extensions?: Record<string, unknown> }[]; scenes?: { nodes?: number[] }[]; scene?: number; skins?: unknown[] };
 type Part = { node: number; min: number[]; max: number[]; triangles: number };
@@ -72,11 +74,15 @@ async function writeTile(io: NodeIO, source: Document, path: string, selectedNod
   const document = cloneDocument(source);
   if (selectedNodes) document.getRoot().listNodes().forEach((node, index) => { if (!selectedNodes.has(index)) node.setMesh(null); });
   await document.transform(prune());
+  batchStaticMeshes(document, !detail);
+  await document.transform(prune());
   if (detail) {
+    const flatNormals = prepareCoarseNormals(document);
     await document.transform(weld());
     for (const mesh of document.getRoot().listMeshes()) for (const primitive of mesh.listPrimitives()) {
       if ((primitive.getMode() === 4 || primitive.getMode() === 5 || primitive.getMode() === 6) && (primitive.getIndices()?.getCount() ?? primitive.getAttribute('POSITION')?.getCount() ?? 0) >= 90) simplifyPrimitive(primitive, { simplifier: MeshoptSimplifier, ...detail });
     }
+    for (const primitive of flatNormals) restoreFlatNormals(document, primitive);
     await document.transform(prune());
   }
   await io.write(path, document);
@@ -247,7 +253,9 @@ export async function build3dTiles(input: string, directory: string, options: Op
     const header = Buffer.alloc(20);
     if ((await handle.read(header, 0, 20, 0)).bytesRead !== 20 || header.toString('ascii', 0, 4) !== 'glTF' || header.readUInt32LE(4) !== 2) throw new JobError('INVALID_GLB', 'Expected a binary glTF 2.0 file.');
     const size = (await handle.stat()).size, jsonSize = header.readUInt32LE(12); sourceSize = size;
-    if (header.readUInt32LE(8) !== size || header.toString('ascii', 16, 20) !== 'JSON' || jsonSize < 2 || jsonSize > 16 * 1024 ** 2 || jsonSize + 20 > size) throw new JobError('INVALID_GLB', 'Invalid GLB header or JSON chunk.');
+    if (header.readUInt32LE(8) !== size || header.toString('ascii', 16, 20) !== 'JSON' || jsonSize < 2 || jsonSize + 20 > size) throw new JobError('INVALID_GLB', 'Invalid GLB header or JSON chunk.');
+    const sizeError = glbJsonSizeError(jsonSize);
+    if (sizeError) throw new JobError('INVALID_GLB', sizeError);
     const json = Buffer.alloc(jsonSize);
     if ((await handle.read(json, 0, jsonSize, 20)).bytesRead !== jsonSize) throw new JobError('INVALID_GLB', 'Incomplete GLB JSON chunk.');
     const binHeader = Buffer.alloc(8);

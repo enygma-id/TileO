@@ -1,16 +1,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, open, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build3dTiles } from '../model3d.js';
 import { run } from '../process.js';
 import { JobError, parseOptions } from '../types.js';
+import { GLB_MAX_JSON_BYTES, glbJsonSizeError } from '../glb-limits.js';
 
 const options = parseOptions({ latitude: 0, longitude: 0, height: 0 }, true);
 
-async function fixture(path: string, change?: (gltf: any, bin: Buffer) => void) {
+async function fixture(path: string, change?: (gltf: any, bin: Buffer) => void, jsonBytes = 0) {
   const bin = Buffer.alloc(44);
   bin.writeFloatLE(1, 12);
   bin.writeFloatLE(1, 28);
@@ -27,13 +28,46 @@ async function fixture(path: string, change?: (gltf: any, bin: Buffer) => void) 
   };
   change?.(gltf, bin);
   const raw = JSON.stringify(gltf);
-  const json = Buffer.from(raw.padEnd(Math.ceil(raw.length / 4) * 4, ' '));
+  const json = Buffer.from(raw.padEnd(Math.max(jsonBytes, Math.ceil(raw.length / 4) * 4), ' '));
   const header = Buffer.alloc(28);
   header.write('glTF', 0); header.writeUInt32LE(2, 4); header.writeUInt32LE(28 + json.length + bin.length, 8);
   header.writeUInt32LE(json.length, 12); header.write('JSON', 16);
   header.writeUInt32LE(bin.length, 20); header.write('BIN\0', 24);
   await writeFile(path, Buffer.concat([header.subarray(0, 20), json, header.subarray(20), bin]));
 }
+
+test('GLB JSON size limit accepts 64 MiB and reports actual oversized metadata', async () => {
+  assert.equal(glbJsonSizeError(GLB_MAX_JSON_BYTES), undefined);
+  assert.match(glbJsonSizeError(GLB_MAX_JSON_BYTES + 4)!, /64.00 MiB; the maximum is 64 MiB/);
+  const dir = await mkdtemp(join(tmpdir(), 'tileo-glb-json-limit-'));
+  try {
+    for (const bytes of [17 * 1024 ** 2, GLB_MAX_JSON_BYTES]) {
+      const input = join(dir, `valid-${bytes}.glb`);
+      await fixture(input, undefined, bytes);
+      assert.equal((await build3dTiles(input, join(dir, `out-${bytes}`), options)).triangles, 2);
+    }
+    const input = join(dir, 'too-large.glb');
+    const handle = await open(input, 'w');
+    try {
+      const jsonSize = GLB_MAX_JSON_BYTES + 4, size = 28 + jsonSize + 4;
+      const header = Buffer.alloc(20);
+      header.write('glTF'); header.writeUInt32LE(2, 4); header.writeUInt32LE(size, 8);
+      header.writeUInt32LE(jsonSize, 12); header.write('JSON', 16);
+      await handle.write(header); await handle.truncate(size);
+    } finally { await handle.close(); }
+    // Deliberately unreadable JSON: the size error must win before parsing.
+    await assert.rejects(build3dTiles(input, join(dir, 'oversized'), options),
+      error => error instanceof JobError && error.code === 'INVALID_GLB' && /the maximum is 64 MiB/.test(error.message));
+    const broken = join(dir, 'broken.glb');
+    await fixture(broken);
+    const valid = await readFile(broken);
+    await writeFile(broken, valid.subarray(0, valid.length - 4));
+    await assert.rejects(build3dTiles(broken, join(dir, 'broken'), options), /Invalid GLB header/);
+    valid[20] = 0;
+    await writeFile(broken, valid);
+    await assert.rejects(build3dTiles(broken, join(dir, 'bad-json'), options), /Invalid GLB JSON/);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
 
 test('3D validation checks vertex bounds and indices and counts strip/fan triangles', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'tileo-3d-validation-'));
