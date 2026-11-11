@@ -2,7 +2,7 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "0f572b58d475e79974280b0963309e109c0fdae8075170b516660c268621bb00",
+  "reference_lockfile_sha256": "bce6dad551d52438b07378606c664cc1c017b7f7ad065602b618f247c99c7ece",
   "package_count": 281,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
@@ -5973,39 +5973,6 @@
       }
     },
     {
-      "package_path": "node_modules/fast-xml-parser",
-      "name": "fast-xml-parser",
-      "version": "5.11.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
-      "notice_file": "third-party/licenses/npm/fast-xml-parser/5.11.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-R9iDuNrQYeQut46cn2r2wHKn4HYzVDvDm5J1wW+koZewykv0yuO2HChTYeZtrULyHIDM9cj9TUXloCsueCQUog==",
-      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.11.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "d8a04c1838235165f66fa2bc8ed6fcc1adfccae6bda34e24e0b2eadd74601321",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
-            "bytes": 1073
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
       "package_path": "node_modules/fastify",
       "name": "fastify",
       "version": "5.12.7",
@@ -6532,39 +6499,6 @@
             "stored": "LICENSE.txt",
             "sha256": "aa0723af232be8bf3b2f937f788909c1596d3ac613c4b3ce9403bbc00034e518",
             "bytes": 1053
-          }
-        ],
-        "note": "corpus matches upstream tarball"
-      }
-    },
-    {
-      "package_path": "node_modules/is-unsafe",
-      "name": "is-unsafe",
-      "version": "2.0.2",
-      "declared_license": "MIT",
-      "notice_license": "MIT",
-      "notice_source": "package/LICENSE",
-      "notice_sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
-      "notice_file": "third-party/licenses/npm/is-unsafe/2.0.2/LICENSE.txt",
-      "dev": false,
-      "optional": false,
-      "integrity": "sha512-HgbIHPBH0KHHCcjLfGsCvhtPTVxjaAZlXjwdz7/GQC40SjSe4sfQsar8J5VFo8JOSbarkpV0OLG95bbaNd9aAQ==",
-      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.2.tgz",
-      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
-      "verification_status": "named_license_notice_collected_unverified",
-      "scope": "runtime",
-      "upstream_verification": {
-        "status": "verified_upstream_tarball",
-        "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-04",
-        "tarball_sha256": "d1dd08942d20c78f5156911f77e60a173c87a4f575eca285fbecf2c6bc36db2b",
-        "package_json_license": "MIT",
-        "files": [
-          {
-            "upstream": "package/LICENSE",
-            "stored": "LICENSE.txt",
-            "sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
-            "bytes": 1077
           }
         ],
         "note": "corpus matches upstream tarball"
@@ -9380,11 +9314,77 @@
       "notice_file": "third-party/licenses/npm/ip-address/10.7.6/LICENSE.txt",
       "notice_sha256": "f8d791359a50cbcac82c29cb7b0b1b889b28be76fdd35b8ee33f0f7c8704702a",
       "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/fast-xml-parser",
+      "name": "fast-xml-parser",
+      "version": "5.12.0",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
+      "notice_file": "third-party/licenses/npm/fast-xml-parser/5.12.0/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-/pXxRBtwxY9w8z7YbgsvIPPcPvFDsTbIkWwTQJhzNJPokj+TbN6ftmcv4j/pEQDvOCNnKGDzuk5Bo2oogIOiFg==",
+      "resolved": "https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-5.12.0.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "104218e11e0bb8e2708211c76b649082d940c45149ccd1b4f7da4aafeb397aec",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "7883225d5e84a6bbb9b170c3d891b4bf6d6259cee869c86bd86381a927071745",
+            "bytes": 1073
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
+    },
+    {
+      "package_path": "node_modules/is-unsafe",
+      "name": "is-unsafe",
+      "version": "2.0.3",
+      "declared_license": "MIT",
+      "notice_license": "MIT",
+      "notice_source": "package/LICENSE",
+      "notice_sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
+      "notice_file": "third-party/licenses/npm/is-unsafe/2.0.3/LICENSE.txt",
+      "dev": false,
+      "optional": false,
+      "integrity": "sha512-ZBllczCCO267vgdFb6Tq3pv+LhHaCiGMdr+ZsuL+OopruAg7S+3ZDs1vD0RPC0uSrkjzbraxaGjtX1YBxjPeFQ==",
+      "resolved": "https://registry.npmjs.org/is-unsafe/-/is-unsafe-2.0.3.tgz",
+      "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
+      "verification_status": "named_license_notice_collected_unverified",
+      "scope": "runtime",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-11",
+        "tarball_sha256": "e3e2374d34a8999f03f2ed9aa85c143ef143b259fe130032812ad15583f28a35",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "8e75fc0e776c62ccadb8178ece8d3daa9ba7601fb0a49b2dfb0ea9a7a5c0aa07",
+            "bytes": 1077
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      }
     }
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-06",
+    "verified_at": "2026-11-11",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
     "package_count": 281,
     "verified_upstream_tarball": 245,
