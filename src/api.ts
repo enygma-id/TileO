@@ -1128,6 +1128,7 @@ export async function createApp(jobs = new Jobs()) {
     '/model3d.js': [join(root, 'dist/web/model3d.js'), 'text/javascript'],
     // Pure ESM helper (no DOM/bundler deps); ../benchmark.js from /app.js resolves here.
     '/benchmark.js': [join(root, 'dist/benchmark.js'), 'text/javascript'],
+    '/glb-limits.js': [join(root, 'dist/glb-limits.js'), 'text/javascript'],
     // Feature-popup view helpers imported by /app.js as ./popup.js.
     '/popup.js': [join(root, 'dist/web/popup.js'), 'text/javascript'],
     // Landing hero snippet builder imported by /app.js as ./landing-sample.js.

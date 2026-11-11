@@ -30,6 +30,8 @@ Tile archives are for map delivery, not a replacement for the authoritative sour
 
 The 3D processing workflow provides GLB placement options based on geographic location, orientation and scale, with both 3D Tiles 1.1 and B3DM-compatible packaging. A local GLB coordinate system is not geographic placement by itself. Do not claim support for all Draco, instancing, skins or morph-target inputs.
 
+Spatial tile delivery batches compatible opaque static triangles by material and attribute layout, baking node transforms into positions and normals. Full-detail leaves retain the original triangle geometry; their merged primitive `extras.tileoParts` records each source mesh node's name, node/mesh/primitive extras, and its `firstIndex`/`indexCount` range. Coarse LODs carry display geometry without these per-part records. For untextured position/normal triangle geometry, coarse LODs weld by position before simplification and rebuild flat face normals afterwards; full-detail leaf normals are retained. Source downloads retain the original GLB and its scene hierarchy. Transparent meshes, unsupported attributes/extensions, animations and multi-scene documents are excluded from batching. Preview uses throttled tile requests and an advisory GPU cache budget; this is not a hard cap on browser RAM.
+
 ## Validation
 
 A successful output requires structure, metadata, driver-specific assertions, and representative sample checks. See [VERIFICATION.md](VERIFICATION.md); do not claim certification from a partial validation procedure.
