@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `4824f702fc2c240206f8f0b204299baae18de1458a6a21b667136e6277f8d97d`
+Generated from committed license evidence · Lockfile SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
 
 ## Verification summary
 
@@ -11404,11 +11404,11 @@ These entries are part of the source build and test toolchain, not the runtime i
 }
 ````
 
-#### @playwright/test (1.64.1)
+#### @playwright/test (1.65.0)
 - **Declared License**: `Apache-2.0`
 - **Verification**: `VERIFIED_UPSTREAM`
-- **Notice**: [`third-party/licenses/npm/@playwright/test/1.64.1/LICENSE.txt`](third-party/licenses/npm/@playwright/test/1.64.1/LICENSE.txt) · SHA-256 `45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb`
-- **Notice**: [`third-party/licenses/npm/@playwright/test/1.64.1/NOTICE.txt`](third-party/licenses/npm/@playwright/test/1.64.1/NOTICE.txt) · SHA-256 `6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d`
+- **Notice**: [`third-party/licenses/npm/@playwright/test/1.65.0/LICENSE.txt`](third-party/licenses/npm/@playwright/test/1.65.0/LICENSE.txt) · SHA-256 `45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb`
+- **Notice**: [`third-party/licenses/npm/@playwright/test/1.65.0/NOTICE.txt`](third-party/licenses/npm/@playwright/test/1.65.0/NOTICE.txt) · SHA-256 `6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d`
 
 ````text
 Apache License
@@ -21808,11 +21808,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
-#### playwright (1.64.1)
+#### playwright (1.65.0)
 - **Declared License**: `Apache-2.0`
 - **Verification**: `VERIFIED_UPSTREAM`
-- **Notice**: [`third-party/licenses/npm/playwright/1.64.1/LICENSE.txt`](third-party/licenses/npm/playwright/1.64.1/LICENSE.txt) · SHA-256 `45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb`
-- **Notice**: [`third-party/licenses/npm/playwright/1.64.1/NOTICE.txt`](third-party/licenses/npm/playwright/1.64.1/NOTICE.txt) · SHA-256 `6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d`
+- **Notice**: [`third-party/licenses/npm/playwright/1.65.0/LICENSE.txt`](third-party/licenses/npm/playwright/1.65.0/LICENSE.txt) · SHA-256 `45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb`
+- **Notice**: [`third-party/licenses/npm/playwright/1.65.0/NOTICE.txt`](third-party/licenses/npm/playwright/1.65.0/NOTICE.txt) · SHA-256 `6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d`
 
 ````text
 Apache License
@@ -22027,11 +22027,11 @@ This software contains code derived from the Puppeteer project (https://github.c
 available under the Apache 2.0 license (https://github.com/puppeteer/puppeteer/blob/master/LICENSE).
 ````
 
-#### playwright-core (1.64.1)
+#### playwright-core (1.65.0)
 - **Declared License**: `Apache-2.0`
 - **Verification**: `VERIFIED_UPSTREAM`
-- **Notice**: [`third-party/licenses/npm/playwright-core/1.64.1/LICENSE.txt`](third-party/licenses/npm/playwright-core/1.64.1/LICENSE.txt) · SHA-256 `45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb`
-- **Notice**: [`third-party/licenses/npm/playwright-core/1.64.1/NOTICE.txt`](third-party/licenses/npm/playwright-core/1.64.1/NOTICE.txt) · SHA-256 `6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d`
+- **Notice**: [`third-party/licenses/npm/playwright-core/1.65.0/LICENSE.txt`](third-party/licenses/npm/playwright-core/1.65.0/LICENSE.txt) · SHA-256 `45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb`
+- **Notice**: [`third-party/licenses/npm/playwright-core/1.65.0/NOTICE.txt`](third-party/licenses/npm/playwright-core/1.65.0/NOTICE.txt) · SHA-256 `6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d`
 
 ````text
 Apache License
