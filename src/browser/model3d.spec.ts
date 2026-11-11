@@ -1,5 +1,36 @@
 import { test, expect } from '@playwright/test';
 
+test('GLB metadata accepts more than 16 MiB and explains the 64 MiB limit', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/');
+  const response = await page.request.get('/glb-limits.js');
+  expect(response.status()).toBe(200);
+  await page.evaluate(() => {
+    const jsonSize = 17 * 1024 ** 2;
+    const json = JSON.stringify({ asset: { version: '2.0', extras: {
+      location: { crs: 'EPSG:4979', latitude: -5.147, longitude: 119.433, height: 10 },
+    } } }).padEnd(jsonSize, ' ');
+    const header = new Uint32Array([0x46546c67, 2, 28 + jsonSize + 4, jsonSize, 0x4e4f534a]);
+    const file = new File([header, json, new Uint32Array([4, 0x004e4942]), new Uint8Array(4)], 'large-metadata.glb');
+    const input = document.querySelector<HTMLInputElement>('#file')!;
+    const data = new DataTransfer(); data.items.add(file); input.files = data.files;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#model-location-note')).toContainText('Placement loaded from declared WGS84 metadata');
+  await expect(page.locator('#model-latitude')).toHaveValue('-5.1470000');
+  await page.evaluate(() => {
+    const jsonSize = 64 * 1024 ** 2 + 4;
+    const header = new Uint32Array([0x46546c67, 2, 28 + jsonSize + 4, jsonSize, 0x4e4f534a]);
+    const file = new File([header, new Uint8Array(jsonSize + 12)], 'oversized-metadata.glb');
+    const input = document.querySelector<HTMLInputElement>('#file')!;
+    const data = new DataTransfer(); data.items.add(file); input.files = data.files;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await expect(page.locator('#model-location-note')).toContainText('the maximum is 64 MiB');
+  expect(errors).toEqual([]);
+});
+
 test('GLB job creates a previewable 3D Tiles package', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));

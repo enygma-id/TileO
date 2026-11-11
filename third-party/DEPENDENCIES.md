@@ -2,7 +2,7 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **281 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `56ad06b9a586570da9fb65286c67f0438e0782bbdb22019eb77214a579525f3b`
+- `package-lock.json` SHA-256: `4824f702fc2c240206f8f0b204299baae18de1458a6a21b667136e6277f8d97d`
 - Runtime entries: **220** · runtime-optional: **5** · development: **56**
 - Notice evidence: **245** verified from exact upstream tarballs · **36** metadata-only · **0** failed
 - Verification date: 2026-11-11 (scripts/verify-npm-notices.js@1)
@@ -210,7 +210,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `fast-uri` | 4.2.3 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-xml-builder` | 1.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fast-xml-parser` | 5.12.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `fastify` | 5.12.7 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `fastify` | 5.12.8 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fastify-plugin` | 6.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fastq` | 1.20.3 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `fflate` | 0.8.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
