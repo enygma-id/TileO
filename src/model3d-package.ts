@@ -2,6 +2,7 @@ import { createReadStream } from 'node:fs';
 import { open } from 'node:fs/promises';
 import { ZipFile } from 'yazl';
 import { JobError, type Job } from './types.js';
+import { glbJsonSizeError } from './glb-limits.js';
 
 export async function readGltfCompanion(input: string) {
   const file = await open(input, 'r');
@@ -9,7 +10,9 @@ export async function readGltfCompanion(input: string) {
     const header = Buffer.alloc(20);
     if ((await file.read(header, 0, 20, 0)).bytesRead !== 20 || header.toString('ascii', 0, 4) !== 'glTF' || header.readUInt32LE(4) !== 2 || header.toString('ascii', 16, 20) !== 'JSON') throw new JobError('INVALID_GLB', 'The source model is not a GLB 2.0 file.');
     const jsonLength = header.readUInt32LE(12);
-    if (jsonLength < 2 || jsonLength > 16 * 1024 ** 2) throw new JobError('INVALID_GLB', 'The source GLB JSON chunk is invalid.');
+    if (jsonLength < 2 || 28 + jsonLength > (await file.stat()).size) throw new JobError('INVALID_GLB', 'The source GLB JSON chunk is invalid.');
+    const sizeError = glbJsonSizeError(jsonLength);
+    if (sizeError) throw new JobError('INVALID_GLB', sizeError);
     const jsonBytes = Buffer.alloc(jsonLength);
     if ((await file.read(jsonBytes, 0, jsonLength, 20)).bytesRead !== jsonLength) throw new JobError('INVALID_GLB', 'The source GLB JSON chunk is incomplete.');
     const binHeader = Buffer.alloc(8);
