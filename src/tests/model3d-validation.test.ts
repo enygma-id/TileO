@@ -8,6 +8,7 @@ import { build3dTiles } from '../model3d.js';
 import { run } from '../process.js';
 import { JobError, parseOptions } from '../types.js';
 import { GLB_MAX_JSON_BYTES, glbJsonSizeError } from '../glb-limits.js';
+import { readGltfCompanion } from '../model3d-package.js';
 
 const options = parseOptions({ latitude: 0, longitude: 0, height: 0 }, true);
 
@@ -44,6 +45,9 @@ test('GLB JSON size limit accepts 64 MiB and reports actual oversized metadata',
     for (const bytes of [17 * 1024 ** 2, GLB_MAX_JSON_BYTES]) {
       const input = join(dir, `valid-${bytes}.glb`);
       await fixture(input, undefined, bytes);
+      const companion = await readGltfCompanion(input);
+      assert.equal(JSON.parse(companion.json.toString()).buffers[0].uri, 'original.bin');
+      assert.equal(companion.binLength, 44);
       assert.equal((await build3dTiles(input, join(dir, `out-${bytes}`), options)).triangles, 2);
     }
     const input = join(dir, 'too-large.glb');
@@ -56,6 +60,7 @@ test('GLB JSON size limit accepts 64 MiB and reports actual oversized metadata',
       await handle.write(header); await handle.truncate(size);
     } finally { await handle.close(); }
     // Deliberately unreadable JSON: the size error must win before parsing.
+    await assert.rejects(readGltfCompanion(input), /the maximum is 64 MiB/);
     await assert.rejects(build3dTiles(input, join(dir, 'oversized'), options),
       error => error instanceof JobError && error.code === 'INVALID_GLB' && /the maximum is 64 MiB/.test(error.message));
     const broken = join(dir, 'broken.glb');
