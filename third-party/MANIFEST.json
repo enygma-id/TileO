@@ -2,8 +2,8 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63",
-  "package_count": 281,
+  "reference_lockfile_sha256": "58a91f8ccd40b28a8a67e94daa434c99cd6f73ac041f1365e899a31c41452c20",
+  "package_count": 282,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
   "generated_from": "Committed package-lock.json and exact-version upstream npm tarballs",
@@ -3014,24 +3014,24 @@
     {
       "package_path": "node_modules/@maplibre/geojson-vt",
       "name": "@maplibre/geojson-vt",
-      "version": "6.3.0",
+      "version": "6.3.3",
       "declared_license": "ISC",
       "notice_license": "ISC",
       "notice_source": "package/LICENSE",
       "notice_sha256": "9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3",
-      "notice_file": "third-party/licenses/npm/@maplibre/geojson-vt/6.3.0/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/@maplibre/geojson-vt/6.3.3/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-3Zw2jsU9pIJG3G2CQFbLjWj2MlAHodhD7cSY+15iywUuLmmkgzcKRnueVRZ4AcC/5wOtfhidcJAAzBpoBNs3Xg==",
-      "resolved": "https://registry.npmjs.org/@maplibre/geojson-vt/-/geojson-vt-6.3.0.tgz",
+      "integrity": "sha512-sfftN4326foT7uex0aN0jqr+vq/lfgeTfASOd+kvdUd0uMMIgXZDPdntCazKFKKcxPH002NPCy4j396peanWCg==",
+      "resolved": "https://registry.npmjs.org/@maplibre/geojson-vt/-/geojson-vt-6.3.3.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-11",
-        "tarball_sha256": "504ff00fedc73ab6d6aa359cea8c52242766fed013cd3b8d96277eb0d15fea45",
+        "verified_at": "2026-11-25",
+        "tarball_sha256": "20fc432d61275d362277314134d1020acdfa4f21be57cf305ef02f9a6dc7d459",
         "package_json_license": "ISC",
         "files": [
           {
@@ -3041,30 +3041,30 @@
             "bytes": 1909
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
       "package_path": "node_modules/@maplibre/maplibre-gl-style-spec",
       "name": "@maplibre/maplibre-gl-style-spec",
-      "version": "26.5.1",
+      "version": "26.9.0",
       "declared_license": "ISC",
       "notice_license": "ISC",
       "notice_source": "package/LICENSE.txt",
       "notice_sha256": "bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890",
-      "notice_file": "third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.5.1/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.9.0/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-9ufQ5LR+Ldn87SILPVyRNz4wVm/sBrM2ZRv9VfjLRKYKIGAcvC1VFw/DEkJLAHqfMV8m03zDz1DUNTIUj/GvdA==",
-      "resolved": "https://registry.npmjs.org/@maplibre/maplibre-gl-style-spec/-/maplibre-gl-style-spec-26.5.1.tgz",
+      "integrity": "sha512-cQZK2lG3d6I5FjriPZCgJx/LiVMpWqoVibF+cgp2mkQ/P4BIGOsrA3WsvLw1wB28Q9JU9v2fapsQUJUbjjwa6g==",
+      "resolved": "https://registry.npmjs.org/@maplibre/maplibre-gl-style-spec/-/maplibre-gl-style-spec-26.9.0.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-11",
-        "tarball_sha256": "679236f10c80e27df5ca10eac67bc18cde99fcedc6f8e60dc569ede64c21e766",
+        "verified_at": "2026-11-25",
+        "tarball_sha256": "f277dffaf04dd6099a6981820bfa2fd0ae99958902671f7e792058b4d7aefd82",
         "package_json_license": "ISC",
         "files": [
           {
@@ -3074,7 +3074,7 @@
             "bytes": 5984
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -7126,24 +7126,24 @@
     {
       "package_path": "node_modules/maplibre-gl",
       "name": "maplibre-gl",
-      "version": "6.17.0",
+      "version": "6.19.0",
       "declared_license": "BSD-3-Clause",
       "notice_license": "BSD-3-Clause",
       "notice_source": "package/LICENSE.txt",
       "notice_sha256": "ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2",
-      "notice_file": "third-party/licenses/npm/maplibre-gl/6.17.0/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/maplibre-gl/6.19.0/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-2chIZwpLGenoUQOcnm9Pk4SLbA8ppNFq8jlpXiq9vcYm3Y1wJ3fc82FL0GLwBaPYJCLzPv/mC46KEupVov75rQ==",
-      "resolved": "https://registry.npmjs.org/maplibre-gl/-/maplibre-gl-6.17.0.tgz",
+      "integrity": "sha512-3bOrnfddggUYudLGJFsYFvqulUyvSxy4iQzd/uURI7ZhgYEZifdSrECujRSghaCpc+v/ZsFI0Y6ZsGSilEtE+w==",
+      "resolved": "https://registry.npmjs.org/maplibre-gl/-/maplibre-gl-6.19.0.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-11",
-        "tarball_sha256": "587807d8d6c99349022e027fa310c16cfaa55392131f6263df080306db6809b0",
+        "verified_at": "2026-11-25",
+        "tarball_sha256": "8a0648e7a1f3baf757f3a9d994c3fdc7383ea0ebfc52ce1e90f3e7264dc9a20f",
         "package_json_license": "BSD-3-Clause",
         "files": [
           {
@@ -7153,7 +7153,7 @@
             "bytes": 5984
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -9380,14 +9380,45 @@
         ],
         "note": "corpus matches upstream tarball"
       }
+    },
+    {
+      "package_path": "node_modules/zustand",
+      "name": "zustand",
+      "version": "5.1.0",
+      "declared_license": "MIT",
+      "dev": false,
+      "optional": false,
+      "scope": "runtime",
+      "integrity": "sha512-ciJZlP48M1PTQbVQq81CGVFxHTLpZNrFjKqwjtCU34AWuXTZT/jrF3p9+fI84Cf1eSCMLapxqBy/SNTfwOBuqA==",
+      "resolved": "https://registry.npmjs.org/zustand/-/zustand-5.1.0.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-25",
+        "tarball_sha256": "f3ce315f91392a416e3d4f4cc2da2db00934ed6140fbc688fadd2b5030c79c4b",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "c1e6e266563517467b1bf874817d23e426f3149252bd7d42758cd697514b8417",
+            "bytes": 1070
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/zustand/5.1.0/LICENSE.txt",
+      "notice_sha256": "c1e6e266563517467b1bf874817d23e426f3149252bd7d42758cd697514b8417",
+      "notice_source": "package/LICENSE"
     }
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-11",
+    "verified_at": "2026-11-25",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
-    "package_count": 281,
-    "verified_upstream_tarball": 245,
+    "package_count": 282,
+    "verified_upstream_tarball": 246,
     "metadata_only_no_license_file": 36,
     "verification_failed": 0,
     "output": "third-party/npm-upstream-verification.csv",
