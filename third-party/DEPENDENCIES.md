@@ -2,10 +2,10 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **281 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
+- `package-lock.json` SHA-256: `546d9a7000eee1b1e1e0ab077513aa5327ffe85433621ad7e393da54f622c145`
 - Runtime entries: **220** · runtime-optional: **5** · development: **56**
 - Notice evidence: **245** verified from exact upstream tarballs · **36** metadata-only · **0** failed
-- Verification date: 2026-11-11 (scripts/verify-npm-notices.js@1)
+- Verification date: 2026-11-25 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
 
@@ -187,7 +187,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `atomic-sleep` | 1.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `avvio` | 9.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `base64-js` | 1.5.1 | `MIT` | runtime-optional | `verified_upstream_tarball` | `LICENSE.txt` |
-| `better-sqlite3` | 13.0.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `better-sqlite3` | 13.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `bidi-js` | 1.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `brotli` | 1.3.3 | `MIT` | runtime-optional | `metadata_only_no_license_file` | `package.json` |
 | `buf-compare` | 1.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
