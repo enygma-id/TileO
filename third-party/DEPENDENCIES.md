@@ -2,10 +2,10 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **281 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
+- `package-lock.json` SHA-256: `d3eb8589abd8506eb583925a3598fc8e11f2430e17565f26258c7fa6ccf9f014`
 - Runtime entries: **220** · runtime-optional: **5** · development: **56**
 - Notice evidence: **245** verified from exact upstream tarballs · **36** metadata-only · **0** failed
-- Verification date: 2026-11-11 (scripts/verify-npm-notices.js@1)
+- Verification date: 2026-11-25 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
 
@@ -266,7 +266,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `potpack` | 2.1.0 | `ISC` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `process-nextick-args` | 2.0.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `process-warning` | 5.1.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `proj4` | 2.22.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `proj4` | 2.23.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `property-graph` | 4.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `protocol-buffers-schema` | 3.6.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pure-rand` | 8.4.2 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -303,7 +303,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `vt-pbf/node_modules/@mapbox/vector-tile` | 1.3.1 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `vt-pbf/node_modules/pbf` | 3.3.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `web-worker` | 1.5.0 | `Apache-2.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `wkt-parser` | 1.5.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `wkt-parser` | 1.9.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `xml-naming` | 0.3.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `xml-utils` | 1.10.2 | `CC0-1.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `yazl` | 3.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
