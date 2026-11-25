@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
+Generated from committed license evidence · Lockfile SHA-256: `525585d8ad0fb2e4574874fa5152655bf9e1a718e1ee1366531e1deb0ba78bfe`
 
 ## Verification summary
 
@@ -8781,11 +8781,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
-#### pbf (5.1.2)
+#### pbf (5.2.0)
 - **Declared License**: `BSD-3-Clause`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `3b3dc3c096a3a264ae68722d1e380893d89d56161093f8e90b1910020fbdb5d7`
-- **Notice**: [`third-party/licenses/npm/pbf/5.1.2/LICENSE.txt`](third-party/licenses/npm/pbf/5.1.2/LICENSE.txt) · SHA-256 `fdf1d5279107d760c7df8c6edab1faab2b72ba17528273a8b417b08f1e12ebbe`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `d21bea782f56728ced9671fdca78d44e0295bb327193baf6eb922db472ebb2c9`
+- **Notice**: [`third-party/licenses/npm/pbf/5.2.0/LICENSE.txt`](third-party/licenses/npm/pbf/5.2.0/LICENSE.txt) · SHA-256 `fdf1d5279107d760c7df8c6edab1faab2b72ba17528273a8b417b08f1e12ebbe`
 
 ````text
 Copyright (c) 2026, Mapbox
