@@ -3,8 +3,8 @@ import rateLimit from '@fastify/rate-limit';
 import Database from 'better-sqlite3';
 import { randomUUID, randomBytes, createHash, scryptSync, timingSafeEqual } from 'node:crypto';
 import { createReadStream, createWriteStream } from 'node:fs';
-import { mkdir, rename, rm, open, stat, readdir, readFile } from 'node:fs/promises';
-import { join, extname, relative, basename } from 'node:path';
+import { mkdir, rename, rm, open, stat, readdir, readFile, realpath } from 'node:fs/promises';
+import { join, extname, relative, basename, resolve, sep } from 'node:path';
 import { Readable, Transform } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { pathToFileURL } from 'node:url';
@@ -821,7 +821,10 @@ export async function createApp(jobs = new Jobs()) {
     if (job.options.model3dArchive) {
       const mime = tilesetArchiveMime(name);
       if (!mime) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
-      const file = join(path, name);
+      const directory = await realpath(path).catch(() => undefined);
+      if (!directory) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
+      const file = await realpath(resolve(directory, name)).catch(() => undefined);
+      if (!file || !file.startsWith(directory + sep)) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
       const stats = await stat(file).catch(() => undefined);
       if (!stats?.isFile()) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
       return reply.type(mime).header('X-Content-Type-Options', 'nosniff').header('Content-Length', stats.size).send(createReadStream(file));

@@ -1,11 +1,11 @@
 # Third-Party NPM Dependency Inventory
 
-This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **281 non-root entries** (direct, transitive, development and platform-optional packages).
+This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **284 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
-- Runtime entries: **220** · runtime-optional: **5** · development: **56**
-- Notice evidence: **245** verified from exact upstream tarballs · **36** metadata-only · **0** failed
-- Verification date: 2026-11-11 (scripts/verify-npm-notices.js@1)
+- `package-lock.json` SHA-256: `ff0b52d25f342175d540f0df2cf14135062e1f13d0921947dc9186325b93c055`
+- Runtime entries: **222** · runtime-optional: **5** · development: **57**
+- Notice evidence: **248** verified from exact upstream tarballs · **36** metadata-only · **0** failed
+- Verification date: 2026-11-24 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
 
@@ -22,7 +22,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `BSD-3-Clause` | 18 |
 | `CC0-1.0` | 1 |
 | `ISC` | 20 |
-| `MIT` | 201 |
+| `MIT` | 204 |
 | `MIT AND BSD-3-Clause` | 1 |
 
 ## Complete package-level inventory
@@ -155,6 +155,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `@types/offscreencanvas` | 2019.7.3 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@types/pako` | 1.0.7 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@types/vt-pbf` | 3.1.1 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
+| `@types/yauzl` | 3.4.0 | `MIT` | development | `verified_upstream_tarball` | `LICENSE.txt` |
 | `@typescript/typescript-aix-ppc64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `@typescript/typescript-darwin-arm64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
 | `@typescript/typescript-darwin-x64` | 7.0.2 | `Apache-2.0` | development | `verified_upstream_tarball` | `LICENSE.txt`<br>`NOTICE.txt` |
@@ -257,6 +258,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `parse-headers` | 2.0.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `path-expression-matcher` | 1.6.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pbf` | 5.1.2 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `pend` | 1.2.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino` | 10.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino-abstract-transport` | 3.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino-std-serializers` | 7.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
@@ -306,6 +308,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `wkt-parser` | 1.5.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `xml-naming` | 0.3.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `xml-utils` | 1.10.2 | `CC0-1.0` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `yauzl` | 3.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `yazl` | 3.3.1 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `zod` | 4.6.7 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `zstd-codec` | 0.1.5 | `MIT` | runtime-optional | `metadata_only_no_license_file` | `package.json` |
