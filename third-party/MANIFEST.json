@@ -2,8 +2,8 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63",
-  "package_count": 281,
+  "reference_lockfile_sha256": "ff0b52d25f342175d540f0df2cf14135062e1f13d0921947dc9186325b93c055",
+  "package_count": 284,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
   "generated_from": "Committed package-lock.json and exact-version upstream npm tarballs",
@@ -9380,14 +9380,107 @@
         ],
         "note": "corpus matches upstream tarball"
       }
+    },
+    {
+      "package_path": "node_modules/@types/yauzl",
+      "name": "@types/yauzl",
+      "version": "3.4.0",
+      "declared_license": "MIT",
+      "dev": true,
+      "optional": false,
+      "scope": "development",
+      "integrity": "sha512-NRPn5w6h8dhcnmx3YIRQcqMywY/+nND/uOkJessedcrowO3C0AssHp3tMJpxKAwOhFOo0OV1y9VtsC5hbKKBAw==",
+      "resolved": "https://registry.npmjs.org/@types/yauzl/-/yauzl-3.4.0.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-24",
+        "tarball_sha256": "ec097b0820d9e7b3054e9d8006453a232447a9ef187eef2b9739a6f44d21f99e",
+        "package_json_license": null,
+        "files": [
+          {
+            "upstream": "yauzl/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+            "bytes": 1141
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/@types/yauzl/3.4.0/LICENSE.txt",
+      "notice_sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "notice_source": "yauzl/LICENSE"
+    },
+    {
+      "package_path": "node_modules/yauzl",
+      "name": "yauzl",
+      "version": "3.4.0",
+      "declared_license": "MIT",
+      "dev": false,
+      "optional": false,
+      "scope": "runtime",
+      "integrity": "sha512-jIH9yLR9wqr0wOS0TpBvo/g/2UgZH5qePVbjgRliiF0BYvOZyaBknKsF+x9Iht0O6sqgnB93rCICdOZFecJuDw==",
+      "resolved": "https://registry.npmjs.org/yauzl/-/yauzl-3.4.0.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-24",
+        "tarball_sha256": "ec962fa3205d4be5849f0fc3bebd0492b0abe8acf402656fd80490531fa8ba88",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "b303783d5eb7ca50b853ffa5f145e4e7998fab339831d848f507ca6cd970577a",
+            "bytes": 1077
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/yauzl/3.4.0/LICENSE.txt",
+      "notice_sha256": "b303783d5eb7ca50b853ffa5f145e4e7998fab339831d848f507ca6cd970577a",
+      "notice_source": "package/LICENSE"
+    },
+    {
+      "package_path": "node_modules/pend",
+      "name": "pend",
+      "version": "1.2.0",
+      "declared_license": "MIT",
+      "dev": false,
+      "optional": false,
+      "scope": "runtime",
+      "integrity": "sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==",
+      "resolved": "https://registry.npmjs.org/pend/-/pend-1.2.0.tgz",
+      "upstream_verification": {
+        "status": "verified_upstream_tarball",
+        "verifier": "scripts/verify-npm-notices.js@1",
+        "verified_at": "2026-11-24",
+        "tarball_sha256": "a12f279b25a9df710b52a9892bad00bdeeb862a9b5d1e4f4db77131129436d7f",
+        "package_json_license": "MIT",
+        "files": [
+          {
+            "upstream": "package/LICENSE",
+            "stored": "LICENSE.txt",
+            "sha256": "7e64acffcb0d20d33f5a86949ffd4a99ae045b10c7332a9c3a58635876c16880",
+            "bytes": 1082
+          }
+        ],
+        "note": "corpus updated (1 mismatch)"
+      },
+      "notice_license": "MIT",
+      "notice_file": "third-party/licenses/npm/pend/1.2.0/LICENSE.txt",
+      "notice_sha256": "7e64acffcb0d20d33f5a86949ffd4a99ae045b10c7332a9c3a58635876c16880",
+      "notice_source": "package/LICENSE"
     }
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-11",
+    "verified_at": "2026-11-24",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
-    "package_count": 281,
-    "verified_upstream_tarball": 245,
+    "package_count": 284,
+    "verified_upstream_tarball": 248,
     "metadata_only_no_license_file": 36,
     "verification_failed": 0,
     "output": "third-party/npm-upstream-verification.csv",

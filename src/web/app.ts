@@ -77,7 +77,7 @@ function unlockLocalDatasetPicker() {
   const picker = element('dataset-picker'); picker.classList.remove('production-locked');
   picker.querySelector('strong')!.textContent = 'Choose a dataset';
   const description = picker.querySelector('span:not(.file-icon)');
-  if (description) description.innerHTML = 'GeoTIFF, GeoJSON, GeoPackage, Shapefile (.zip),<br>FlatGeobuf, or 3D model (.glb)';
+  if (description) description.innerHTML = 'GeoTIFF, GeoJSON, GeoPackage, Shapefile (.zip),<br>FlatGeobuf, 3D model (.glb), or 3D Tiles (.zip)';
   const submit = element<HTMLButtonElement>('submit');
   submit.innerHTML = 'Create tile job <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <path d="m10 8 4 4-4 4" /></svg>';
   submit.title = '';
@@ -178,7 +178,7 @@ function safeDownloadBase(filename: string) {
 }
 function primaryDownloadName(job: Job) {
   const base = safeDownloadBase(job.filename);
-  if (job.metadata?.kind === 'model3d') return `${base}-3dtiles.zip`;
+  if (job.metadata?.kind === 'model3d') return job.options.model3dArchive ? `${base}.zip` : `${base}-3dtiles.zip`;
   if (job.metadata?.kind === 'scientific') return `${base}-scientific.tif`;
   if (job.metadata?.kind === 'elevation') return job.options.elevationOutput === 'cog' ? `${base}-elevation.tif` : `${base}-elevation.zip`;
   return job.options.exportPmtiles ? `${base}-tiles.zip` : `${base}.mbtiles`;
@@ -207,17 +207,19 @@ type RemoteDataset = DatasetRef & { source: ({ kind: 's3'; connectionId: string;
 let inputSourceMode: 'upload' | 's3' = 'upload';
 let remoteDataset: RemoteDataset | undefined;
 
-function updateDatasetFormState(file?: DatasetRef, detectedKind?: 'raster' | 'vector') {
+function updateDatasetFormState(file?: DatasetRef, detectedKind?: FileInspection['kind']) {
   const vectorGroup = element('vector-options-group');
   const rasterGroup = element('raster-options-group');
   const modelGroup = element('model3d-options-group');
   const model3d = file?.name.toLowerCase().endsWith('.glb') ?? false;
-  const candidate = !!file && !model3d && !!selectedInspection?.elevationCandidate;
+  const archive3d = detectedKind === 'model3d';
+  const any3d = model3d || archive3d;
+  const candidate = !!file && !any3d && !!selectedInspection?.elevationCandidate;
   const elevation = candidate && field('raster-purpose') === 'elevation';
   const scientific = candidate && field('raster-purpose') === 'scientific';
   const terrain = elevation && field('elevation-output') !== 'cog';
-  element('archive-options-group').hidden = !file || model3d || scientific || (elevation && !terrain);
-  element<HTMLSelectElement>('export-pmtiles').disabled = !file || model3d || scientific || (elevation && !terrain);
+  element('archive-options-group').hidden = !file || any3d || scientific || (elevation && !terrain);
+  element<HTMLSelectElement>('export-pmtiles').disabled = !file || any3d || scientific || (elevation && !terrain);
   element<HTMLInputElement>('terrain-nodata-height').min = field('elevation-output') === 'terrarium' ? '-32768' : '-10000';
   element<HTMLInputElement>('terrain-nodata-height').max = field('elevation-output') === 'terrarium' ? '32767.99609375' : '1667721.5';
   element('raster-purpose-group').hidden = !candidate;
@@ -232,10 +234,10 @@ function updateDatasetFormState(file?: DatasetRef, detectedKind?: 'raster' | 've
     control.required = id === 'terrain-nodata-height' && terrain;
   }
   modelGroup.hidden = !model3d;
-  element('zoom-options-group').hidden = !file || model3d || scientific || (elevation && !terrain);
-  for (const id of ['min-zoom', 'max-zoom']) element<HTMLInputElement>(id).disabled = !file || model3d || scientific || (elevation && !terrain);
-  element<HTMLInputElement>('quality').disabled = model3d || elevation || scientific || field('tile-format') === 'png';
-  element('source-options-group').hidden = !file || model3d;
+  element('zoom-options-group').hidden = !file || any3d || scientific || (elevation && !terrain);
+  for (const id of ['min-zoom', 'max-zoom']) element<HTMLInputElement>(id).disabled = !file || any3d || scientific || (elevation && !terrain);
+  element<HTMLInputElement>('quality').disabled = any3d || elevation || scientific || field('tile-format') === 'png';
+  element('source-options-group').hidden = !file || any3d;
   for (const id of ['model-latitude', 'model-longitude', 'model-height', 'model-heading', 'model-pitch', 'model-roll', 'model-anchor', 'model-scale', 'model-b3dm']) {
     const input = element<HTMLInputElement | HTMLSelectElement>(id);
     input.disabled = !model3d;
@@ -247,7 +249,7 @@ function updateDatasetFormState(file?: DatasetRef, detectedKind?: 'raster' | 've
     rasterGroup.hidden = true;
     return;
   }
-  if (model3d) { vectorGroup.hidden = true; rasterGroup.hidden = true; return; }
+  if (any3d) { vectorGroup.hidden = true; rasterGroup.hidden = true; return; }
   if (elevation || scientific) { vectorGroup.hidden = true; rasterGroup.hidden = true; return; }
 
   const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
@@ -361,7 +363,7 @@ function applyRecommendationsForFile(file: DatasetRef) {
   }
 }
 
-type FileInspection = { kind: 'raster' | 'vector'; crs: string | null; layer?: string; layers?: string[]; fields?: string[]; fieldCollisions?: string[][]; geometryType?: string; bands?: number; width?: number; height?: number; nativeZoom?: number; estimatedTiles?: number; featureCount?: number; elevationCandidate?: boolean; dataType?: string; unit?: string; noData?: number | string; scale?: number; offset?: number; verticalCrs?: string | null; inferredElevationUnit?: 'm' | 'ft'; inferredHeightReference?: 'ellipsoid' | 'orthometric'; minimum?: number; maximum?: number; suggestedNoDataHeight?: number; pixelSize?: number[]; bounds?: number[]; cog?: boolean };
+type FileInspection = { kind: 'raster' | 'vector' | 'model3d'; version?: string; entrypoint?: string; manifests?: number; tiles?: number; lodLevels?: number; contentFormats?: string[]; crs: string | null; layer?: string; layers?: string[]; fields?: string[]; fieldCollisions?: string[][]; geometryType?: string; bands?: number; width?: number; height?: number; nativeZoom?: number; estimatedTiles?: number; featureCount?: number; elevationCandidate?: boolean; dataType?: string; unit?: string; noData?: number | string; scale?: number; offset?: number; verticalCrs?: string | null; inferredElevationUnit?: 'm' | 'ft'; inferredHeightReference?: 'ellipsoid' | 'orthometric'; minimum?: number; maximum?: number; suggestedNoDataHeight?: number; pixelSize?: number[]; bounds?: number[]; cog?: boolean };
 function tilesAtZoom(bounds: number[], zoom: number) {
   const n = 2 ** zoom;
   const x = (lon: number) => ((lon + 180) / 360) * n;
@@ -970,6 +972,23 @@ function showInspectionRecommendations(file: DatasetRef, info: FileInspection) {
   const tipBox = element('tip-box'), tipTitle = element('tip-title'), tipList = element('tip-list');
   tipBox.hidden = false;
   tipBox.className = `tip-box${info.kind === 'vector' ? ' vector' : file.size > 400 * 1024 ** 2 ? ' large-raster' : ''}`;
+  if (info.kind === 'model3d') {
+    tipTitle.textContent = `3D Tiles ${info.version} · ${file.name}`;
+    const summary = document.createElement('li');
+    summary.textContent = `${info.tiles} tiles · ${info.lodLevels} LOD levels · ${info.contentFormats?.join(', ').toUpperCase()}`;
+    const manifest = document.createElement('li');
+    manifest.textContent = `Entry point: ${info.entrypoint}. ${info.manifests} tileset manifest(s).`;
+    tipList.replaceChildren(summary, manifest);
+    if (info.version === '0.0') {
+      const hint = document.createElement('li');
+      hint.textContent = 'Legacy tileset (asset.version 0.0). Preview uses the placement and axis declared in the archive.';
+      tipList.append(hint);
+    }
+    renderAttributeCheckboxes([], []);
+    recommendedSettings = null;
+    element<HTMLButtonElement>('btn-apply-rec').hidden = true;
+    return;
+  }
   tipTitle.textContent = `Inspected ${info.kind} dataset: ${file.name}`;
   const featureCount = info.featureCount ?? 0;
   const dense = featureCount > 100_000;
@@ -1072,6 +1091,11 @@ element('file').addEventListener('change', () => {
   updateDatasetFormState(file);
   element<HTMLButtonElement>('submit').disabled = false;
   if (file) {
+    if (/\.(gltf|obj|fbx|stl)$/i.test(file.name)) {
+      element<HTMLButtonElement>('submit').disabled = true;
+      notice('Convert this model to a self-contained GLB with npm run model3d:convert, then upload the GLB. Keep any companion files beside the source model for conversion.');
+      return;
+    }
     if (file.name.toLowerCase().endsWith('.glb')) {
       recommendedSettings = null;
       element('tip-box').hidden = true;
@@ -1299,7 +1323,7 @@ element('job-form').addEventListener('submit', async event => {
     anchor: field('model-anchor'),
     scale: Number(field('model-scale')),
     exportB3dm: field('model-b3dm') === 'yes',
-  } : selectedInspection?.elevationCandidate && field('raster-purpose') === 'elevation' ? {
+  } : selectedInspection?.kind === 'model3d' ? {} : selectedInspection?.elevationCandidate && field('raster-purpose') === 'elevation' ? {
     exportPmtiles: field('elevation-output') !== 'cog' && field('export-pmtiles') === 'yes', pipeline: 'elevation', elevationOutput: field('elevation-output'), elevationKind: field('elevation-kind'),
     rasterPurpose: 'elevation', elevationUnit: field('elevation-unit'), heightReference: field('height-reference'),
     sourceCrs: field('source-crs').trim() || null,
@@ -1593,6 +1617,7 @@ type DownloadOption = { format: string; label: string; extension: string; icon?:
 
 function getJobDownloadOptions(job: Job): DownloadOption[] {
   const options: DownloadOption[] = [];
+  if (job.options.model3dArchive) return options;
   if (job.metadata?.kind === 'model3d') {
     const formats = Array.isArray(job.metadata.formats) ? job.metadata.formats : [];
     if (formats.includes('b3dm')) {
@@ -3114,20 +3139,23 @@ async function preview(job: Job) {
   }
 
   if (job.metadata.kind === 'model3d') {
-    const longitude = Number(job.metadata.longitude), latitude = Number(job.metadata.latitude);
+    const imported = job.options.model3dArchive;
+    const bounds = imported && Array.isArray(job.metadata.bounds) ? job.metadata.bounds as [number, number, number, number] : undefined;
+    const longitude = Number(job.metadata.longitude ?? 0), latitude = Number(job.metadata.latitude ?? 0);
+    const extent = bounds ? [[bounds[0], bounds[1]], [bounds[2], bounds[3]]] as [[number, number], [number, number]] : undefined;
     const style = await buildMapStyle();
-    const previewMap = new maplibregl.Map({ container: 'map', style, center: [longitude, latitude], zoom: 18, pitch: 60, maxPitch: 85 });
+    const previewMap = new maplibregl.Map({ container: 'map', style, center: [longitude, latitude], zoom: imported ? 2 : 18, pitch: 60, ...(extent ? { bounds: extent, fitBoundsOptions: { padding: 45, maxZoom: 18 } } : {}), maxPitch: 85 });
     map = previewMap;
     addMapControls(maplibregl, previewMap);
     previewMap.once('load', async () => {
       if (map !== previewMap) return;
-      try { const { show3dTiles } = await import('./model3d.js'); if (map === previewMap) active3dCleanup = show3dTiles(previewMap, job.id, message => notice(`3D tile failed: ${message}`)); }
+      try { const { show3dTiles } = await import('./model3d.js'); if (map === previewMap) active3dCleanup = show3dTiles(previewMap, job.id, message => notice(`3D tile failed: ${message}`), false, extent ? 'fixed' : imported ? 'archive' : 'model'); }
       catch (error) { notice(`Could not load 3D preview: ${String(error)}`); }
     });
     previewMap.on('error', event => console.warn('3D map notice:', event.error?.message || event.error));
     const tileCount = typeof job.metadata.tiles === 'number' ? `${job.metadata.tiles} tiles` : '';
     const lod = typeof job.metadata.lodLevels === 'number' ? `${job.metadata.lodLevels} LOD level${job.metadata.lodLevels === 1 ? '' : 's'}` : '';
-    showLoadedBadge(job.filename, ['3D Tiles', tileCount, lod, 'deck.gl + MapLibre'].filter(Boolean).join(' · '), [longitude, latitude, longitude, latitude], undefined, true);
+    showLoadedBadge(job.filename, ['3D Tiles', tileCount, lod, 'deck.gl + MapLibre'].filter(Boolean).join(' · '), imported ? bounds ?? null : [longitude, latitude, longitude, latitude], undefined, true);
     return;
   }
 }

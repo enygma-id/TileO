@@ -4,14 +4,14 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
+Generated from committed license evidence · Lockfile SHA-256: `ff0b52d25f342175d540f0df2cf14135062e1f13d0921947dc9186325b93c055`
 
 ## Verification summary
 
 | Evidence set | Count | Method |
 | --- | ---: | --- |
-| npm entries in `package-lock.json` | 281 | Direct, transitive, development and platform-optional entries |
-| npm notices verified from exact tarball | 245 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
+| npm entries in `package-lock.json` | 284 | Direct, transitive, development and platform-optional entries |
+| npm notices verified from exact tarball | 248 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
 | npm metadata-only entries | 36 | Tarball has no license file; only `package.json` metadata retained |
 | npm runtime entries marked metadata-only | 10 | Review required before strict release |
 | Native runtime components | 28 | Pinned upstream license corpus |
@@ -106,7 +106,7 @@ The GCC runtime exception permits distributing `libstdc++`/`libgcc` with indepen
 
 Each entry names the exact locked version, the recorded license expression, the verification state and the SHA-256 of the stored upstream notice. Development-only entries are not shipped in the runtime image; platform-optional entries are shipped only on matching platforms.
 
-### Runtime and optional entries (225)
+### Runtime and optional entries (227)
 
 #### @deck.gl/core (9.4.0)
 - **Declared License**: `MIT`
@@ -8817,6 +8817,38 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ````
 
+#### pend (1.2.0)
+- **Declared License**: `MIT`
+- **Scope**: `runtime`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `a12f279b25a9df710b52a9892bad00bdeeb862a9b5d1e4f4db77131129436d7f`
+- **Notice**: [`third-party/licenses/npm/pend/1.2.0/LICENSE.txt`](third-party/licenses/npm/pend/1.2.0/LICENSE.txt) · SHA-256 `7e64acffcb0d20d33f5a86949ffd4a99ae045b10c7332a9c3a58635876c16880`
+
+````text
+The MIT License (Expat)
+
+Copyright (c) 2014 Andrew Kelley
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+````
+
 #### pino (10.4.0)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
@@ -10512,6 +10544,36 @@ express Statement of Purpose.
     this CC0 or use of the Work.
 ````
 
+#### yauzl (3.4.0)
+- **Declared License**: `MIT`
+- **Scope**: `runtime`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `ec962fa3205d4be5849f0fc3bebd0492b0abe8acf402656fd80490531fa8ba88`
+- **Notice**: [`third-party/licenses/npm/yauzl/3.4.0/LICENSE.txt`](third-party/licenses/npm/yauzl/3.4.0/LICENSE.txt) · SHA-256 `b303783d5eb7ca50b853ffa5f145e4e7998fab339831d848f507ca6cd970577a`
+
+````text
+The MIT License (MIT)
+
+Copyright (c) 2014 Josh Wolfe
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+````
+
 #### yazl (3.3.1)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
@@ -10673,7 +10735,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ````
 
-### Development-only entries (56)
+### Development-only entries (57)
 
 These entries are part of the source build and test toolchain, not the runtime image. They are retained for reproducible source compliance.
 
@@ -11685,6 +11747,35 @@ MIT License
 - **Declared License**: `MIT`
 - **Verification**: `VERIFIED_UPSTREAM`
 - **Notice**: [`third-party/licenses/npm/@types/vt-pbf/3.1.1/LICENSE.txt`](third-party/licenses/npm/@types/vt-pbf/3.1.1/LICENSE.txt) · SHA-256 `c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383`
+
+````text
+MIT License
+
+    Copyright (c) Microsoft Corporation.
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE
+````
+
+#### @types/yauzl (3.4.0)
+- **Declared License**: `MIT`
+- **Verification**: `VERIFIED_UPSTREAM`
+- **Notice**: [`third-party/licenses/npm/@types/yauzl/3.4.0/LICENSE.txt`](third-party/licenses/npm/@types/yauzl/3.4.0/LICENSE.txt) · SHA-256 `c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383`
 
 ````text
 MIT License

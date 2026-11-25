@@ -29,6 +29,7 @@ export interface Options {
   includeProperties: string[] | null; maxTileBytes: number | null; maxTileFeatures: number | null;
   latitude?: number; longitude?: number; height?: number; heading?: number; pitch?: number; roll?: number;
   anchor?: 'origin' | 'base' | 'center'; scale?: number; exportB3dm?: boolean;
+  model3dArchive?: true;
 }
 export function parseOptions(input: unknown, model3d = false): Options {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new JobError('INVALID_OPTIONS', 'Options must be an object.');

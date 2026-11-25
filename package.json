@@ -25,7 +25,8 @@
     "validators:setup": "node scripts/setup-output-validators.js",
     "validate:output": "node scripts/validate-output.js",
     "validate:outputs": "node scripts/validate-outputs.js",
-    "check:docs": "node scripts/check-documentation.js"
+    "check:docs": "node scripts/check-documentation.js",
+    "model3d:convert": "node dist/convert-model3d-cli.js"
   },
   "overrides": {
     "@loaders.gl/textures": "^4.5.4",
@@ -37,6 +38,8 @@
     "@fastify/rate-limit": "11.2.2",
     "@gltf-transform/core": "^4.5.1",
     "@gltf-transform/extensions": "^4.5.1",
+    "@math.gl/core": "4.1.0",
+    "@math.gl/geospatial": "4.1.0",
     "better-sqlite3": "13.0.3",
     "fastify": "^5.12.8",
     "geojson-vt": "^5.0.4",
@@ -47,6 +50,7 @@
     "pmtiles": "^4.5.0",
     "proj4": "^2.22.0",
     "vt-pbf": "^3.1.3",
+    "yauzl": "3.4.0",
     "yazl": "^3.3.1"
   },
   "devDependencies": {
@@ -55,6 +59,7 @@
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^24.19.2",
     "@types/vt-pbf": "^3.1.1",
+    "@types/yauzl": "3.4.0",
     "esbuild": "^0.28.2",
     "fast-check": "4.10.2",
     "typescript": "^7.0.2"
