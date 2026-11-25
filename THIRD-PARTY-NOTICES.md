@@ -4,14 +4,14 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
+Generated from committed license evidence · Lockfile SHA-256: `58a91f8ccd40b28a8a67e94daa434c99cd6f73ac041f1365e899a31c41452c20`
 
 ## Verification summary
 
 | Evidence set | Count | Method |
 | --- | ---: | --- |
-| npm entries in `package-lock.json` | 281 | Direct, transitive, development and platform-optional entries |
-| npm notices verified from exact tarball | 245 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
+| npm entries in `package-lock.json` | 282 | Direct, transitive, development and platform-optional entries |
+| npm notices verified from exact tarball | 246 | sha512 integrity + extracted LICENSE/COPYING/NOTICE + SHA-256 |
 | npm metadata-only entries | 36 | Tarball has no license file; only `package.json` metadata retained |
 | npm runtime entries marked metadata-only | 10 | Review required before strict release |
 | Native runtime components | 28 | Pinned upstream license corpus |
@@ -106,7 +106,7 @@ The GCC runtime exception permits distributing `libstdc++`/`libgcc` with indepen
 
 Each entry names the exact locked version, the recorded license expression, the verification state and the SHA-256 of the stored upstream notice. Development-only entries are not shipped in the runtime image; platform-optional entries are shipped only on matching platforms.
 
-### Runtime and optional entries (225)
+### Runtime and optional entries (226)
 
 #### @deck.gl/core (9.4.0)
 - **Declared License**: `MIT`
@@ -2942,11 +2942,11 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ````
 
-#### @maplibre/geojson-vt (6.3.0)
+#### @maplibre/geojson-vt (6.3.3)
 - **Declared License**: `ISC`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `504ff00fedc73ab6d6aa359cea8c52242766fed013cd3b8d96277eb0d15fea45`
-- **Notice**: [`third-party/licenses/npm/@maplibre/geojson-vt/6.3.0/LICENSE.txt`](third-party/licenses/npm/@maplibre/geojson-vt/6.3.0/LICENSE.txt) · SHA-256 `9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `20fc432d61275d362277314134d1020acdfa4f21be57cf305ef02f9a6dc7d459`
+- **Notice**: [`third-party/licenses/npm/@maplibre/geojson-vt/6.3.3/LICENSE.txt`](third-party/licenses/npm/@maplibre/geojson-vt/6.3.3/LICENSE.txt) · SHA-256 `9eb90e1c920aeccc6d630bd48c1512683d454c669701d46ff8c4c41f922dc4f3`
 
 ````text
 The MIT License (MIT)
@@ -2990,11 +2990,11 @@ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ````
 
-#### @maplibre/maplibre-gl-style-spec (26.5.1)
+#### @maplibre/maplibre-gl-style-spec (26.9.0)
 - **Declared License**: `ISC`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `679236f10c80e27df5ca10eac67bc18cde99fcedc6f8e60dc569ede64c21e766`
-- **Notice**: [`third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.5.1/LICENSE.txt`](third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.5.1/LICENSE.txt) · SHA-256 `bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `f277dffaf04dd6099a6981820bfa2fd0ae99958902671f7e792058b4d7aefd82`
+- **Notice**: [`third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.9.0/LICENSE.txt`](third-party/licenses/npm/@maplibre/maplibre-gl-style-spec/26.9.0/LICENSE.txt) · SHA-256 `bfd4cb919eec574e9213e1e61f880831eb5fc372d467be429fd0a8d51d1df890`
 
 ````text
 Copyright (c) 2020, MapLibre contributors
@@ -8284,11 +8284,11 @@ Apache License
 }
 ````
 
-#### maplibre-gl (6.17.0)
+#### maplibre-gl (6.19.0)
 - **Declared License**: `BSD-3-Clause`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `587807d8d6c99349022e027fa310c16cfaa55392131f6263df080306db6809b0`
-- **Notice**: [`third-party/licenses/npm/maplibre-gl/6.17.0/LICENSE.txt`](third-party/licenses/npm/maplibre-gl/6.17.0/LICENSE.txt) · SHA-256 `ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `8a0648e7a1f3baf757f3a9d994c3fdc7383ea0ebfc52ce1e90f3e7264dc9a20f`
+- **Notice**: [`third-party/licenses/npm/maplibre-gl/6.19.0/LICENSE.txt`](third-party/licenses/npm/maplibre-gl/6.19.0/LICENSE.txt) · SHA-256 `ee5fc05a0677eaf69601d2c7db0d9ecd6cc27c3abc1d0733bc9ed34707cf8ef2`
 
 ````text
 Copyright (c) 2023, MapLibre contributors
@@ -10671,6 +10671,36 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+````
+
+#### zustand (5.1.0)
+- **Declared License**: `MIT`
+- **Scope**: `runtime`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `f3ce315f91392a416e3d4f4cc2da2db00934ed6140fbc688fadd2b5030c79c4b`
+- **Notice**: [`third-party/licenses/npm/zustand/5.1.0/LICENSE.txt`](third-party/licenses/npm/zustand/5.1.0/LICENSE.txt) · SHA-256 `c1e6e266563517467b1bf874817d23e426f3149252bd7d42758cd697514b8417`
+
+````text
+MIT License
+
+Copyright (c) 2019 Paul Henschel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ````
 
 ### Development-only entries (56)
