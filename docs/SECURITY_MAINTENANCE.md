@@ -44,12 +44,12 @@ Use a fresh output directory for each conformance run. Validator overrides cross
 
 Node type declarations must track the supported runtime major in `package.json` (currently Node 24). Dependabot keeps `@types/node` major updates pending a deliberate runtime migration; its minor and patch updates remain enabled. Compiler updates still require typecheck, build, and runtime tests. IPC callbacks must recheck connection state before disconnecting because the channel can close while a send is queued.
 
-An automated dependency PR does not regenerate TileO's license evidence. Whenever the root lockfile changes, refresh the upstream manifest, redistribution notices, and dependency inventory together, and review the resulting license evidence before merging. A stale inventory can block unrelated workflow-update PRs that inherit the same `main` commit. Formal license-election rows and their tests refer to exact currently locked versions; removed dependencies must not leave placeholder elections.
+Dependabot changes the npm lockfile. TileO also requires committed evidence from the exact npm tarballs. If the notice checks fail on a Dependabot PR, the CI run prepares a `dependency-evidence` artifact when it can verify the new evidence. Download the patch, apply it with `git apply --check dependency-evidence.patch` followed by `git apply dependency-evidence.patch` on the updated PR branch, and review and commit the generated changes. If the patch no longer applies, regenerate the evidence locally. The workflow uses a read-only token and the failing checks rerun after the evidence commit is pushed. A stale inventory can block unrelated workflow-update PRs that inherit the same `main` commit. Formal license-election rows and their tests refer to exact currently locked versions; removed dependencies must not leave placeholder elections.
 
 Root lockfile changes also require the existing upstream notice and license gates:
 
 ```bash
-node scripts/verify-npm-notices.js --update
+node scripts/verify-npm-notices.js --update --changed
 node scripts/generate-third-party-notices.js
 node scripts/generate-dependency-inventory.js
 node scripts/check-notice-parity.js
@@ -58,7 +58,7 @@ npm test
 npm run check:docs
 ```
 
-Never bypass these checks to merge an automated dependency update.
+The `--changed` option reuses only matching package records whose stored file hashes still match. Omit it to fetch and reverify every locked tarball. Merge one root lockfile update at a time and sync the remaining PR branches with `main` before regenerating their evidence.
 
 ## Release signatures
 
