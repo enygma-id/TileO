@@ -823,8 +823,11 @@ export async function createApp(jobs = new Jobs()) {
       if (!mime) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
       const directory = await realpath(path).catch(() => undefined);
       if (!directory) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
-      const file = await realpath(resolve(directory, name)).catch(() => undefined);
-      if (!file || !file.startsWith(directory + sep)) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
+      const prefix = directory + sep;
+      const requested = resolve(directory, name);
+      if (!requested.startsWith(prefix)) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
+      const file = await realpath(requested).catch(() => undefined);
+      if (!file || !file.startsWith(prefix)) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
       const stats = await stat(file).catch(() => undefined);
       if (!stats?.isFile()) throw new JobError('NOT_FOUND', '3D Tiles file not found.');
       return reply.type(mime).header('X-Content-Type-Options', 'nosniff').header('Content-Length', stats.size).send(createReadStream(file));
