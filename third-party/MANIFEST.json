@@ -2,7 +2,7 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63",
+  "reference_lockfile_sha256": "546d9a7000eee1b1e1e0ab077513aa5327ffe85433621ad7e393da54f622c145",
   "package_count": 281,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
@@ -5313,24 +5313,24 @@
     {
       "package_path": "node_modules/better-sqlite3",
       "name": "better-sqlite3",
-      "version": "13.0.3",
+      "version": "13.2.0",
       "declared_license": "MIT",
       "notice_license": "MIT",
       "notice_source": "package/LICENSE",
       "notice_sha256": "09856b52897c91ab67e7456ef43067019f31dfd3b87fda72e655736b1ebdee55",
-      "notice_file": "third-party/licenses/npm/better-sqlite3/13.0.3/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/better-sqlite3/13.2.0/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-RbOBxmLBG8uvFUc15X9+9SFemKcQ0WBuISBVkpuiaUB2qblC8UWlHEjdWVoZ8AdhSwmoEgsiXKfopX0CQxaACQ==",
-      "resolved": "https://registry.npmjs.org/better-sqlite3/-/better-sqlite3-13.0.3.tgz",
+      "integrity": "sha512-Z8Q/9x/uNyKxA1v4FNodyItRVRw1TeKBrmj32JhxhR0ceNcBY+wMobt/Bv7M7TzwPAXjnZRtNaEsATnUZSKWZQ==",
+      "resolved": "https://registry.npmjs.org/better-sqlite3/-/better-sqlite3-13.2.0.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-11",
-        "tarball_sha256": "77e0513dc1a469fb3bceec4c7fb5ad3f403109787eda05be047ec17fd56868cb",
+        "verified_at": "2026-11-25",
+        "tarball_sha256": "40487589df3496f2ee0079d22b73c63fccebe7db0e8ee9a2c42421861e321e0b",
         "package_json_license": "MIT",
         "files": [
           {
@@ -5340,7 +5340,7 @@
             "bytes": 1078
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -9384,7 +9384,7 @@
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-11",
+    "verified_at": "2026-11-25",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
     "package_count": 281,
     "verified_upstream_tarball": 245,

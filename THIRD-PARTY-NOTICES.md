@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
+Generated from committed license evidence · Lockfile SHA-256: `546d9a7000eee1b1e1e0ab077513aa5327ffe85433621ad7e393da54f622c145`
 
 ## Verification summary
 
@@ -5462,11 +5462,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ````
 
-#### better-sqlite3 (13.0.3)
+#### better-sqlite3 (13.2.0)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `77e0513dc1a469fb3bceec4c7fb5ad3f403109787eda05be047ec17fd56868cb`
-- **Notice**: [`third-party/licenses/npm/better-sqlite3/13.0.3/LICENSE.txt`](third-party/licenses/npm/better-sqlite3/13.0.3/LICENSE.txt) · SHA-256 `09856b52897c91ab67e7456ef43067019f31dfd3b87fda72e655736b1ebdee55`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `40487589df3496f2ee0079d22b73c63fccebe7db0e8ee9a2c42421861e321e0b`
+- **Notice**: [`third-party/licenses/npm/better-sqlite3/13.2.0/LICENSE.txt`](third-party/licenses/npm/better-sqlite3/13.2.0/LICENSE.txt) · SHA-256 `09856b52897c91ab67e7456ef43067019f31dfd3b87fda72e655736b1ebdee55`
 
 ````text
 The MIT License (MIT)
