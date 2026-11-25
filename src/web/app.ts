@@ -7,6 +7,8 @@ function isOsmBasemap(value: string): boolean {
   } catch { return false; }
 }
 
+import { availableEncodingPresets, type PresetChoice } from './encoded-form.js';
+import type { SourceBand } from '../encoded-options.js';
 import type { Job } from '../types.js';
 import { glbJsonSizeError } from '../glb-limits.js';
 import { iconElement } from './icons.js';
@@ -179,6 +181,7 @@ function safeDownloadBase(filename: string) {
 function primaryDownloadName(job: Job) {
   const base = safeDownloadBase(job.filename);
   if (job.metadata?.kind === 'model3d') return job.options.model3dArchive ? `${base}.zip` : `${base}-3dtiles.zip`;
+  if (job.options.scientificOutput === 'encoded-tiles') return `${base}-encoded.mbtiles`;
   if (job.metadata?.kind === 'scientific') return `${base}-scientific.tif`;
   if (job.metadata?.kind === 'elevation') return job.options.elevationOutput === 'cog' ? `${base}-elevation.tif` : `${base}-elevation.zip`;
   return job.options.exportPmtiles ? `${base}-tiles.zip` : `${base}.mbtiles`;
@@ -207,6 +210,48 @@ type RemoteDataset = DatasetRef & { source: ({ kind: 's3'; connectionId: string;
 let inputSourceMode: 'upload' | 's3' = 'upload';
 let remoteDataset: RemoteDataset | undefined;
 
+let encodedBandSource: SourceBand[] | undefined;
+let encodedPresetChoices: PresetChoice[] = [];
+let renderedEncodedPreset = '';
+function updateEncodedBandControls(enabled: boolean) {
+  const preset = element<HTMLSelectElement>('encoded-preset');
+  const first = element<HTMLSelectElement>('encoded-band'), second = element<HTMLSelectElement>('encoded-band-v');
+  const note = element('encoded-preset-note');
+  const source = selectedInspection?.encodedBands;
+  if (source !== encodedBandSource) {
+    encodedBandSource = source;
+    renderedEncodedPreset = '';
+    encodedPresetChoices = availableEncodingPresets(source ?? []);
+    preset.replaceChildren(...encodedPresetChoices.map(choice =>
+      new Option(`${choice.preset.label} (${choice.preset.unit})`, choice.id)));
+    const suggested = encodedPresetChoices.find(choice => choice.controls.every(control => control.suggested !== undefined));
+    if (suggested) preset.value = suggested.id;
+  }
+  const choice = encodedPresetChoices.find(candidate => candidate.id === preset.value);
+  const vector = enabled && choice?.controls.length === 2;
+  if (renderedEncodedPreset !== preset.value) {
+    renderedEncodedPreset = preset.value;
+    for (const [index, control] of [first, second].entries()) {
+      const data = choice?.controls[index];
+      control.replaceChildren(new Option('Choose band…', ''), ...(data?.bands ?? []).map(band =>
+        new Option(`Band ${band.index}${band.description ? ` · ${band.description}` : ''}${band.unit ? ` (${band.unit})` : ''}`, String(band.index))));
+      control.value = data?.suggested === undefined ? '' : String(data.suggested);
+    }
+  }
+  preset.disabled = !enabled || !choice;
+  first.disabled = !enabled || !choice;
+  first.required = !first.disabled;
+  second.disabled = !vector;
+  second.required = !!vector;
+  element('encoded-band-label').textContent = vector ? 'U band (eastward)' : 'Source band';
+  element('encoded-band-v-group').hidden = !vector;
+  const kind = choice?.preset.profile === 'r-encoded' ? 'R-Encoded 8-bit'
+    : choice?.preset.profile === 'rg-encoded-16bit' ? 'RG-Encoded 16-bit' : 'RG-Encoded 8-bit per component';
+  note.textContent = choice
+    ? `${kind} · Encoding range ${choice.preset.range.join(' to ')} ${choice.preset.unit}`
+    : 'No encoding preset matches the detected band units and parameters.';
+}
+
 function updateDatasetFormState(file?: DatasetRef, detectedKind?: FileInspection['kind']) {
   const vectorGroup = element('vector-options-group');
   const rasterGroup = element('raster-options-group');
@@ -217,15 +262,25 @@ function updateDatasetFormState(file?: DatasetRef, detectedKind?: FileInspection
   const candidate = !!file && !any3d && !!selectedInspection?.elevationCandidate;
   const elevation = candidate && field('raster-purpose') === 'elevation';
   const scientific = candidate && field('raster-purpose') === 'scientific';
+  const canEncode = !!file && !any3d && !!selectedInspection?.encodedBands?.length;
+  const encoded = canEncode && field('raster-purpose') === 'encoded';
+  element('encoded-options-group').hidden = !encoded;
+  updateEncodedBandControls(encoded);
   const terrain = elevation && field('elevation-output') !== 'cog';
   element('archive-options-group').hidden = !file || any3d || scientific || (elevation && !terrain);
   element<HTMLSelectElement>('export-pmtiles').disabled = !file || any3d || scientific || (elevation && !terrain);
   element<HTMLInputElement>('terrain-nodata-height').min = field('elevation-output') === 'terrarium' ? '-32768' : '-10000';
   element<HTMLInputElement>('terrain-nodata-height').max = field('elevation-output') === 'terrarium' ? '32767.99609375' : '1667721.5';
-  element('raster-purpose-group').hidden = !candidate;
+  element('raster-purpose-group').hidden = !(candidate || canEncode);
   const rasterPurpose = element<HTMLSelectElement>('raster-purpose');
-  rasterPurpose.disabled = !candidate;
-  rasterPurpose.required = candidate;
+  rasterPurpose.disabled = !(candidate || canEncode);
+  rasterPurpose.required = candidate || canEncode;
+  for (const option of rasterPurpose.options) {
+    if (!option.value) continue;
+    const allowed = option.value === 'encoded' ? canEncode : candidate;
+    option.disabled = !allowed;
+    option.hidden = !allowed;
+  }
   element('elevation-options-group').hidden = !elevation;
   element('terrain-nodata-group').hidden = !terrain;
   for (const id of ['elevation-output', 'elevation-kind', 'elevation-unit', 'height-reference', 'terrain-nodata-height']) {
@@ -237,7 +292,8 @@ function updateDatasetFormState(file?: DatasetRef, detectedKind?: FileInspection
   element('zoom-options-group').hidden = !file || any3d || scientific || (elevation && !terrain);
   for (const id of ['min-zoom', 'max-zoom']) element<HTMLInputElement>(id).disabled = !file || any3d || scientific || (elevation && !terrain);
   element<HTMLInputElement>('quality').disabled = any3d || elevation || scientific || field('tile-format') === 'png';
-  element('source-options-group').hidden = !file || any3d;
+  element('source-options-group').hidden = !file || any3d || encoded;
+  element<HTMLInputElement>('source-crs').disabled = encoded;
   for (const id of ['model-latitude', 'model-longitude', 'model-height', 'model-heading', 'model-pitch', 'model-roll', 'model-anchor', 'model-scale', 'model-b3dm']) {
     const input = element<HTMLInputElement | HTMLSelectElement>(id);
     input.disabled = !model3d;
@@ -250,7 +306,7 @@ function updateDatasetFormState(file?: DatasetRef, detectedKind?: FileInspection
     return;
   }
   if (any3d) { vectorGroup.hidden = true; rasterGroup.hidden = true; return; }
-  if (elevation || scientific) { vectorGroup.hidden = true; rasterGroup.hidden = true; return; }
+  if (elevation || scientific || encoded) { vectorGroup.hidden = true; rasterGroup.hidden = true; return; }
 
   const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
   const isVector = detectedKind ? detectedKind === 'vector' : ['.geojson', '.json', '.geojsonl', '.gpkg', '.fgb', '.zip', '.kml'].includes(ext);
@@ -363,7 +419,7 @@ function applyRecommendationsForFile(file: DatasetRef) {
   }
 }
 
-type FileInspection = { kind: 'raster' | 'vector' | 'model3d'; version?: string; entrypoint?: string; manifests?: number; tiles?: number; lodLevels?: number; contentFormats?: string[]; crs: string | null; layer?: string; layers?: string[]; fields?: string[]; fieldCollisions?: string[][]; geometryType?: string; bands?: number; width?: number; height?: number; nativeZoom?: number; estimatedTiles?: number; featureCount?: number; elevationCandidate?: boolean; dataType?: string; unit?: string; noData?: number | string; scale?: number; offset?: number; verticalCrs?: string | null; inferredElevationUnit?: 'm' | 'ft'; inferredHeightReference?: 'ellipsoid' | 'orthometric'; minimum?: number; maximum?: number; suggestedNoDataHeight?: number; pixelSize?: number[]; bounds?: number[]; cog?: boolean };
+type FileInspection = { kind: 'raster' | 'vector' | 'model3d'; version?: string; entrypoint?: string; manifests?: number; tiles?: number; lodLevels?: number; contentFormats?: string[]; crs: string | null; layer?: string; layers?: string[]; fields?: string[]; fieldCollisions?: string[][]; geometryType?: string; bands?: number; width?: number; height?: number; nativeZoom?: number; estimatedTiles?: number; featureCount?: number; elevationCandidate?: boolean; dataType?: string; unit?: string; noData?: number | string; scale?: number; offset?: number; verticalCrs?: string | null; inferredElevationUnit?: 'm' | 'ft'; inferredHeightReference?: 'ellipsoid' | 'orthometric'; minimum?: number; maximum?: number; suggestedNoDataHeight?: number; pixelSize?: number[]; bounds?: number[]; cog?: boolean; encodedBands?: SourceBand[] };
 function tilesAtZoom(bounds: number[], zoom: number) {
   const n = 2 ** zoom;
   const x = (lon: number) => ((lon + 180) / 360) * n;
@@ -894,7 +950,7 @@ element('inspect-s3').addEventListener('click', async () => {
     inspectionId = result.inspectionId; selectedInspection = result.inspection;
     const remoteName = url ? new URL(url).pathname.split('/').at(-1) : key.split('/').at(-1);
     remoteDataset = { name: remoteName || 'remote.tif', size: result.source.size, source: result.source };
-    element<HTMLSelectElement>('raster-purpose').value = result.inspection.elevationCandidate ? '' : 'imagery';
+    element<HTMLSelectElement>('raster-purpose').value = result.inspection.elevationCandidate ? '' : result.inspection.encodedBands?.length ? 'encoded' : 'imagery';
     element<HTMLSelectElement>('elevation-output').value = 'cog';
     element<HTMLSelectElement>('elevation-unit').value = /^(m|metre|meter|meters|metres)$/i.test(result.inspection.unit ?? '') ? 'm' : /^(ft|foot|feet|international foot|international feet)$/i.test(result.inspection.unit ?? '') ? 'ft' : 'unknown';
     element<HTMLSelectElement>('height-reference').value = 'unknown';
@@ -1017,7 +1073,9 @@ function showInspectionRecommendations(file: DatasetRef, info: FileInspection) {
   const geomKind = (info.geometryType ?? '').toLowerCase().includes('point') ? 'point'
     : /(line|curve|string)/.test((info.geometryType ?? '').toLowerCase()) ? 'line'
     : info.geometryType ? 'polygon' : null;
-  const lines = info.elevationCandidate && field('raster-purpose') === 'elevation'
+  const lines = field('raster-purpose') === 'encoded' && info.encodedBands?.length
+    ? ['Choose a preset and the source band or U/V bands. Output uses lossless numeric PNG.', `Recommended: zoom 0–${maxZoom}.`]
+    : info.elevationCandidate && field('raster-purpose') === 'elevation'
     ? [`Single-band ${info.dataType}; ${info.width} × ${info.height} pixels; pixel size ${info.pixelSize?.join(' × ') ?? 'unknown'} in CRS units.`, `CRS: ${info.crs ?? 'missing'}; units: ${info.unit || 'not declared'}${info.inferredElevationUnit ? ` (detected as ${info.inferredElevationUnit})` : ''}; NoData: ${info.noData ?? 'not declared'}.`, `Scale: ${info.scale ?? 1}; offset: ${info.offset ?? 0}; vertical reference: ${info.inferredHeightReference ?? (info.verticalCrs ? 'embedded but ambiguous' : 'not declared')}.`, `Valid height range: ${info.minimum ?? 'unknown'} to ${info.maximum ?? 'unknown'} in source units.${info.suggestedNoDataHeight !== undefined ? ` Suggested terrain NoData fill: ${info.suggestedNoDataHeight} m.` : ''}`, `Recommended: lossless COG. Terrain requires explicit units, height reference and NoData display height; maximum zoom ${maxZoom}.`]
     : info.elevationCandidate && field('raster-purpose') === 'scientific'
     ? [`Single-band ${info.dataType}; ${info.width} × ${info.height} pixels; pixel size ${info.pixelSize?.join(' × ') ?? 'unknown'} in CRS units.`, `CRS: ${info.crs ?? 'missing'}; units: ${info.unit || 'not declared'}; NoData: ${info.noData ?? 'not declared'}.`, `Scale: ${info.scale ?? 1}; offset: ${info.offset ?? 0}.`, 'Output is a lossless COG with a false-color preview range. It is not treated as terrain or elevation.']
@@ -1030,7 +1088,7 @@ function showInspectionRecommendations(file: DatasetRef, info: FileInspection) {
   // default. No typing, no typos (a mistyped name would reject the whole job).
   renderAttributeCheckboxes(info.kind === 'vector' ? info.fields ?? [] : [], info.fieldCollisions ?? []);
   recommendedSettings = info.kind === 'raster'
-    ? { minZoom: 0, maxZoom, format: 'webp', quality: 80 }
+    ? { minZoom: 0, maxZoom, format: field('raster-purpose') === 'encoded' ? 'png' : 'webp', quality: 80 }
     : { minZoom, maxZoom, preset: featureCount > 100_000 ? 'density' : 'preserve', engine: 'auto' };
   element<HTMLButtonElement>('btn-apply-rec').hidden = false;
   applyRecommendedSettings();
@@ -1055,7 +1113,7 @@ function inspectSelectedFile(file: File) {
       const result = JSON.parse(xhr.responseText) as { inspectionId: string; inspection: FileInspection };
       inspectionId = result.inspectionId;
       selectedInspection = result.inspection;
-      element<HTMLSelectElement>('raster-purpose').value = result.inspection.elevationCandidate ? '' : 'imagery';
+      element<HTMLSelectElement>('raster-purpose').value = result.inspection.elevationCandidate ? '' : result.inspection.encodedBands?.length ? 'encoded' : 'imagery';
       element<HTMLSelectElement>('elevation-output').value = 'cog';
       element<HTMLSelectElement>('elevation-unit').value = /^(m|metre|meter|meters|metres)$/i.test(result.inspection.unit ?? '') ? 'm' : /^(ft|foot|feet|international foot|international feet)$/i.test(result.inspection.unit ?? '') ? 'ft' : 'unknown';
       element<HTMLSelectElement>('height-reference').value = 'unknown';
@@ -1285,6 +1343,7 @@ function updateRecommendationNotes() {
   }
 }
 
+element('encoded-preset').addEventListener('change', () => updateEncodedBandControls(field('raster-purpose') === 'encoded'));
 element('max-zoom').addEventListener('input', updateRecommendationNotes);
 element('min-zoom').addEventListener('input', updateRecommendationNotes);
 element('vector-preset').addEventListener('change', updateRecommendationNotes);
@@ -1313,7 +1372,18 @@ element('job-form').addEventListener('submit', async event => {
     if (selectedInspection.inferredElevationUnit && field('elevation-unit') !== selectedInspection.inferredElevationUnit) { notice(`The source metadata indicates ${selectedInspection.inferredElevationUnit}; choose the matching elevation unit.`); return; }
     if (selectedInspection.inferredHeightReference && field('height-reference') !== selectedInspection.inferredHeightReference) { notice(`The source vertical CRS indicates ${selectedInspection.inferredHeightReference} heights; choose the matching reference.`); return; }
   }
-  const options = file.name.toLowerCase().endsWith('.glb') ? {
+  const encoded = !!selectedInspection?.encodedBands?.length && field('raster-purpose') === 'encoded';
+  const bands = [Number(field('encoded-band'))];
+  if (!element<HTMLSelectElement>('encoded-band-v').disabled) bands.push(Number(field('encoded-band-v')));
+  if (encoded && !field('encoded-preset')) { notice('No encoding preset matches this dataset.'); return; }
+  if (encoded && (bands.includes(0) || new Set(bands).size !== bands.length)) {
+    notice('Choose distinct source bands for the preset.');
+    return;
+  }
+  const options = encoded ? {
+    pipeline: 'scientific', scientificOutput: 'encoded-tiles', preset: field('encoded-preset'), bands,
+    minZoom: Number(field('min-zoom')), maxZoom: Number(field('max-zoom')), exportPmtiles: field('export-pmtiles') === 'yes',
+  } : file.name.toLowerCase().endsWith('.glb') ? {
     latitude: Number(field('model-latitude')),
     longitude: Number(field('model-longitude')),
     height: Number(field('model-height')),
@@ -1695,7 +1765,7 @@ function renderJobs(jobs?: Job[]) {
     const corner = document.createElement('span'); corner.className = 'job-corner';
     corner.append(statusBadge(job.status), jobMenu(job));
     head.append(name, corner); article.append(head);
-    article.append(textNode('p', `${job.source?.kind === 's3' ? 'S3 · ' : job.source?.kind === 'url' ? 'URL · ' : ''}${bytes(job.size)} · ${job.options.pipeline === 'elevation' ? job.options.elevationOutput !== 'cog' ? `COG + ${job.options.elevationOutput}` : 'Elevation COG' : job.options.pipeline === 'scientific' ? 'Scientific COG' : job.filename.toLowerCase().endsWith('.glb') ? '3D Tiles' : `Zoom ${job.options.minZoom}–${job.options.maxZoom}`} · ${new Date(job.created).toLocaleString()}`, 'hint'));
+    article.append(textNode('p', `${job.source?.kind === 's3' ? 'S3 · ' : job.source?.kind === 'url' ? 'URL · ' : ''}${bytes(job.size)} · ${job.options.pipeline === 'elevation' ? job.options.elevationOutput !== 'cog' ? `COG + ${job.options.elevationOutput}` : 'Elevation COG' : job.options.pipeline === 'scientific' ? job.options.scientificOutput === 'encoded-tiles' ? 'Encoded raster PNG' : 'Scientific COG' : job.filename.toLowerCase().endsWith('.glb') ? '3D Tiles' : `Zoom ${job.options.minZoom}–${job.options.maxZoom}`} · ${new Date(job.created).toLocaleString()}`, 'hint'));
     if (job.status === 'SUCCEEDED' && job.metadata && typeof job.metadata === 'object') {
       const meta = job.metadata as { tileCount?: unknown; minZoom?: unknown; maxZoom?: unknown; maxTileBytes?: unknown; totalTileBytes?: unknown; cogBytes?: unknown; minKeptPct?: unknown; batch?: { active?: unknown; stream?: unknown; mode?: unknown; normalization?: unknown; featureCount?: unknown; batchCount?: unknown; fallback?: unknown } };
       const parts: string[] = [];
@@ -1727,7 +1797,7 @@ function renderJobs(jobs?: Job[]) {
     if (['QUEUED','RUNNING'].includes(job.status)) main.append(button(job.cancel ? 'Cancelling…' : 'Cancel', async () => { await api(`/api/jobs/${job.id}/cancel`, { method: 'POST' }); await refresh(); }, 'job-cancel', 'ban'));
     if (['FAILED','CANCELLED'].includes(job.status)) main.append(button('Retry', async () => { await api(`/api/jobs/${job.id}/retry`, { method: 'POST' }); await refresh(); }, 'job-retry', 'rotate-right'));
     if (job.status === 'SUCCEEDED') {
-      const exclusivePreview = ['elevation', 'scientific', 'model3d'].includes(String(job.metadata?.kind));
+      const exclusivePreview = ['elevation', 'scientific', 'model3d', 'encoded-raster'].includes(String(job.metadata?.kind));
       const previewBtn = button(isOnMap ? 'Zoom to' : exclusivePreview ? 'Open preview' : 'Add to map', async () => {
         activeJob = job;
         lastDirectData = null;
@@ -1738,9 +1808,18 @@ function renderJobs(jobs?: Job[]) {
       }, `job-preview${isOnMap ? ' active' : ''}`, isOnMap ? 'crosshairs' : 'layer-group');
       previewBtn.title = isOnMap ? 'Center the map on this result' : exclusivePreview ? 'Open this dedicated preview; current job layers will be cleared' : 'Add this result without removing existing job layers';
       main.append(previewBtn);
+      if (job.options.scientificOutput === 'encoded-tiles') {
+        const metadataLink = document.createElement('a');
+        metadataLink.className = 'secondary job-action';
+        metadataLink.href = `/api/jobs/${job.id}/tilejson`;
+        metadataLink.target = '_blank';
+        metadataLink.rel = 'noopener';
+        metadataLink.textContent = 'TileJSON';
+        main.append(metadataLink);
+      }
       // Short visible label keeps one tidy row; the full name stays available
       // to assistive tech (and the existing browser test) via aria-label.
-      const fullLabel = ['elevation', 'scientific'].includes(String(job.metadata?.kind)) ? job.metadata?.kind === 'elevation' && job.options.elevationOutput !== 'cog' ? 'Download elevation' : 'Download COG' : job.metadata?.kind === 'model3d' ? 'Download 3D Tiles' : job.options.exportPmtiles ? 'Download tiles' : 'Download MBTiles';
+      const fullLabel = ['elevation', 'scientific'].includes(String(job.metadata?.kind)) ? job.metadata?.kind === 'elevation' && job.options.elevationOutput !== 'cog' ? 'Download elevation' : 'Download COG' : job.metadata?.kind === 'model3d' ? 'Download 3D Tiles' : job.options.exportPmtiles && job.options.scientificOutput !== 'encoded-tiles' ? 'Download tiles' : 'Download MBTiles';
       const alternates = getJobDownloadOptions(job);
       const link = document.createElement('a') as HTMLAnchorElement;
       link.className = 'secondary job-action job-download';
@@ -2404,6 +2483,7 @@ function resetPreviewStatus() {
 }
 
 function clearMapDataLayers() {
+  stopActiveEncoded();
   stopVisualCompare();
   stopActive3d();
   jobMapLayers.clear();
@@ -2697,6 +2777,9 @@ async function loadDirectPMTiles(file: File) {
 }
 
 let activeTiffCleanup: (() => void) | null = null;
+let activeEncodedCleanup: (() => void) | undefined;
+function stopActiveEncoded() { activeEncodedCleanup?.(); activeEncodedCleanup = undefined; }
+
 let active3dCleanup: (() => void) | null = null;
 function stopActive3d() { active3dCleanup?.(); active3dCleanup = null; }
 let activeQuickId: string | null = null;
@@ -3096,7 +3179,7 @@ async function addStandardJobMapLayer(job: Job) {
 
 async function preview(job: Job) {
   if (!job.metadata) return;
-  if (!['elevation', 'scientific', 'model3d'].includes(String(job.metadata.kind))) {
+  if (!['elevation', 'scientific', 'model3d', 'encoded-raster'].includes(String(job.metadata.kind))) {
     const queued = jobMapLayerQueue.then(() => addStandardJobMapLayer(job));
     jobMapLayerQueue = queued.catch(() => undefined);
     await queued;
@@ -3106,14 +3189,41 @@ async function preview(job: Job) {
   stopActiveTiff();
   clearMapDataLayers();
   activeJob = job;
-  // Elevation, scientific, and 3D previews do not populate jobMapLayers.
+  // Dedicated previews do not populate jobMapLayers.
   // They still render a selected dataset, so do not show the empty-map state.
   element('no-map-selected').hidden = true;
   lastDirectData = null;
   const maplibregl = await loadMapLibre();
+  if (job.metadata.kind === 'encoded-raster' && activeJob?.id !== job.id) return;
+  const previousMap = map;
   map?.remove();
   element('map').replaceChildren();
   ensureDropOverlay();
+
+  if (job.metadata.kind === 'encoded-raster') {
+    try {
+      const [encoded, response, style] = await Promise.all([
+        import('./encoded-preview.js'), api(`/api/jobs/${job.id}/tilejson`), buildMapStyle(),
+      ]);
+      const metadata = encoded.parseEncodedTileJSON(await response.json());
+      if (activeJob?.id !== job.id || map !== previousMap) return;
+      const previewMap = new maplibregl.Map({
+        container: 'map', style, bounds: metadata.bounds, fitBoundsOptions: { padding: 40 },
+        minZoom: Math.max(0, metadata.minzoom - 1),
+      });
+      map = previewMap;
+      addMapControls(maplibregl, previewMap);
+      await waitForMapStyle(previewMap);
+      if (map !== previewMap) return;
+      activeEncodedCleanup = encoded.showEncodedTiles(previewMap, maplibregl, metadata, api);
+      previewMap.on('error', event => notice(`Encoded raster preview: ${event.error?.message ?? 'Tile could not be loaded.'}`));
+      showLoadedBadge(job.filename, `${metadata.profile} · ${metadata.channels[0]!.unit}`, metadata.bounds,
+        { minZoom: Math.max(0, metadata.minzoom - 1), maxZoom: 22 }, true);
+    } catch (error) {
+      if (activeJob?.id === job.id) notice(`Encoded raster preview: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    return;
+  }
 
   if (job.metadata.kind === 'elevation' || job.metadata.kind === 'scientific') {
     const style = await buildMapStyle();

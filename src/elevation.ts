@@ -2,7 +2,7 @@ import { mkdir, open, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
-import { crc32, deflateSync, inflateSync } from 'node:zlib';
+import { crc32, inflateSync } from 'node:zlib';
 import Database from 'better-sqlite3';
 import { config, toolEnvironment } from './config.js';
 import { run, type RunOptions } from './process.js';
@@ -12,7 +12,9 @@ import { exportPmtiles } from './pmtiles.js';
 import { validate } from './validate.js';
 import { JobError, type Options } from './types.js';
 
-const world = 20037508.342789244, tileSize = 256;
+import { tilePng, tileSize } from './tile-png.js';
+
+const world = 20037508.342789244;
 export function terrainGrid(bounds: number[], zoom: number) {
   const n = 2 ** zoom;
   const x = (lon: number) => (lon + 180) / 360 * n;
@@ -40,13 +42,7 @@ export function terrainPng(heights: Float64Array, encoding: 'mapbox' | 'terrariu
     const p = y * (1 + tileSize * 3) + 1 + x * 3;
     rows[p] = encoded >>> 16; rows[p + 1] = encoded >>> 8; rows[p + 2] = encoded & 255;
   }
-  const chunk = (type: string, data: Buffer) => {
-    const result = Buffer.alloc(data.length + 12); result.writeUInt32BE(data.length);
-    result.write(type, 4, 'ascii'); data.copy(result, 8);
-    result.writeUInt32BE(crc32(result.subarray(4, -4)), result.length - 4); return result;
-  };
-  const header = Buffer.alloc(13); header.writeUInt32BE(tileSize); header.writeUInt32BE(tileSize, 4); header[8] = 8; header[9] = 2;
-  return Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]), chunk('IHDR', header), chunk('IDAT', deflateSync(rows)), chunk('IEND', Buffer.alloc(0))]);
+  return tilePng(rows, 3);
 }
 
 async function exactRasterHash(path: string, raw: string, execution: RunOptions) {

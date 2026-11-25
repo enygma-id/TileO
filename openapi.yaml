@@ -223,7 +223,7 @@ paths:
   /api/jobs/from-source:
     post:
       tags: [Storage inputs, Conversion jobs]
-      summary: Enqueue a job from a storage inspection
+      summary: Enqueue a job from a storage inspection or preflight encoded raster options
       requestBody:
         required: true
         content:
@@ -233,8 +233,13 @@ paths:
               required: [inspectionId]
               properties:
                 inspectionId: { type: string, format: uuid }
-                options: { type: object, additionalProperties: true }
+                options:
+                  type: object
+                  additionalProperties: true
+                  description: For encoded PNG tiles, set pipeline to scientific and scientificOutput to encoded-tiles. Pass one-based bands and a preset or a custom profile, unscale range, unit and parameters.
+                preflightOnly: { type: boolean, description: Resolve and validate encoded options without consuming the inspection. }
       responses:
+        '200': { description: Resolved encoded options, selected band metadata and estimated tile count }
         '202':
           description: Job accepted
           content:
@@ -420,8 +425,8 @@ paths:
   /api/jobs/{id}/tilejson:
     get:
       tags: [Map tiles and services]
-      summary: Get Terrain-RGB or Terrarium XYZ TileJSON
-      description: Only jobs with Terrain-RGB or Terrarium output expose TileJSON; other pipelines return 404.
+      summary: Get terrain or encoded raster XYZ TileJSON
+      description: Encoded raster jobs include raster_layers with profiles, units, ranges and byte roles.
       parameters: [{ $ref: '#/components/parameters/JobId' }]
       responses:
         '200': { description: Terrain bounds, zooms, encoding and tile URLs, content: { application/json: { schema: { type: object } } } }

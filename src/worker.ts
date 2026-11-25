@@ -1,3 +1,4 @@
+import { buildEncodedRaster } from './encoded-raster.js';
 import { randomUUID } from 'node:crypto';
 import { mkdir, rename, rm, open, readdir, writeFile, readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path';
@@ -117,12 +118,18 @@ async function execute(job: Job) {
       return;
     }
     if (scientific) {
-      const result = await buildScientific(input, staged, job.options, execution, (stage, progress) => jobs.update(job.id, stage, progress));
+      const report = (stage: string, progress: number) => jobs.update(job.id, stage, progress);
+      const result = job.options.encoding
+        ? await buildEncodedRaster(input, staged, scratch, job.options, execution, report)
+        : await buildScientific(input, staged, job.options, execution, report);
       await check(); abort.signal.throwIfAborted();
       if (job.source?.kind === 's3' && job.source.readMode === 'remote') await assertS3SourceUnchanged(job.source, abort.signal, sealedLoader);
       if (job.source?.kind === 'url' && job.source.readMode === 'remote') await assertUrlSourceUnchanged(job.source, abort.signal);
       jobs.update(job.id, 'Validating output before publication', 95);
-      const validation = await validatePublication(staged, 'scientific', scratch, execution);
+      if (job.options.encoding && job.options.exportPmtiles) {
+        await exportPmtiles(join(staged, 'tiles.mbtiles'), join(staged, 'tiles.pmtiles'), abort.signal);
+      }
+      const validation = await validatePublication(staged, job.options.encoding ? 'raster' : 'scientific', scratch, execution);
       await rename(staged, final);
       published = jobs.finish(job.id, job.attempt, owner, outputName, { ...result, validation });
       if (!published) throw new JobError('CANCELLED', 'Publication cancelled because the job or worker ownership changed.');

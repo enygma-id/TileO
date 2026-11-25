@@ -1,3 +1,4 @@
+import { resolveEncodedBands, type SourceBand } from './encoded-options.js';
 import { extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { run, type RunOptions } from './process.js';
@@ -18,6 +19,8 @@ export interface Inspection {
   inferredElevationUnit?: 'm' | 'ft'; inferredHeightReference?: 'ellipsoid' | 'orthometric'; minimum?: number; maximum?: number; suggestedNoDataHeight?: number;
   pixelSize?: number[];
   cog?: boolean;
+  encodedBands?: SourceBand[];
+  encodedGrid?: { crs: string; transform: number[] };
 }
 // Groups attribute names that differ only by letter case (e.g. ID vs id).
 // MVT and GeoJSON keep both, but humans and case-insensitive consumers mix
@@ -103,7 +106,7 @@ export async function inspect(input: string, options: Options, execution: RunOpt
     };
   }
   let raster: Record<string, any> | undefined;
-  try { raster = JSON.parse(await run('gdalinfo', ['-json', ...(probe && !execution.remoteProbe ? ['-approx_stats'] : []), input], { ...execution, capture: true })); }
+  try { raster = JSON.parse(await run('gdalinfo', ['-json', ...(probe && !execution.remoteProbe && !options.encoding ? ['-approx_stats'] : []), input], { ...execution, capture: true })); }
   catch (error) { if (!(error instanceof JobError) || error.code !== 'TOOL_FAILED') throw error; }
   if (raster?.size?.length === 2 && raster.bands?.length) {
     const wkt = raster.coordinateSystem?.wkt;
@@ -113,13 +116,29 @@ export async function inspect(input: string, options: Options, execution: RunOpt
     const elevationCandidate = raster.driverShortName === 'GTiff' && raster.bands.length === 1 && ['Byte', 'Int16', 'UInt16', 'Int32', 'UInt32', 'Float32', 'Float64'].includes(band.type) && !band.colorTable;
     if (elevationCandidate && (![band.scale ?? 1, band.offset ?? 0].every(Number.isFinite))) throw new JobError('INVALID_ELEVATION', 'Elevation scale and offset must be finite numbers.');
     if (options.pipeline === 'elevation' && !elevationCandidate) throw new JobError('UNSUPPORTED_ELEVATION', 'Elevation input must be a georeferenced, single-band numeric GeoTIFF without a palette.');
-    if (options.pipeline === 'scientific' && !elevationCandidate) throw new JobError('UNSUPPORTED_SCIENTIFIC_RASTER', 'Scientific raster input must be a georeferenced, single-band numeric GeoTIFF without a palette.');
-    if (!['elevation', 'scientific'].includes(options.pipeline ?? '') && !(probe && elevationCandidate) && (!raster.bands.every((b: any) => b.type === 'Byte') || ![1,3,4].includes(raster.bands.length) || raster.bands.some((b: any) => b.colorTable))) {
+    if (options.pipeline === 'scientific' && !options.encoding && !elevationCandidate) throw new JobError('UNSUPPORTED_SCIENTIFIC_RASTER', 'Scientific raster input must be a georeferenced, single-band numeric GeoTIFF without a palette.');
+    const numericTypes = new Set(['Int16', 'UInt16', 'Float32', 'Float64']);
+    const encodedBands: SourceBand[] = [];
+    const crsCode = raster.stac?.['proj:code'];
+    const crsId = crsCode ?? `EPSG:${raster.stac?.['proj:epsg']}`;
+    if ((probe || options.encoding) && raster.driverShortName === 'GTiff' && raster.metadata?.IMAGE_STRUCTURE?.LAYOUT === 'COG' && wkt && raster.geoTransform.length === 6 && raster.geoTransform.every(Number.isFinite) && ['EPSG:4326', 'EPSG:3857'].includes(crsId)) {
+      for (const [i, source] of raster.bands.entries()) {
+        if (!numericTypes.has(source.type) || source.colorTable) continue;
+        encodedBands.push({ index: i + 1, type: source.type, unit: source.unit ?? '', scale: source.scale ?? 1, offset: source.offset ?? 0,
+          noData: source.noDataValue, maskFlags: source.mask?.flags ?? [], description: source.description });
+      }
+    }
+    if (!['elevation', 'scientific'].includes(options.pipeline ?? '') && !(probe && (elevationCandidate || encodedBands.length)) && (!raster.bands.every((b: any) => b.type === 'Byte') || ![1,3,4].includes(raster.bands.length) || raster.bands.some((b: any) => b.colorTable))) {
       throw new JobError('UNSUPPORTED_RASTER', 'This console accepts Byte grayscale/RGB/RGBA rasters. Scale non-Byte data or expand a palette with GDAL first.');
     }
     const epsg = raster.stac?.['proj:epsg'];
     // GDAL reads the actual WKT from the dataset; never infer CRS from the last nested EPSG ID.
     const result: Inspection = { kind: 'raster', crs: options.sourceCrs ?? (wkt ? (epsg ? `EPSG:${epsg}` : 'Embedded CRS') : null), bands: raster.bands.length, width: raster.size[0], height: raster.size[1], cog: raster.metadata?.IMAGE_STRUCTURE?.LAYOUT === 'COG' };
+    if (encodedBands.length) {
+      result.encodedBands = encodedBands;
+      if (options.encoding) result.encodedGrid = { crs: crsId, transform: raster.geoTransform };
+    }
+    if (options.encoding) resolveEncodedBands(options.encoding, result.encodedBands);
     if (elevationCandidate) {
       const inferredHeightReference = /gravity-related height|orthometric|geoid|mean sea level|\bEGM(?:84|96|2008)?\b/i.test(wkt ?? '') ? 'orthometric' : /ellipsoidal height/i.test(wkt ?? '') ? 'ellipsoid' : undefined;
       const bandUnit = String(band.unit ?? '');
@@ -148,6 +167,7 @@ export async function inspect(input: string, options: Options, execution: RunOpt
     }
     return result;
   }
+  if (options.encoding) throw new JobError('INVALID_ENCODED_SOURCE', 'Encoded raster jobs require a georeferenced numeric COG.');
   if (options.pipeline === 'elevation') throw new JobError('UNSUPPORTED_ELEVATION', 'Elevation jobs require a single-band GeoTIFF.');
   if (options.pipeline === 'scientific') throw new JobError('UNSUPPORTED_SCIENTIFIC_RASTER', 'Scientific raster jobs require a single-band GeoTIFF.');
 

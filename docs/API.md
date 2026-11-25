@@ -64,6 +64,28 @@ Content-Type: application/json
 {"inspectionId":"<uuid>","options":{"minZoom":0,"maxZoom":14,"tileFormat":"webp"}}
 ```
 
+For numeric PNG tiles from a COG, use the following options. Band indices start at 1. Vector jobs accept earth-relative eastward and northward components in that order.
+
+```json
+{
+  "inspectionId": "<uuid>",
+  "preflightOnly": true,
+  "options": {
+    "pipeline": "scientific",
+    "scientificOutput": "encoded-tiles",
+    "preset": "wind-surface",
+    "bands": [3, 4],
+    "minZoom": 0,
+    "maxZoom": 5,
+    "exportPmtiles": true
+  }
+}
+```
+
+Preflight returns the resolved encoding, source band metadata and tile estimate. Omit `preflightOnly` to enqueue the job. For a local COG, upload it to `POST /api/inspect` and pass the returned `inspectionId` and the same `options` through the query on `POST /api/jobs`. Encoded jobs use the embedded EPSG:4326 or EPSG:3857 CRS. Without `maxZoom`, TileO uses the native zoom estimate when available.
+
+Completed jobs serve numeric RGBA PNG on `/api/jobs/{id}/tiles/{z}/{x}/{y}`. Query `/api/jobs/{id}/tilejson` for profile, parameter units, ranges and byte order in `raster_layers`. Alpha 0 marks NoData and alpha 255 marks valid samples. The default download is MBTiles. Use `?file=pmtiles` when the job requested PMTiles. The console uses TileJSON to color scalar values or vector magnitude. Open the job preview and point to a location or tap the map to read the value with its unit. NoData stays transparent.
+
 `auto` defaults to conditional staging. Direct URL range reading is offered only when the URL pins an S3 `versionId`; otherwise mixed-version reads cannot be ruled out. Staging uses `If-Match` with the inspected ETag and fails if the object changed. Its effective size limit is the smaller of `TILEO_MAX_REMOTE_STAGE_MB` and `TILEO_MAX_SCRATCH_MB`; free-disk preflight reserves the input size before transfer. Output and the configured disk reserve still need additional space.
 
 Public internet URLs must use HTTPS and cannot resolve to local/private addresses. For an intentional private MinIO or development HTTP endpoint, the administrator must add its exact hostname to `TILEO_REMOTE_URL_HOSTS` on both API and worker.

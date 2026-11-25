@@ -1,3 +1,5 @@
+import { encodedTilePlan } from './encoded-raster.js';
+import { resolveEncodedBands } from './encoded-options.js';
 import Fastify from 'fastify';
 import rateLimit from '@fastify/rate-limit';
 import Database from 'better-sqlite3';
@@ -455,7 +457,7 @@ export async function createApp(jobs = new Jobs()) {
   });
   app.post('/api/jobs/from-source', async (req, reply) => {
     if (config.production) throw new JobError('PRODUCTION_READ_ONLY', 'Creating tile jobs is disabled on the hosted production instance.');
-    const body = req.body as { inspectionId?: unknown; options?: unknown } | null;
+    const body = req.body as { inspectionId?: unknown; options?: unknown; preflightOnly?: unknown } | null;
     const inspectionId = String(body?.inspectionId ?? ''), pending = pendingStorageInspections.get(inspectionId);
     if (!pending || pending.expires <= Date.now()) throw new JobError('INSPECTION_EXPIRED', 'Storage inspection expired. Inspect the object again.');
     // Credential-bound inspections can only be spent by the session that
@@ -466,8 +468,21 @@ export async function createApp(jobs = new Jobs()) {
     }
     let options;
     try { options = parseOptions(body?.options ?? {}); } catch (error) { if (error instanceof JobError) throw error; throw new JobError('INVALID_OPTIONS', 'Options must be valid.'); }
+    if (body?.preflightOnly !== undefined && typeof body.preflightOnly !== 'boolean') throw new JobError('INVALID_OPTIONS', 'preflightOnly must be boolean.');
+    if (options.encoding) {
+      const bands = resolveEncodedBands(options.encoding, pending.info.encodedBands);
+      if ((body?.options as Record<string, unknown>)?.maxZoom === undefined && pending.info.nativeZoom !== undefined) {
+        options.maxZoom = Math.max(options.minZoom, pending.info.nativeZoom);
+      }
+      const plan = encodedTilePlan(pending.info, options);
+      if (body?.preflightOnly) return { options, bands, bounds: plan.bounds, nativeZoom: pending.info.nativeZoom, estimatedTiles: plan.count };
+    }
+    if (body?.preflightOnly) throw new JobError('INVALID_OPTIONS', 'preflightOnly is available for encoded tile requests.');
+    if (pending.info.encodedBands?.length && !pending.info.elevationCandidate && pending.info.bands !== 1 && !options.pipeline) {
+      throw new JobError('UNSUPPORTED_RASTER', 'Use an encoded tile preflight to validate selected bands from a multiband numeric COG.');
+    }
     if (options.pipeline === 'elevation' && !pending.info.elevationCandidate) throw new JobError('UNSUPPORTED_ELEVATION', 'Elevation requires a single-band numeric COG.');
-    if (options.pipeline === 'scientific' && !pending.info.elevationCandidate) throw new JobError('UNSUPPORTED_SCIENTIFIC_RASTER', 'Scientific raster requires a single-band numeric COG.');
+    if (options.pipeline === 'scientific' && !options.encoding && !pending.info.elevationCandidate) throw new JobError('UNSUPPORTED_SCIENTIFIC_RASTER', 'Scientific raster requires a single-band numeric COG.');
     if (pending.info.elevationCandidate && !options.rasterPurpose) throw new JobError('RASTER_PURPOSE_REQUIRED', 'Choose imagery, elevation, or scientific raster.');
     if (options.pipeline !== 'elevation' && options.pipeline !== 'scientific' && pending.info.elevationCandidate && pending.info.dataType !== 'Byte') throw new JobError('NUMERIC_RASTER_PURPOSE_REQUIRED', 'Choose Scientific raster to preserve numeric values, or Elevation only when values represent heights.');
     const id = randomUUID();
@@ -534,7 +549,19 @@ export async function createApp(jobs = new Jobs()) {
       if (!pending || pending.expires <= Date.now()) throw new JobError('INSPECTION_EXPIRED', 'File inspection expired. Select the file again to inspect it.');
       if (req.query.filename && req.query.filename !== pending.filename) throw new JobError('INVALID_INPUT', 'The inspected filename does not match.');
       let options;
-      try { options = parseOptions(JSON.parse(req.query.options ?? '{}')); } catch (e) { if (e instanceof JobError) throw e; throw new JobError('INVALID_OPTIONS', 'Options must be valid JSON.'); }
+      let requestedOptions: Record<string, unknown>;
+      try { requestedOptions = JSON.parse(req.query.options ?? '{}'); options = parseOptions(requestedOptions); } catch (e) { if (e instanceof JobError) throw e; throw new JobError('INVALID_OPTIONS', 'Options must be valid JSON.'); }
+      if (options.encoding) {
+        if (pending.info.kind !== 'raster') throw new JobError('INVALID_ENCODED_SOURCE', 'Select a numeric COG.');
+        resolveEncodedBands(options.encoding, pending.info.encodedBands);
+        if (requestedOptions.maxZoom === undefined && pending.info.nativeZoom !== undefined) {
+          options.maxZoom = Math.max(options.minZoom, pending.info.nativeZoom);
+        }
+        encodedTilePlan(pending.info, options);
+      }
+      if (pending.info.kind === 'raster' && pending.info.encodedBands?.length && pending.info.bands !== 1 && !options.pipeline) {
+        throw new JobError('UNSUPPORTED_RASTER', 'Multiband numeric COGs require the encoded raster workflow.');
+      }
       if (pending.info.kind === 'model3d') {
         if (options.pipeline) throw new JobError('INVALID_OPTIONS', 'A 3D Tiles archive cannot use an elevation or scientific raster pipeline.');
         options = { ...parseOptions({}), model3dArchive: true as const };
@@ -543,7 +570,7 @@ export async function createApp(jobs = new Jobs()) {
       // A single GeoJSON layer can be named after the staging file; auto-select it after the upload is renamed.
       if (pending.info.kind === 'vector' && pending.info.layers?.length === 1 && options.layer === pending.info.layer) options.layer = null;
       if (options.pipeline === 'elevation' && !elevationCandidate) throw new JobError('UNSUPPORTED_ELEVATION', 'Elevation requires a single-band numeric GeoTIFF.');
-      if (options.pipeline === 'scientific' && !elevationCandidate) throw new JobError('UNSUPPORTED_SCIENTIFIC_RASTER', 'Scientific raster requires a single-band numeric GeoTIFF.');
+      if (options.pipeline === 'scientific' && !options.encoding && !elevationCandidate) throw new JobError('UNSUPPORTED_SCIENTIFIC_RASTER', 'Scientific raster requires a single-band numeric GeoTIFF.');
       if (elevationCandidate && !options.rasterPurpose) throw new JobError('RASTER_PURPOSE_REQUIRED', 'Choose whether this single-band numeric raster is imagery, elevation, or a scientific raster.');
       if (options.pipeline !== 'elevation' && options.pipeline !== 'scientific' && pending.info.kind !== 'model3d' && elevationCandidate && pending.info.dataType !== 'Byte') throw new JobError('NUMERIC_RASTER_PURPOSE_REQUIRED', 'Choose Scientific raster to preserve numeric values, or Elevation only when values represent heights.');
       const id = randomUUID(), input = `${id}${extname(pending.filename).toLowerCase()}`, final = join(config.data, 'input', input);
@@ -564,6 +591,7 @@ export async function createApp(jobs = new Jobs()) {
     if (!(req.body instanceof Readable)) throw new JobError('INVALID_INPUT', 'Send the file as application/octet-stream.');
     let options;
     try { options = parseOptions(JSON.parse(req.query.options ?? '{}'), extension === '.glb'); } catch (e) { if (e instanceof JobError) throw e; throw new JobError('INVALID_OPTIONS', 'Options must be valid JSON.'); }
+    if (options.encoding) throw new JobError('INVALID_OPTIONS', 'Inspect the COG first and provide its inspectionId to create an encoded raster job.');
     const length = Number(req.headers['content-length'] ?? 0);
     if (length > config.uploadBytes) throw new JobError('UPLOAD_LIMIT', 'The file exceeds the upload limit.');
     uploads++;
@@ -731,6 +759,11 @@ export async function createApp(jobs = new Jobs()) {
       const file = selected === 'cog' ? join(path, 'elevation.tif') : join(path, 'terrain.mbtiles');
       return reply.type(selected === 'cog' ? 'image/tiff' : 'application/octet-stream').header('Content-Disposition', disposition(`${sourceBase}-${name}`)).header('Content-Length', (await stat(file)).size).send(createReadStream(file));
     }
+    if (job.options.encoding) {
+      if (req.query.file) throw new JobError('NOT_FOUND', 'Encoded raster download format not found.');
+      const file = join(path, 'tiles.mbtiles');
+      return reply.type('application/octet-stream').header('Content-Disposition', disposition(`${sourceBase}-encoded.mbtiles`)).header('Content-Length', (await stat(file)).size).send(createReadStream(file));
+    }
     if (job.options.pipeline === 'scientific') {
       const file = join(path, 'scientific.tif');
       return reply.type('image/tiff').header('Content-Disposition', disposition(`${sourceBase}-scientific.tif`)).header('Content-Length', (await stat(file)).size).send(createReadStream(file));
@@ -807,12 +840,17 @@ export async function createApp(jobs = new Jobs()) {
   });
   app.get<{ Params: { id: string } }>('/api/jobs/:id/cog', async (req, reply) => {
     const { job, path } = artifact(req.params.id);
-    if (job.options.pipeline !== 'elevation' && job.options.pipeline !== 'scientific') throw new JobError('NOT_FOUND', 'This job has no COG.');
+    if (job.options.encoding || (job.options.pipeline !== 'elevation' && job.options.pipeline !== 'scientific')) throw new JobError('NOT_FOUND', 'This job has no COG.');
     return sendFileRange(reply, join(path, job.options.pipeline === 'scientific' ? 'scientific.tif' : 'elevation.tif'), 'image/tiff', req.headers.range);
   });
   app.get<{ Params: { id: string } }>('/api/jobs/:id/tilejson', async req => {
     const { job } = artifact(req.params.id);
-    if (!['terrain-rgb', 'terrarium'].includes(job.options.elevationOutput!)) throw new JobError('NOT_FOUND', 'This job has no terrain tiles.');
+    if (job.options.encoding) {
+      return { tilejson: '3.0.0', name: job.filename, scheme: 'xyz', tileSize: 256, minzoom: job.options.minZoom, maxzoom: job.options.maxZoom,
+        bounds: job.metadata?.bounds, tiles: [`${config.origin || requestPublicOrigin(req)}/api/jobs/${job.id}/tiles/{z}/{x}/{y}`],
+        raster_layers: job.metadata?.raster_layers };
+    }
+    if (!['terrain-rgb', 'terrarium'].includes(job.options.elevationOutput!)) throw new JobError('NOT_FOUND', 'This job has no terrain or encoded tiles.');
     return { tilejson: '3.0.0', name: job.filename, scheme: 'xyz', encoding: job.options.elevationOutput === 'terrarium' ? 'terrarium' : 'mapbox', tileSize: 256, minzoom: job.options.minZoom, maxzoom: job.options.maxZoom, bounds: job.metadata?.bounds, tiles: [`${config.origin || `${req.protocol}://${req.headers.host}`}/api/jobs/${job.id}/tiles/{z}/{x}/{y}`], height_reference: job.options.heightReference, nodata_display_height: job.options.terrainNoDataHeight };
   });
   app.get<{ Params: { id: string; '*': string } }>('/api/jobs/:id/3d/*', async (req, reply) => {
@@ -859,7 +897,7 @@ export async function createApp(jobs = new Jobs()) {
       if (key === prefix || key.startsWith(prefix)) { try { tileDbCache.get(key)?.close(); } catch { /* ignore */ } tileDbCache.delete(key); }
     }
   };
-  const tileDbPath = (job: Job, outputPath: string) => job.options.pipeline === 'elevation' ? join(outputPath, 'terrain.mbtiles') : job.options.exportPmtiles ? join(outputPath, 'tiles.mbtiles') : outputPath;
+  const tileDbPath = (job: Job, outputPath: string) => job.options.pipeline === 'elevation' ? join(outputPath, 'terrain.mbtiles') : job.options.encoding || job.options.exportPmtiles ? join(outputPath, 'tiles.mbtiles') : outputPath;
   const tileMimeForFormat = (job: Job, format?: string) => {
     const effective = job.options.pipeline === 'elevation' || format === 'png' ? 'image/png' : format === 'pbf' ? 'application/vnd.mapbox-vector-tile' : format === 'webp' ? 'image/webp' : null;
     return effective ?? tileMime(job);
@@ -877,7 +915,7 @@ export async function createApp(jobs = new Jobs()) {
   const sendTile = async (id: string, coords: string[], reply: import('fastify').FastifyReply) => {
     const { path, job } = artifact(id);
     if (job.input.endsWith('.glb') || job.options.model3dArchive) throw new JobError('NOT_FOUND', 'This job contains 3D Tiles.');
-    if ((job.options.pipeline === 'elevation' && !['terrain-rgb', 'terrarium'].includes(job.options.elevationOutput!)) || job.options.pipeline === 'scientific') throw new JobError('NOT_FOUND', 'This COG job has no PNG tiles.');
+    if ((job.options.pipeline === 'elevation' && !['terrain-rgb', 'terrarium'].includes(job.options.elevationOutput!)) || (job.options.pipeline === 'scientific' && !job.options.encoding)) throw new JobError('NOT_FOUND', 'This COG job has no PNG tiles.');
     if (coords.some(s => !/^\d+$/.test(s))) throw new JobError('INVALID_INPUT', 'Invalid tile coordinates.');
     const [z, x, y] = coords.map(Number) as [number, number, number];
     if (!Number.isSafeInteger(z) || !Number.isSafeInteger(x) || !Number.isSafeInteger(y) || z > 22 || x >= 2 ** z || y >= 2 ** z) throw new JobError('INVALID_INPUT', 'Invalid tile coordinates.');
@@ -1161,6 +1199,10 @@ export async function createApp(jobs = new Jobs()) {
     '/docs-playground.js': [join(root, 'web/docs-playground.js'), 'text/javascript; charset=utf-8'],
     '/app.js': [join(root, 'dist/web/app.js'), 'text/javascript'],
     '/icons.js': [join(root, 'dist/web/icons.js'), 'text/javascript'],
+    '/encoded-form.js': [join(root, 'dist/web/encoded-form.js'), 'text/javascript'],
+    '/encoded-presets.js': [join(root, 'dist/encoded-presets.js'), 'text/javascript'],
+    '/encoded-preview.js': [join(root, 'dist/web/encoded-preview.js'), 'text/javascript'],
+    '/encoded-pixel.js': [join(root, 'dist/encoded-pixel.js'), 'text/javascript'],
     '/cog.js': [join(root, 'dist/web/cog.js'), 'text/javascript'],
     '/model3d.js': [join(root, 'dist/web/model3d.js'), 'text/javascript'],
     // Pure ESM helper (no DOM/bundler deps); ../benchmark.js from /app.js resolves here.

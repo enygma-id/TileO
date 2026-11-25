@@ -131,7 +131,16 @@
               <span class="selected-file-details"><strong id="file-name"></strong><small id="file-size"></small></span>
               <button id="clear-file" class="clear-file" type="button" aria-label="Remove selected file"><svg class="icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg></button>
             </div>
-            <div id="raster-purpose-group" hidden><label for="raster-purpose">Raster purpose</label><select id="raster-purpose" disabled><option value="">Choose purpose…</option><option value="imagery">Imagery / grayscale</option><option value="elevation">Elevation (DEM / DSM / DTM)</option><option value="scientific">Scientific numeric raster</option></select><p class="hint">Single-band numeric data can be imagery, elevation, or measurements such as temperature and NDVI. Confirm its purpose before conversion.</p></div>
+            <div id="raster-purpose-group" hidden><label for="raster-purpose">Raster purpose</label><select id="raster-purpose" disabled><option value="">Choose purpose…</option><option value="imagery">Imagery / grayscale</option><option value="elevation">Elevation (DEM / DSM / DTM)</option><option value="scientific">Scientific numeric raster</option><option value="encoded" hidden disabled>RG-Encoded / R-Encoded tiles</option></select><p class="hint">Choose the output for this numeric raster.</p></div>
+            <div id="encoded-options-group" class="dataset-options-group" hidden>
+              <label for="encoded-preset">Encoding preset</label>
+              <select id="encoded-preset" disabled></select>
+              <p class="hint" id="encoded-preset-note"></p>
+              <div class="row">
+                <div><label for="encoded-band" id="encoded-band-label">Source band</label><select id="encoded-band" disabled></select></div>
+                <div id="encoded-band-v-group" hidden><label for="encoded-band-v">V band (northward)</label><select id="encoded-band-v" disabled></select></div>
+              </div>
+            </div>
             <div id="elevation-options-group" class="dataset-options-group" hidden>
               <div class="group-header"><strong>Elevation options</strong><span class="group-badge">DSM / DTM</span></div>
               <div class="row"><div><label for="elevation-output">Output</label><select id="elevation-output"><option value="cog">COG — preserve elevation</option><option value="terrain-rgb">COG + Terrain-RGB MBTiles</option><option value="terrarium">COG + Terrarium MBTiles</option></select></div><div><label for="elevation-kind">Surface type</label><select id="elevation-kind"><option value="dem">DEM / unspecified</option><option value="dtm">DTM — bare ground</option><option value="dsm">DSM — surface, roofs and trees</option></select></div></div>
