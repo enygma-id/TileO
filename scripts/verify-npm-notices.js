@@ -13,6 +13,7 @@
  * Usage:
  *   node scripts/verify-npm-notices.js                 # offline check
  *   node scripts/verify-npm-notices.js --update        # fetch + rewrite
+ *   node scripts/verify-npm-notices.js --update --changed # reuse matching stored evidence
  *   node scripts/verify-npm-notices.js --update --filter deck.gl
  */
 import crypto from 'node:crypto';
@@ -40,6 +41,8 @@ const VERIFIER = 'scripts/verify-npm-notices.js@1';
 const update = args.includes('--update');
 const filterIndex = args.indexOf('--filter');
 const filter = filterIndex >= 0 ? args[filterIndex + 1] : null;
+const changedOnly = args.includes('--changed');
+if (changedOnly && (!update || filter)) throw new Error('--changed requires --update and cannot be combined with --filter');
 const concurrencyIndex = args.indexOf('--concurrency');
 const requestedConcurrency = concurrencyIndex >= 0 ? Number(args[concurrencyIndex + 1]) : 8;
 const concurrency = Number.isFinite(requestedConcurrency) && requestedConcurrency > 0 ? requestedConcurrency : 8;
@@ -256,9 +259,20 @@ async function main() {
       resolved: meta.resolved,
     };
 
+    const priorRecord = previous.get(lockPath);
+    const prior = priorRecord?.upstream_verification;
+    const samePackage = priorRecord && Object.entries(base).every(([key, value]) => priorRecord[key] === value);
+    if (changedOnly && samePackage && prior?.tarball_sha256 &&
+      ['verified_upstream_tarball', 'metadata_only_no_license_file'].includes(prior.status)) {
+      const stored = readCorpus(dir);
+      const actual = new Set(stored.map((file) => `${file.stored}:${file.sha256}`));
+      if (stored.length > 0 && prior.files?.length === stored.length &&
+        prior.files.every((file) => actual.has(`${file.stored}:${file.sha256}`))) {
+        return { ...base, ...prior, note: undefined, problems: [], reused: true };
+      }
+    }
     if (!update) {
       const stored = readCorpus(dir);
-      const prior = previous.get(lockPath)?.upstream_verification;
       const problems = [];
       if (!prior) problems.push('manifest entry has no upstream_verification record');
       if (stored.length === 0) problems.push('no stored notice files');
@@ -350,7 +364,7 @@ async function main() {
       record.notice_sha256 = result.files[0]?.sha256 ?? null;
       record.notice_source = result.files[0]?.upstream ?? null;
     }
-    manifest.packages.push(record);
+    manifest.packages.push(result.reused ? prior : record);
     rows.push({
       package: result.name,
       version: result.version,
@@ -411,16 +425,22 @@ async function main() {
     allRows.sort((a, b) => a.package.localeCompare(b.package));
   }
   const csv = [header.join(','), ...allRows.map((row) => header.map((key) => csvEscape(row[key])).join(','))].join('\n');
-  fs.writeFileSync(CSV_FILE, `${csv}\n`);
+  if (update) fs.writeFileSync(CSV_FILE, `${csv}\n`);
 
   console.log(`${update ? 'Updated' : 'Checked'} ${results.length} packages: ${verified} verified, ${metadataOnly} metadata-only, ${failed} failed.`);
+  if (changedOnly) console.log(`Reused ${results.filter((item) => item.reused).length} matching evidence records.`);
   if (!update && checkedProblems.length > 0) {
     for (const item of checkedProblems.slice(0, 25)) {
       console.error(`FAIL ${item.package_path}: ${item.problems.join('; ')}`);
     }
     process.exitCode = 1;
   }
-  if (failed > 0) process.exitCode = 1;
+  if (failed > 0) {
+    for (const item of checkedProblems.slice(0, 25)) {
+      console.error(`FAIL ${item.package_path}: ${item.problems.join('; ')}`);
+    }
+    process.exitCode = 1;
+  }
 }
 
 await main();
