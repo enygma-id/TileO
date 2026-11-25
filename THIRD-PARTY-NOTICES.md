@@ -4,7 +4,7 @@ This document is generated from committed, exact-version license evidence. It is
 
 > **Certification boundary:** this notice document records evidence, not a blanket permissive-only certification of an image. A release claim additionally requires a final-image SBOM, an `ldd`/`readelf` closure audit and human approval of the documented exceptions listed below.
 
-Generated from committed license evidence · Lockfile SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
+Generated from committed license evidence · Lockfile SHA-256: `d3eb8589abd8506eb583925a3598fc8e11f2430e17565f26258c7fa6ccf9f014`
 
 ## Verification summary
 
@@ -9034,11 +9034,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ````
 
-#### proj4 (2.22.0)
+#### proj4 (2.23.0)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `7192ce47111f28ae8c47a39b583ea419202fbc216fe6303117cb1567b42e52d7`
-- **Notice**: [`third-party/licenses/npm/proj4/2.22.0/LICENSE.txt`](third-party/licenses/npm/proj4/2.22.0/LICENSE.txt) · SHA-256 `d514fd8b286fc00a5c97a29f8a99b73f1a4053bbdd00c400aee5f24a1b6b301e`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `dd8989d5adf35669773f16c5f696354553bbefe032e2b22f787f211e297ca4b4`
+- **Notice**: [`third-party/licenses/npm/proj4/2.23.0/LICENSE.txt`](third-party/licenses/npm/proj4/2.23.0/LICENSE.txt) · SHA-256 `d514fd8b286fc00a5c97a29f8a99b73f1a4053bbdd00c400aee5f24a1b6b301e`
 
 ````text
 ## Proj4js -- Javascript reprojection library. 
@@ -10314,11 +10314,11 @@ Apache License
    limitations under the License.
 ````
 
-#### wkt-parser (1.5.6)
+#### wkt-parser (1.9.0)
 - **Declared License**: `MIT`
 - **Scope**: `runtime`
-- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `e7fbc6e1f560857fe74d1e081abe880ab50b2018e46206872ea5819d5a353837`
-- **Notice**: [`third-party/licenses/npm/wkt-parser/1.5.6/LICENSE.txt`](third-party/licenses/npm/wkt-parser/1.5.6/LICENSE.txt) · SHA-256 `d514fd8b286fc00a5c97a29f8a99b73f1a4053bbdd00c400aee5f24a1b6b301e`
+- **Verification**: `VERIFIED_UPSTREAM` · tarball SHA-256 `f85333f876041141966d92c0648ac887fcf334f95ad84e9aa3d35ad745832c52`
+- **Notice**: [`third-party/licenses/npm/wkt-parser/1.9.0/LICENSE.txt`](third-party/licenses/npm/wkt-parser/1.9.0/LICENSE.txt) · SHA-256 `d514fd8b286fc00a5c97a29f8a99b73f1a4053bbdd00c400aee5f24a1b6b301e`
 
 ````text
 ## Proj4js -- Javascript reprojection library. 

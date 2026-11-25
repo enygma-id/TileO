@@ -2,7 +2,7 @@
   "project": "TileO",
   "source": "TileO committed repository inventory",
   "reference_lockfile": "package-lock.json",
-  "reference_lockfile_sha256": "cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63",
+  "reference_lockfile_sha256": "d3eb8589abd8506eb583925a3598fc8e11f2430e17565f26258c7fa6ccf9f014",
   "package_count": 281,
   "notice_source": "THIRD-PARTY-NOTICES.md",
   "meaning": "Full declared npm inventory with upstream notice evidence. metadata_only_no_license_file entries are explicitly identified and are not represented as verified upstream license files.",
@@ -7928,24 +7928,24 @@
     {
       "package_path": "node_modules/proj4",
       "name": "proj4",
-      "version": "2.22.0",
+      "version": "2.23.0",
       "declared_license": "MIT",
       "notice_license": "MIT",
       "notice_source": "package/LICENSE.md",
       "notice_sha256": "d514fd8b286fc00a5c97a29f8a99b73f1a4053bbdd00c400aee5f24a1b6b301e",
-      "notice_file": "third-party/licenses/npm/proj4/2.22.0/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/proj4/2.23.0/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-MVvH09QrYm3A235rcX39WDiCKanrBiblu28l0KYIn/B2DofmYhvP/LLS43kE66jNDfx/P1l/nah3JmsAq8UgbQ==",
-      "resolved": "https://registry.npmjs.org/proj4/-/proj4-2.22.0.tgz",
+      "integrity": "sha512-vb1Z/dOztEyXg5JC2LgKc2ye+md4qUdwH/RLS0EUUMKzoIsAC2PT1IGKPIDv9qg51p7uONn93qTh9gtfh+GmOQ==",
+      "resolved": "https://registry.npmjs.org/proj4/-/proj4-2.23.0.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-11",
-        "tarball_sha256": "7192ce47111f28ae8c47a39b583ea419202fbc216fe6303117cb1567b42e52d7",
+        "verified_at": "2026-11-25",
+        "tarball_sha256": "dd8989d5adf35669773f16c5f696354553bbefe032e2b22f787f211e297ca4b4",
         "package_json_license": "MIT",
         "files": [
           {
@@ -7955,7 +7955,7 @@
             "bytes": 1454
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -9153,24 +9153,24 @@
     {
       "package_path": "node_modules/wkt-parser",
       "name": "wkt-parser",
-      "version": "1.5.6",
+      "version": "1.9.0",
       "declared_license": "MIT",
       "notice_license": "MIT",
       "notice_source": "package/LICENSE.md",
       "notice_sha256": "d514fd8b286fc00a5c97a29f8a99b73f1a4053bbdd00c400aee5f24a1b6b301e",
-      "notice_file": "third-party/licenses/npm/wkt-parser/1.5.6/LICENSE.txt",
+      "notice_file": "third-party/licenses/npm/wkt-parser/1.9.0/LICENSE.txt",
       "dev": false,
       "optional": false,
-      "integrity": "sha512-cqHU3lzGt/gt2OqIORP0uVy5yeOX43WABmgFkmJsmcqH3HhQo9PiJG6ftytwGKmpQUbegeX7+pQc2BuNCRfcrw==",
-      "resolved": "https://registry.npmjs.org/wkt-parser/-/wkt-parser-1.5.6.tgz",
+      "integrity": "sha512-0muBykCBpbUgMPqmH+2rlvFlFwwH1kdgIMa0YbaQ/JZAlyWCv8Fa4HFSbEvZs2gYRaqJP/0D8xSI1G7Z4tn0vw==",
+      "resolved": "https://registry.npmjs.org/wkt-parser/-/wkt-parser-1.9.0.tgz",
       "evidence": "Notice text collected in the TileO third-party license archive; completeness of the version-specific upstream LICENSE/NOTICE and copyright notices remains subject to independent release-time verification",
       "verification_status": "named_license_notice_collected_unverified",
       "scope": "runtime",
       "upstream_verification": {
         "status": "verified_upstream_tarball",
         "verifier": "scripts/verify-npm-notices.js@1",
-        "verified_at": "2026-11-11",
-        "tarball_sha256": "e7fbc6e1f560857fe74d1e081abe880ab50b2018e46206872ea5819d5a353837",
+        "verified_at": "2026-11-25",
+        "tarball_sha256": "f85333f876041141966d92c0648ac887fcf334f95ad84e9aa3d35ad745832c52",
         "package_json_license": "MIT",
         "files": [
           {
@@ -9180,7 +9180,7 @@
             "bytes": 1454
           }
         ],
-        "note": "corpus matches upstream tarball"
+        "note": "corpus updated (1 mismatch)"
       }
     },
     {
@@ -9384,7 +9384,7 @@
   ],
   "npm_verification": {
     "verifier": "scripts/verify-npm-notices.js@1",
-    "verified_at": "2026-11-11",
+    "verified_at": "2026-11-25",
     "method": "Exact tarball from package-lock resolved URL; sha512 integrity checked; LICENSE/COPYING/NOTICE extracted and hashed.",
     "package_count": 281,
     "verified_upstream_tarball": 245,
