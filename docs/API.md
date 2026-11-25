@@ -64,6 +64,28 @@ Content-Type: application/json
 {"inspectionId":"<uuid>","options":{"minZoom":0,"maxZoom":14,"tileFormat":"webp"}}
 ```
 
+For numeric PNG tiles from a COG, use the following options. Band indices start at 1. Vector jobs accept earth-relative eastward and northward components in that order.
+
+```json
+{
+  "inspectionId": "<uuid>",
+  "preflightOnly": true,
+  "options": {
+    "pipeline": "scientific",
+    "scientificOutput": "encoded-tiles",
+    "preset": "wind-surface",
+    "bands": [3, 4],
+    "minZoom": 0,
+    "maxZoom": 5,
+    "exportPmtiles": true
+  }
+}
+```
+
+Preflight returns the resolved encoding, source band metadata and tile estimate. Omit `preflightOnly` to enqueue the job. For a local COG, upload it to `POST /api/inspect` and pass the returned `inspectionId` and the same `options` through the query on `POST /api/jobs`. Encoded jobs use the embedded EPSG:4326 or EPSG:3857 CRS. Without `maxZoom`, TileO uses the native zoom estimate when available.
+
+Completed jobs serve numeric RGBA PNG on `/api/jobs/{id}/tiles/{z}/{x}/{y}`. Query `/api/jobs/{id}/tilejson` for profile, parameter units, ranges and byte order in `raster_layers`. Alpha 0 marks NoData and alpha 255 marks valid samples. The default download is MBTiles. Use `?file=pmtiles` when the job requested PMTiles. The console uses TileJSON to color scalar values or vector magnitude. Open the job preview and point to a location or tap the map to read the value with its unit. NoData stays transparent.
+
 `auto` defaults to conditional staging. Direct URL range reading is offered only when the URL pins an S3 `versionId`; otherwise mixed-version reads cannot be ruled out. Staging uses `If-Match` with the inspected ETag and fails if the object changed. Its effective size limit is the smaller of `TILEO_MAX_REMOTE_STAGE_MB` and `TILEO_MAX_SCRATCH_MB`; free-disk preflight reserves the input size before transfer. Output and the configured disk reserve still need additional space.
 
 Public internet URLs must use HTTPS and cannot resolve to local/private addresses. For an intentional private MinIO or development HTTP endpoint, the administrator must add its exact hostname to `TILEO_REMOTE_URL_HOSTS` on both API and worker.
@@ -127,9 +149,11 @@ curl -X POST \
   'http://localhost:8090/api/jobs?filename=source.tif&options=%7B%22minZoom%22%3A0%2C%22maxZoom%22%3A18%2C%22tileFormat%22%3A%22webp%22%2C%22quality%22%3A80%7D'
 ```
 
-Supported input extensions include GeoTIFF, GeoJSON, GeoPackage, FlatGeobuf, zipped Shapefile, common raster formats, MBTiles, PMTiles, and GLB. Conversion inputs use `POST /api/jobs`; already tiled MBTiles preview uses the Quick Open endpoint below.
+Supported input extensions include GeoTIFF, GeoJSON, GeoPackage, FlatGeobuf, zipped Shapefile, common raster formats, MBTiles, PMTiles, GLB, and ZIP-packaged 3D Tiles. Conversion inputs use `POST /api/jobs`; already tiled MBTiles preview uses the Quick Open endpoint below.
 
 For a self-contained GLB 2.0 file, pass `filename=model.glb` and JSON options with `latitude` (-90 to 90), `longitude` (-180 to 180), `height` (WGS84 ellipsoid meters), and optional `heading` (degrees clockwise from north, default 0; model forward is local +Y). The web form reads placement from metadata that explicitly declares WGS84/EPSG:4979; missing placement must be entered manually. This creates a 3D Tiles 1.1 package. Small models use one GLB; larger models automatically use a simplified root LOD and spatial child GLBs. Set `exportB3dm=true`, or choose B3DM in the advanced 3D form, to add the compatibility output. `GET /api/jobs/{id}/download` returns the modern ZIP containing `tileset.json` and its `tiles/*.glb` content. Use `?file=b3dm` to download the separate 3D Tiles 1.0 ZIP whose hierarchy and LOD are identical but whose tile content is wrapped as B3DM. The main MapLibre map previews the 1.1 package through deck.gl. Preview files are served below `/api/jobs/{id}/3d/` after the job succeeds.
+
+For an existing 3D Tiles package, upload a ZIP with one root `tileset.json` and its relative GLB, B3DM, or nested tileset files. Use either a direct `POST /api/jobs` upload or `POST /api/inspect` followed by job creation with the returned `inspectionId`. The importer supports legacy asset.version 0.0 and 3D Tiles 1.0 and 1.1 with explicit tile hierarchies, one content file per tile, and embedded GLB resources. Open the manifest at `GET /api/jobs/{id}/3d/tileset.json` and resolve its content paths relative to that URL. The default download returns the original ZIP bytes. The preview can open over a detailed tile region when the manifest declares one. It interprets clearly identifiable absolute Earth-fixed child transforms relative to the parent for rendering. This adjustment applies to the preview. The API serves the source manifest.
 
 Options:
 

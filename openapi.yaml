@@ -223,7 +223,7 @@ paths:
   /api/jobs/from-source:
     post:
       tags: [Storage inputs, Conversion jobs]
-      summary: Enqueue a job from a storage inspection
+      summary: Enqueue a job from a storage inspection or preflight encoded raster options
       requestBody:
         required: true
         content:
@@ -233,8 +233,13 @@ paths:
               required: [inspectionId]
               properties:
                 inspectionId: { type: string, format: uuid }
-                options: { type: object, additionalProperties: true }
+                options:
+                  type: object
+                  additionalProperties: true
+                  description: For encoded PNG tiles, set pipeline to scientific and scientificOutput to encoded-tiles. Pass one-based bands and a preset or a custom profile, unscale range, unit and parameters.
+                preflightOnly: { type: boolean, description: Resolve and validate encoded options without consuming the inspection. }
       responses:
+        '200': { description: Resolved encoded options, selected band metadata and estimated tile count }
         '202':
           description: Job accepted
           content:
@@ -262,7 +267,7 @@ paths:
         - in: query
           name: inspectionId
           required: false
-          description: Use the temporary upload returned by POST /api/inspect instead of sending the file again.
+          description: Use the temporary upload returned by POST /api/inspect instead of sending the file again. A ZIP with one root tileset.json and relative GLB, B3DM, or nested tileset content can also be uploaded directly.
           schema: { type: string, format: uuid }
         - in: query
           name: options
@@ -420,8 +425,8 @@ paths:
   /api/jobs/{id}/tilejson:
     get:
       tags: [Map tiles and services]
-      summary: Get Terrain-RGB or Terrarium XYZ TileJSON
-      description: Only jobs with Terrain-RGB or Terrarium output expose TileJSON; other pipelines return 404.
+      summary: Get terrain or encoded raster XYZ TileJSON
+      description: Encoded raster jobs include raster_layers with profiles, units, ranges and byte roles.
       parameters: [{ $ref: '#/components/parameters/JobId' }]
       responses:
         '200': { description: Terrain bounds, zooms, encoding and tile URLs, content: { application/json: { schema: { type: object } } } }
@@ -478,15 +483,16 @@ paths:
   /api/jobs/{id}/3d/tileset.json:
     get:
       tags: [Map tiles and services]
-      summary: Read the tileset manifest from a completed GLB job
+      summary: Read the tileset manifest from a completed 3D job
+      description: Resolve relative content URIs against this endpoint. Imported archives can serve GLB and B3DM content from the relative paths listed in their manifest.
       parameters: [{ $ref: '#/components/parameters/JobId' }]
       responses:
-        '200': { description: 3D Tiles 1.1 tileset JSON }
+        '200': { description: 3D Tiles 0.0, 1.0 or 1.1 tileset JSON }
         '404': { $ref: '#/components/responses/Error' }
   /api/jobs/{id}/3d/tiles/{file}:
     get:
       tags: [Map tiles and services]
-      summary: Read GLB tile content from a completed GLB job
+      summary: Read a GLB tile from a generated 3D job
       parameters:
         - { $ref: '#/components/parameters/JobId' }
         - { in: path, name: file, required: true, schema: { type: string, pattern: '^[a-z0-9-]+\.glb$' } }

@@ -1,3 +1,4 @@
+import { buildEncodedRaster } from './encoded-raster.js';
 import { randomUUID } from 'node:crypto';
 import { mkdir, rename, rm, open, readdir, writeFile, readFile } from 'node:fs/promises';
 import { join, extname } from 'node:path';
@@ -13,6 +14,7 @@ import { run } from './process.js';
 import { validatePublication } from './output-validation.js';
 import { exportPmtiles } from './pmtiles.js';
 import { buildElevation, buildScientific } from './elevation.js';
+import { inspectTilesetArchive } from './tileset-archive.js';
 import { doctor } from './doctor.js';
 import { checkDisk, directoryBytes } from './resources.js';
 import { JobError, type Job } from './types.js';
@@ -36,8 +38,9 @@ async function execute(job: Job) {
   const model3d = job.input.endsWith('.glb');
   const elevation = job.options.pipeline === 'elevation';
   const scientific = job.options.pipeline === 'scientific';
-  const directoryOutput = model3d || elevation || scientific || !!job.options.exportPmtiles;
-  const outputName = model3d ? `${job.id}-${job.attempt}-3dtiles` : elevation ? `${job.id}-${job.attempt}-elevation` : scientific ? `${job.id}-${job.attempt}-scientific` : job.options.exportPmtiles ? `${job.id}-${job.attempt}-tiles` : `${job.id}-${job.attempt}.mbtiles`;
+  const archive3d = job.options.model3dArchive;
+  const directoryOutput = model3d || archive3d || elevation || scientific || !!job.options.exportPmtiles;
+  const outputName = model3d || archive3d ? `${job.id}-${job.attempt}-3dtiles` : elevation ? `${job.id}-${job.attempt}-elevation` : scientific ? `${job.id}-${job.attempt}-scientific` : job.options.exportPmtiles ? `${job.id}-${job.attempt}-tiles` : `${job.id}-${job.attempt}.mbtiles`;
   const final = join(config.data, 'output', outputName);
   const staged = join(scratch, directoryOutput ? 'result' : 'result.mbtiles');
   await mkdir(scratch, { recursive: true });
@@ -91,6 +94,17 @@ async function execute(job: Job) {
       if (extname(input).toLowerCase() === '.zip') input = `/vsizip/${input.replaceAll('\\', '/')}`;
     }
     const execution = { signal: abort.signal, log: join(config.data, 'logs', `${job.id}-${job.attempt}.log`), timeoutMs: config.timeout * 1000, deadlineMs: Date.now() + config.timeout * 1000, batchMode: config.vectorBatchMode, batchDelivery: config.vectorBatchDelivery, ...(sourceEnvironment ? { env: sourceEnvironment } : {}), ...(sourceRedactions ? { redactions: sourceRedactions } : {}) };
+    if (archive3d) {
+      jobs.update(job.id, 'Validating and importing the 3D Tiles ZIP', 10);
+      const result = await inspectTilesetArchive(join(config.data, 'input', job.input), abort.signal, staged);
+      if (!result) throw new JobError('INVALID_TILESET_ARCHIVE', 'The ZIP does not contain tileset.json.');
+      await check(); abort.signal.throwIfAborted();
+      await writeFile(execution.log, `Imported 3D Tiles ${result.version}: ${result.tiles} tiles, ${result.lodLevels} LOD levels, ${result.contentFiles} content files (${result.contentFormats.join(', ')}).\n`);
+      await rename(staged, final);
+      published = jobs.finish(job.id, job.attempt, owner, outputName, result);
+      if (!published) throw new JobError('CANCELLED', 'Publication cancelled because the job or worker ownership changed.');
+      return;
+    }
     if (elevation) {
       const result = await buildElevation(input, staged, job.options, execution, (stage, progress) => jobs.update(job.id, stage, progress));
       await check(); abort.signal.throwIfAborted();
@@ -104,12 +118,18 @@ async function execute(job: Job) {
       return;
     }
     if (scientific) {
-      const result = await buildScientific(input, staged, job.options, execution, (stage, progress) => jobs.update(job.id, stage, progress));
+      const report = (stage: string, progress: number) => jobs.update(job.id, stage, progress);
+      const result = job.options.encoding
+        ? await buildEncodedRaster(input, staged, scratch, job.options, execution, report)
+        : await buildScientific(input, staged, job.options, execution, report);
       await check(); abort.signal.throwIfAborted();
       if (job.source?.kind === 's3' && job.source.readMode === 'remote') await assertS3SourceUnchanged(job.source, abort.signal, sealedLoader);
       if (job.source?.kind === 'url' && job.source.readMode === 'remote') await assertUrlSourceUnchanged(job.source, abort.signal);
       jobs.update(job.id, 'Validating output before publication', 95);
-      const validation = await validatePublication(staged, 'scientific', scratch, execution);
+      if (job.options.encoding && job.options.exportPmtiles) {
+        await exportPmtiles(join(staged, 'tiles.mbtiles'), join(staged, 'tiles.pmtiles'), abort.signal);
+      }
+      const validation = await validatePublication(staged, job.options.encoding ? 'raster' : 'scientific', scratch, execution);
       await rename(staged, final);
       published = jobs.finish(job.id, job.attempt, owner, outputName, { ...result, validation });
       if (!published) throw new JobError('CANCELLED', 'Publication cancelled because the job or worker ownership changed.');

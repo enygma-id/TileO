@@ -8,6 +8,7 @@ This matrix describes input/output workflows in the current TileO application an
 | Numeric raster | Single-band numeric GeoTIFF | COG; if explicitly elevation, Terrain-RGB / Terrarium tile archives | DSM/DTM/DEM vs scientific raster must be explicitly selected; do not assume source vertical datum |
 | Vector | GeoJSON, GeoPackage, FlatGeobuf, zipped Shapefile | MVT-based MBTiles and optional PMTiles | Vector tile quantization/clipping can be lossy; preserve mode still has technical limits |
 | 3D | Self-contained GLB 2.0 | 3D Tiles 1.1 ZIP, optional B3DM package | Placement / transform / units required; not all glTF extensions are accepted |
+| 3D Tiles archive | ZIP with a legacy 0.0, 1.0 or 1.1 entry point and relative GLB, B3DM or tileset JSON content | Web preview and original ZIP download | Explicit hierarchy with one content file per tile and embedded GLB resources. Preview can adapt absolute Earth-fixed child transforms when the tile regions confirm the intended placement. |
 
 ## Coordinate reference systems
 
@@ -31,6 +32,18 @@ Tile archives are for map delivery, not a replacement for the authoritative sour
 The 3D processing workflow provides GLB placement options based on geographic location, orientation and scale, with both 3D Tiles 1.1 and B3DM-compatible packaging. A local GLB coordinate system is not geographic placement by itself. Do not claim support for all Draco, instancing, skins or morph-target inputs.
 
 Spatial tile delivery batches compatible opaque static triangles by material and attribute layout, baking node transforms into positions and normals. Full-detail leaves retain the original triangle geometry; their merged primitive `extras.tileoParts` records each source mesh node's name, node/mesh/primitive extras, and its `firstIndex`/`indexCount` range. Coarse LODs carry display geometry without these per-part records. For untextured position/normal triangle geometry, coarse LODs weld by position before simplification and rebuild flat face normals afterwards; full-detail leaf normals are retained. Source downloads retain the original GLB and its scene hierarchy. Transparent meshes, unsupported attributes/extensions, animations and multi-scene documents are excluded from batching. Preview uses throttled tile requests and an advisory GPU cache budget; this is not a hard cap on browser RAM.
+
+### Convert source models to GLB
+
+Build TileO and install Blender 4.5 or newer locally.
+
+```sh
+npm run build
+npm run model3d:convert -- model.gltf model.glb
+npm run model3d:convert -- equipment.obj equipment.glb --scale 0.001 --up-axis Z
+```
+
+The command also accepts FBX and STL. Keep any glTF buffers and textures, OBJ material files, and linked textures at their source-relative paths. Use `--blender /path/to/blender` when Blender is outside PATH. The command exports static geometry in glTF Y-up orientation with embedded textures. For OBJ and STL, `--up-axis Y|Z` selects the source orientation. Defaults are Y for OBJ and Z for STL. glTF and FBX import use format conventions or source metadata. The scale defaults to 1 and applies to the imported model in Blender units. For a source whose numeric coordinates are in millimeters and imported without unit scaling, use 0.001. The TileO GLB job still requires geographic placement.
 
 ## Validation
 

@@ -47,7 +47,7 @@ Its central promise is **interoperability without silently changing the meaning 
 | Imagery | Inspect georeferenced rasters; normalize imagery; apply explicit output choices | COG, raster tile archives, web preview |
 | Elevation | Inspect numeric GeoTIFF and distinguish DEM/DSM/DTM from non-elevation scientific rasters | COG, optional Terrain-RGB or Terrarium MBTiles/PMTiles |
 | Vector | Read supported vector sources; use GDAL-based normalization and vector tiling strategies | MBTiles / PMTiles containing vector tiles |
-| 3D | Inspect self-contained GLB; configure geographic placement and packaging | 3D Tiles 1.1 packages and B3DM compatibility packages |
+| 3D | Place a self-contained GLB or import a 3D Tiles 1.0/1.1 ZIP with GLB or B3DM content | 3D Tiles preview, original ZIP download for imports, and package export for GLB jobs |
 | Delivery | Job API, local queue, worker, download, source inspection and previews | Browser-based workflow and machine-readable API |
 
 **Format compatibility is conditional, not universal.** Some outputs require specific input types, external tools, explicit coordinates, or chosen conversion strategies. See [the compatibility and semantics matrix](docs/FORMATS_AND_SEMANTICS.md).

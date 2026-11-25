@@ -1,3 +1,5 @@
+import { parseEncoding, type EncodedOptions } from './encoded-options.js';
+
 export class JobError extends Error {
   constructor(public code: string, message: string) { super(message); }
 }
@@ -29,6 +31,9 @@ export interface Options {
   includeProperties: string[] | null; maxTileBytes: number | null; maxTileFeatures: number | null;
   latitude?: number; longitude?: number; height?: number; heading?: number; pitch?: number; roll?: number;
   anchor?: 'origin' | 'base' | 'center'; scale?: number; exportB3dm?: boolean;
+  model3dArchive?: true;
+  scientificOutput?: 'encoded-tiles';
+  encoding?: EncodedOptions;
 }
 export function parseOptions(input: unknown, model3d = false): Options {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw new JobError('INVALID_OPTIONS', 'Options must be an object.');
@@ -55,6 +60,16 @@ export function parseOptions(input: unknown, model3d = false): Options {
     return { ...common, pipeline: 'elevation', rasterPurpose: 'elevation', elevationOutput, elevationKind, elevationUnit, heightReference, terrainNoDataHeight: terrainNoDataHeight as number | undefined, tileFormat: 'png' };
   }
   if (!model3d && value.pipeline === 'scientific') {
+    if (value.scientificOutput === 'encoded-tiles') {
+      const allowed = ['pipeline', 'rasterPurpose', 'scientificOutput', 'profile', 'preset', 'bands', 'unscale', 'unit', 'parameters', 'minZoom', 'maxZoom', 'exportPmtiles'];
+      for (const key of Object.keys(value)) if (!allowed.includes(key)) throw new JobError('INVALID_OPTIONS', `Unknown encoded raster option: ${key}`);
+      if (value.rasterPurpose !== undefined && value.rasterPurpose !== 'scientific') throw new JobError('INVALID_OPTIONS', 'Encoded jobs require rasterPurpose=scientific.');
+      for (const key of ['minZoom', 'maxZoom']) {
+        if (value[key] !== undefined && !Number.isInteger(value[key])) throw new JobError('INVALID_OPTIONS', `${key} must be an integer.`);
+      }
+      const common = parseOptions({ minZoom: value.minZoom, maxZoom: value.maxZoom, exportPmtiles: value.exportPmtiles });
+      return { ...common, pipeline: 'scientific', rasterPurpose: 'scientific', scientificOutput: 'encoded-tiles', encoding: parseEncoding(value), tileFormat: 'png' };
+    }
     const allowed = ['pipeline', 'rasterPurpose', 'sourceCrs'];
     for (const key of Object.keys(value)) if (!allowed.includes(key)) throw new JobError('INVALID_OPTIONS', `Unknown scientific-raster option: ${key}`);
     if (value.rasterPurpose !== undefined && value.rasterPurpose !== 'scientific') throw new JobError('INVALID_OPTIONS', 'Scientific jobs require rasterPurpose=scientific.');

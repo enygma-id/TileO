@@ -1939,3 +1939,78 @@ dialog pre {
 .icon-fw { width: 1.25em; }
 .icon-spin { animation: tileo-icon-spin 1s linear infinite; }
 @keyframes tileo-icon-spin { to { transform: rotate(360deg); } }
+
+#encoded-options-group .row {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+#encoded-preset-note {
+  margin: 5px 0 12px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--surface-subtle);
+  font-variant-numeric: tabular-nums;
+}
+
+.encoded-preview {
+  display: grid;
+  gap: 6px;
+  width: min(224px, 60vw);
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  box-shadow: var(--shadow-sm);
+  color: var(--ink-primary);
+  font-size: 12px;
+  line-height: 1.35;
+  pointer-events: none;
+}
+.encoded-preview-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.encoded-preview-header strong { font-size: 13px; overflow-wrap: anywhere; }
+.encoded-preview-unit {
+  flex-shrink: 0;
+  padding: 2px 5px;
+  background: var(--surface-subtle);
+  border-radius: 4px;
+  color: var(--ink-secondary);
+  font-size: 11px;
+}
+.encoded-preview-ramp { height: 9px; border: 1px solid var(--line); border-radius: 4px; }
+.encoded-preview-ticks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  color: var(--ink-secondary);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.encoded-preview-ticks span:nth-child(2) { text-align: center; }
+.encoded-preview-ticks span:last-child { text-align: right; }
+.encoded-preview-mask {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-secondary);
+  font-size: 10px;
+}
+.encoded-preview-mask span {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: repeating-conic-gradient(var(--surface-subtle) 0% 25%, var(--surface) 0% 50%) 0 0 / 6px 6px;
+}
+.encoded-preview output {
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
