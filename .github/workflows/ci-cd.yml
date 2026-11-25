@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24.13.1
@@ -26,12 +28,40 @@ jobs:
       - run: npm run build
       - run: npm run check:docs
       - run: node scripts/verify-npm-notices.js
+        id: npm-notices
       - run: node scripts/verify-native-licenses.js
       - run: node scripts/check-notice-parity.js
+        id: notice-parity
       - run: npm test
       - name: Validate release tooling syntax
         run: |
           for file in scripts/*.js scripts/lib/*.js; do node --check "$file"; done
+
+      - name: Prepare a license evidence patch for Dependabot
+        id: dependabot-evidence
+        if: >-
+          ${{ failure() && github.event_name == 'pull_request' &&
+              github.event.pull_request.user.login == 'dependabot[bot]' &&
+              (steps.npm-notices.outcome == 'failure' || steps.notice-parity.outcome == 'failure') }}
+        run: |
+          set -euo pipefail
+          node scripts/verify-npm-notices.js --update --changed
+          node scripts/generate-third-party-notices.js
+          node scripts/generate-dependency-inventory.js
+          node scripts/check-notice-parity.js
+          git add --intent-to-add -- third-party/licenses/npm
+          git diff --binary -- THIRD-PARTY-NOTICES.md third-party > "$RUNNER_TEMP/dependency-evidence.patch"
+          test -s "$RUNNER_TEMP/dependency-evidence.patch"
+          echo "Patch ready. Apply and review the dependency-evidence artifact on the PR branch, then push the evidence commit." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the license evidence patch
+        if: ${{ failure() && steps.dependabot-evidence.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dependency-evidence
+          path: ${{ runner.temp }}/dependency-evidence.patch
+          if-no-files-found: error
+          retention-days: 14
 
   output-conformance:
     name: Independent output conformance
