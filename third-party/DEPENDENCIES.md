@@ -2,10 +2,10 @@
 
 This inventory is generated from the committed `package-lock.json` and `third-party/MANIFEST.json`. It lists **281 non-root entries** (direct, transitive, development and platform-optional packages).
 
-- `package-lock.json` SHA-256: `cecc66f94a7d2396e8193b929b5082f01bdb303a8329c5a311dd10a15b6a8d63`
+- `package-lock.json` SHA-256: `525585d8ad0fb2e4574874fa5152655bf9e1a718e1ee1366531e1deb0ba78bfe`
 - Runtime entries: **220** · runtime-optional: **5** · development: **56**
 - Notice evidence: **245** verified from exact upstream tarballs · **36** metadata-only · **0** failed
-- Verification date: 2026-11-11 (scripts/verify-npm-notices.js@1)
+- Verification date: 2026-11-25 (scripts/verify-npm-notices.js@1)
 
 > Metadata-only entries have no LICENSE/COPYING/NOTICE file in the exact tarball. They are not represented as verified upstream license files and require review before a strict release claim. Development-only entries are not shipped in the runtime image.
 
@@ -256,7 +256,7 @@ This inventory is generated from the committed `package-lock.json` and `third-pa
 | `pako` | 1.0.11 | `(MIT AND Zlib)` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `parse-headers` | 2.0.6 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `path-expression-matcher` | 1.6.2 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
-| `pbf` | 5.1.2 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
+| `pbf` | 5.2.0 | `BSD-3-Clause` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino` | 10.4.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino-abstract-transport` | 3.0.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
 | `pino-std-serializers` | 7.1.0 | `MIT` | runtime | `verified_upstream_tarball` | `LICENSE.txt` |
